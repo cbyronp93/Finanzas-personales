@@ -179,6 +179,7 @@
         <div class="summary-arrow">›</div>
         <div class="summary-label">Gastos</div>
         <div class="summary-value red" id="totalGasCard">$348</div>
+
         <div class="summary-tap">Ver detalle</div>
       </div>
     </div>
@@ -363,12 +364,7 @@
     <div class="card">
       <div class="card-title">Movimientos registrados</div>
       <div id="listaMovimientos">
-        <div class="row"><div style="display:flex;align-items:flex-start"><div class="dot ingreso"></div><div><div class="row-label">Otros ingresos</div><div class="row-sub">29/04 · Otros ingresos · Efectivo</div></div></div><div class="row-value green">+$7.00</div></div>
-        <div class="row"><div style="display:flex;align-items:flex-start"><div class="dot ingreso"></div><div><div class="row-label">Cobro Airbnb</div><div class="row-sub">28/04 · Airbnb · Pichincha cte 2203</div></div></div><div class="row-value green">+$350.00</div></div>
-        <div class="row"><div style="display:flex;align-items:flex-start"><div class="dot ingreso"></div><div><div class="row-label">Sueldo Smart House EC</div><div class="row-sub">28/04 · Smart House EC · Jardín Azuayo</div></div></div><div class="row-value green">+$350.00</div></div>
-        <div class="row"><div style="display:flex;align-items:flex-start"><div class="dot deuda"></div><div><div class="row-label">Tarjeta Pichincha</div><div class="row-sub">28/04 · Tarjeta · Tarjeta Pichincha</div></div></div><div class="row-value red">-$105.95</div></div>
-        <div class="row"><div style="display:flex;align-items:flex-start"><div class="dot gasto"></div><div><div class="row-label">Tabacos</div><div class="row-sub">28/04 · Tabacos · Efectivo</div></div></div><div class="row-value red">-$2.00</div></div>
-        <div class="row"><div style="display:flex;align-items:flex-start"><div class="dot deuda"></div><div><div class="row-label">Tarjeta JEP</div><div class="row-sub">24/04 · Tarjeta · Pichincha cte 2203</div></div></div><div class="row-value red">-$240.00</div></div>
+        <div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Cargando...</div>
       </div>
     </div>
   </div>
@@ -410,25 +406,69 @@ const CATS = {
 
 let tipoSel = '', subtipoSel = '';
 let cobrosData = JSON.parse(localStorage.getItem('cobros_byron') || '[]');
-
-let movimientos = [
-  { fecha:'28/04', tipo:'Ingreso', categoria:'Airbnb',         descripcion:'Cobro Airbnb',          cuenta:'Pichincha cte 2203', monto:350.00 },
-  { fecha:'28/04', tipo:'Ingreso', categoria:'Smart House EC', descripcion:'Sueldo Smart House EC', cuenta:'Jardín Azuayo',      monto:350.00 },
-  { fecha:'29/04', tipo:'Ingreso', categoria:'Otros ingresos', descripcion:'Otros ingresos',        cuenta:'Efectivo',           monto:7.00   },
-  { fecha:'28/04', tipo:'Gasto',   categoria:'Tarjeta',        descripcion:'Tarjeta Pichincha',     cuenta:'Tarjeta Pichincha',  monto:105.95 },
-  { fecha:'28/04', tipo:'Gasto',   categoria:'Tabacos',        descripcion:'Tabacos',               cuenta:'Efectivo',           monto:2.00   },
-  { fecha:'24/04', tipo:'Gasto',   categoria:'Tarjeta',        descripcion:'Tarjeta JEP',           cuenta:'Pichincha cte 2203', monto:240.00 },
-];
+let movimientos = [];
 
 document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
 document.getElementById('fechaCobro').value = new Date().toISOString().split('T')[0];
+
+// Cargar movimientos reales desde el Sheet al iniciar
+async function cargarMovimientos() {
+  const lista = document.getElementById('listaMovimientos');
+  lista.innerHTML = '<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Cargando...</div>';
+  try {
+    const res = await fetch(SCRIPT_URL);
+    const data = await res.json();
+    if (data.status === 'ok' && data.movimientos.length > 0) {
+      movimientos = data.movimientos;
+      renderHistorial();
+      actualizarResumen();
+    } else {
+      lista.innerHTML = '<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Sin movimientos registrados</div>';
+    }
+  } catch(e) {
+    lista.innerHTML = '<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Error al cargar — verificá tu conexión</div>';
+  }
+}
+
+function renderHistorial() {
+  const lista = document.getElementById('listaMovimientos');
+  if (movimientos.length === 0) {
+    lista.innerHTML = '<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Sin movimientos</div>';
+    return;
+  }
+  lista.innerHTML = movimientos.map(m => {
+    const esI = m.tipo==='Ingreso'||m.tipo==='Por cobrar';
+    const clase = esI ? 'ingreso' : 'gasto';
+    const colorVal = esI ? 'green' : 'red';
+    const signo = esI ? '+' : '-';
+    return `<div class="row">
+      <div style="display:flex;align-items:flex-start">
+        <div class="dot ${clase}"></div>
+        <div>
+          <div class="row-label">${m.descripcion}</div>
+          <div class="row-sub">${m.fecha} · ${m.categoria} · ${m.cuenta}</div>
+        </div>
+      </div>
+      <div class="row-value ${colorVal}">${signo}$${parseFloat(m.monto).toFixed(2)}</div>
+    </div>`;
+  }).join('');
+}
+
+function actualizarResumen() {
+  const {totalIng, totalGas} = calcTotales();
+  document.getElementById('totalIngCard').textContent = '$' + Math.round(totalIng);
+  document.getElementById('totalGasCard').textContent = '$' + Math.round(totalGas);
+  const bal = totalIng - totalGas;
+  document.getElementById('balanceCard').textContent = (bal >= 0 ? '+' : '') + '$' + Math.abs(bal).toFixed(0);
+  buildCharts();
+}
 
 const font = { family: '-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif', size: 11 };
 let chartCombo, chartDeudas;
 
 function calcTotales() {
   const ing = movimientos.filter(m => m.tipo==='Ingreso');
-  const gas = movimientos.filter(m => m.tipo==='Gasto');
+  const gas = movimientos.filter(m => m.tipo==='Gasto' || m.tipo==='Abono deuda');
   return { ing, gas, totalIng: ing.reduce((s,m)=>s+m.monto,0), totalGas: gas.reduce((s,m)=>s+m.monto,0) };
 }
 
@@ -462,22 +502,55 @@ function buildCharts() {
     }
   });
 
-  // Deudas
+  // Deudas — barra apilada: pagado (claro) + pendiente (oscuro)
+  const cupos    = [1400, 3900, 13000];
+  const saldos   = [1361.27, 2926.42, 6500.08];
+  const pagados  = cupos.map((c, i) => +(c - saldos[i]).toFixed(2));
+  const coloresPend  = ['#a32d2d', '#e09b2d', '#7a7a72'];
+  const coloresPag   = ['#f7c1c1', '#fac775', '#d3d1c7'];
+
   if (chartDeudas) chartDeudas.destroy();
   chartDeudas = new Chart(document.getElementById('chartDeudas'), {
     type: 'bar',
     data: {
       labels: ['Visa Pichincha', 'Visa JEP', 'Préstamo JA'],
       datasets: [
-        { label: 'Saldo actual',   data: [1361.27, 2926.42, 6500.08], backgroundColor: ['#a32d2d','#e09b2d','#7a7a72'], borderRadius: 6, borderWidth: 0 },
-        { label: 'Cupo / Capital', data: [1400,    3900,    13000   ], backgroundColor: ['#f7c1c1','#fac775','#d3d1c7'], borderRadius: 6, borderWidth: 0 }
+        {
+          label: 'Pendiente',
+          data: saldos,
+          backgroundColor: coloresPend,
+          borderRadius: 0,
+          borderWidth: 0,
+          borderSkipped: 'bottom'
+        },
+        {
+          label: 'Pagado',
+          data: pagados,
+          backgroundColor: coloresPag,
+          borderRadius: { topLeft: 6, topRight: 6 },
+          borderWidth: 0,
+          borderSkipped: 'bottom'
+        }
       ]
     },
     options: {
-      plugins: { legend: { position:'bottom', labels:{ font, boxWidth:10, padding:12 } }, tooltip:{ callbacks:{ label: c=>' $'+c.parsed.y.toLocaleString() } } },
+      plugins: {
+        legend: { position:'bottom', labels:{ font, boxWidth:10, padding:12 } },
+        tooltip: {
+          callbacks: {
+            label: c => {
+              const i = c.dataIndex;
+              const pct = c.datasetIndex === 0
+                ? Math.round(saldos[i] / cupos[i] * 100) + '% pendiente — $' + saldos[i].toLocaleString()
+                : Math.round(pagados[i] / cupos[i] * 100) + '% pagado — $' + pagados[i].toLocaleString();
+              return ' ' + pct;
+            }
+          }
+        }
+      },
       scales: {
-        x: { grid:{ display:false }, ticks:{ font } },
-        y: { grid:{ color:'#e2e0d8' }, ticks:{ font, callback: v=>'$'+v.toLocaleString() } }
+        x: { stacked: true, grid:{ display:false }, ticks:{ font } },
+        y: { stacked: true, grid:{ color:'#e2e0d8' }, ticks:{ font, callback: v=>'$'+v.toLocaleString() } }
       },
       responsive: true, maintainAspectRatio: false
     }
@@ -486,10 +559,11 @@ function buildCharts() {
 
 buildCharts();
 renderCobros();
+cargarMovimientos();
 
 // ── MODAL ────────────────────────────────────────────────
 function abrirDetalle(tipo) {
-  const items = movimientos.filter(m => m.tipo === (tipo==='ingreso'?'Ingreso':'Gasto'));
+  const items = movimientos.filter(m => tipo==='ingreso' ? m.tipo==='Ingreso' : (m.tipo==='Gasto'||m.tipo==='Abono deuda'));
   const total = items.reduce((s,m)=>s+m.monto,0);
   const esIng = tipo==='ingreso';
   document.getElementById('modalTitulo').textContent = esIng ? '↑ Detalle de ingresos' : '↓ Detalle de gastos';
@@ -652,16 +726,8 @@ function marcarCobrado(id){
 }
 
 function agregarAlHistorial(mov){
-  const lista=document.getElementById('listaMovimientos');
-  const esI=mov.tipo==='Ingreso'||mov.tipo==='Por cobrar';
-  const esD=mov.tipo==='Abono deuda'||mov.tipo==='Nueva deuda';
-  const clase=esI?'ingreso':(esD?'deuda':'gasto');
-  const colorVal=esI?'green':'red';
-  const signo=esI?'+':'-';
-  const div=document.createElement('div');
-  div.className='row';
-  div.innerHTML=`<div style="display:flex;align-items:flex-start"><div class="dot ${clase}"></div><div><div class="row-label">${mov.descripcion}</div><div class="row-sub">${mov.fecha} · ${mov.categoria} · ${mov.cuenta}</div></div></div><div class="row-value ${colorVal}">${signo}$${parseFloat(mov.monto).toFixed(2)}</div>`;
-  lista.insertBefore(div,lista.firstChild);
+  movimientos.unshift(mov);
+  renderHistorial();
 }
 </script>
 </body>
