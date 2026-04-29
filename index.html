@@ -215,18 +215,7 @@
     <!-- Compromisos -->
     <div class="card">
       <div class="card-title">Compromisos pendientes</div>
-      <div class="row">
-        <div><div class="row-label">Visa Pichincha</div><div class="row-sub">Venció 30/04 · $105.95</div></div>
-        <span class="badge ok">✓ Pagado</span>
-      </div>
-      <div class="row">
-        <div><div class="row-label">Visa JEP</div><div class="row-sub">Vence 04/05 · $239.07</div></div>
-        <span class="badge pend">Pendiente</span>
-      </div>
-      <div class="row">
-        <div><div class="row-label">Cuota Jardín Azuayo</div><div class="row-sub">Vence 01/05 · ~$345</div></div>
-        <span class="badge pend">Pendiente</span>
-      </div>
+      <div id="listaCompromisos"></div>
     </div>
 
     <!-- Por cobrar -->
@@ -421,6 +410,7 @@ async function cargarMovimientos() {
     if (data.status === 'ok' && data.movimientos.length > 0) {
       movimientos = data.movimientos;
       renderHistorial();
+      renderCompromisos();
       actualizarResumen();
     } else {
       lista.innerHTML = '<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Sin movimientos registrados</div>';
@@ -428,6 +418,49 @@ async function cargarMovimientos() {
   } catch(e) {
     lista.innerHTML = '<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Error al cargar — verificá tu conexión</div>';
   }
+}
+
+// Compromisos definidos: { label, sub, keywords en categoria/descripcion }
+const COMPROMISOS = [
+  { label:'Visa Pichincha', sub:'Día 30 · $105.95', keys:['visa pichincha','pichincha'] },
+  { label:'Visa JEP',       sub:'Día 04 · $239.07', keys:['visa jep','jep'] },
+  { label:'Jardín Azuayo',  sub:'Día 01 · ~$345',   keys:['jardín azuayo','jardin azuayo','azuayo'] }
+];
+
+function renderCompromisos() {
+  const lista = document.getElementById('listaCompromisos');
+  if (!lista) return;
+
+  // Mes y año actuales
+  const hoy = new Date();
+  const mesActual = hoy.getMonth();
+  const anioActual = hoy.getFullYear();
+
+  // Buscar abonos del mes actual
+  const abonosMes = movimientos.filter(m => {
+    if (m.tipo !== 'Abono deuda') return false;
+    // Parsear fecha dd/mm/yyyy o dd/m/yyyy
+    const partes = m.fecha.split('/');
+    if (partes.length < 3) return false;
+    const mes = parseInt(partes[1]) - 1;
+    const anio = parseInt(partes[2].length === 2 ? '20'+partes[2] : partes[2]);
+    return mes === mesActual && anio === anioActual;
+  });
+
+  lista.innerHTML = COMPROMISOS.map((c, idx) => {
+    const pagado = abonosMes.some(m => {
+      const texto = (m.categoria + ' ' + m.descripcion).toLowerCase();
+      return c.keys.some(k => texto.includes(k));
+    });
+    const isLast = idx === COMPROMISOS.length - 1;
+    return `<div class="row" ${isLast ? 'style="border-bottom:none;padding-bottom:0"' : ''}>
+      <div>
+        <div class="row-label">${c.label}</div>
+        <div class="row-sub">${c.sub}</div>
+      </div>
+      <span class="badge ${pagado ? 'ok' : 'pend'}">${pagado ? '✓ Pagado' : 'Pendiente'}</span>
+    </div>`;
+  }).join('');
 }
 
 function renderHistorial() {
@@ -559,6 +592,7 @@ function buildCharts() {
 
 buildCharts();
 renderCobros();
+renderCompromisos();
 cargarMovimientos();
 
 // ── MODAL ────────────────────────────────────────────────
@@ -728,6 +762,7 @@ function marcarCobrado(id){
 function agregarAlHistorial(mov){
   movimientos.unshift(mov);
   renderHistorial();
+  renderCompromisos();
 }
 </script>
 </body>
