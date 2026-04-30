@@ -474,15 +474,23 @@ function renderDeudas() {
 
   const todasDeudas = [
     ...DEUDAS_BASE,
-    ...nuevasUnicas.map(m => ({
-      nombre: m.descripcion.split('—')[0].trim() || m.categoria,
-      sub: m.categoria + (m.descripcion.includes('|') ? ' · ' + m.descripcion.split('|')[1].trim() : ''),
-      saldo: m.monto,
-      capital: m.monto, // capital original = monto registrado
-      tasa: m.descripcion.includes('%') ? m.descripcion.match(/[\d.]+%/)?.[0] || '—' : '—',
-      urgente: false,
-      nueva: true
-    }))
+    ...nuevasUnicas.map(m => {
+      const nombreDeuda = m.descripcion.split('—')[0].trim() || m.categoria;
+      // Calcular saldo real restando abonos registrados
+      const totalAbonado = movimientos
+        .filter(a => a.tipo === 'Abono deuda' && a.categoria.toLowerCase() === nombreDeuda.toLowerCase())
+        .reduce((s, a) => s + a.monto, 0);
+      const saldoReal = Math.max(0, m.monto - totalAbonado);
+      return {
+        nombre: nombreDeuda,
+        sub: m.categoria + (m.descripcion.includes('|') ? ' · ' + m.descripcion.split('|')[1].trim() : ''),
+        saldo: saldoReal,
+        capital: m.monto,
+        tasa: m.descripcion.includes('%') ? m.descripcion.match(/[\d.]+%/)?.[0] || '—' : '—',
+        urgente: false,
+        nueva: true
+      };
+    })
   ];
 
   lista.innerHTML = todasDeudas.map((d, i) => {
