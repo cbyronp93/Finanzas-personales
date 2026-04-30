@@ -666,7 +666,20 @@ function selSubtipo(s) {
   document.getElementById('labelDescripcion').textContent=s==='nueva'?'Nombre / referencia':'Descripción';
   const sel=document.getElementById('categoria');
   sel.innerHTML='<option value="">Seleccioná...</option>';
-  CATS[s==='abono'?'Deuda_abono':'Deuda_nueva'].forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
+
+  if (s === 'abono') {
+    // Categorías base
+    const baseAbono = [...CATS['Deuda_abono']];
+    // Agregar nuevas deudas registradas (sin duplicar)
+    const nuevasDeudas = movimientos
+      .filter(m => m.tipo === 'Nueva deuda')
+      .map(m => m.descripcion.split('—')[0].trim())
+      .filter(nombre => !baseAbono.some(b => b.toLowerCase() === nombre.toLowerCase()));
+    const todas = [...baseAbono, ...nuevasDeudas];
+    todas.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+  } else {
+    CATS['Deuda_nueva'].forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+  }
 }
 
 function showToast(msg,tipo=''){
