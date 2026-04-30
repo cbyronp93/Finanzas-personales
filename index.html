@@ -492,10 +492,9 @@ function renderDeudas() {
 }
 
 function buildDeudaChart(deudas) {
-  const cupos   = deudas.map(d => d.capital);
-  const saldos  = deudas.map(d => d.saldo);
-  const pagados = cupos.map((c,i) => +(c - saldos[i]).toFixed(2));
-  const labels  = deudas.map(d => d.nombre);
+  const labels   = deudas.map(d => d.nombre);
+  const pctPend  = deudas.map(d => Math.round((d.saldo / d.capital) * 100));
+  const pctPag   = deudas.map(d => 100 - Math.round((d.saldo / d.capital) * 100));
   const coloresPend = ['#a32d2d','#e09b2d','#7a7a72','#185fa5','#854f0b','#2d7a4f'];
   const coloresPag  = ['#f7c1c1','#fac775','#d3d1c7','#e6f1fb','#faeeda','#eaf3de'];
 
@@ -505,26 +504,50 @@ function buildDeudaChart(deudas) {
     data: {
       labels,
       datasets: [
-        { label:'Pendiente', data:saldos,  backgroundColor:coloresPend.slice(0,deudas.length), borderRadius:0, borderWidth:0, borderSkipped:'bottom' },
-        { label:'Pagado',    data:pagados, backgroundColor:coloresPag.slice(0,deudas.length),  borderRadius:{topLeft:6,topRight:6}, borderWidth:0, borderSkipped:'bottom' }
+        {
+          label: 'Pendiente',
+          data: pctPend,
+          backgroundColor: coloresPend.slice(0, deudas.length),
+          borderRadius: 0,
+          borderWidth: 0,
+          borderSkipped: 'bottom'
+        },
+        {
+          label: 'Pagado',
+          data: pctPag,
+          backgroundColor: coloresPag.slice(0, deudas.length),
+          borderRadius: { topLeft: 6, topRight: 6 },
+          borderWidth: 0,
+          borderSkipped: 'bottom'
+        }
       ]
     },
     options: {
       plugins: {
-        legend: { position:'bottom', labels:{ font, boxWidth:10, padding:12 } },
-        tooltip: { callbacks: { label: c => {
-          const i = c.dataIndex;
-          const pct = c.datasetIndex===0
-            ? Math.round(saldos[i]/cupos[i]*100)+'% pendiente — $'+saldos[i].toLocaleString()
-            : Math.round(pagados[i]/cupos[i]*100)+'% pagado — $'+pagados[i].toLocaleString();
-          return ' '+pct;
-        }}}
+        legend: { position: 'bottom', labels: { font, boxWidth: 10, padding: 12 } },
+        tooltip: {
+          callbacks: {
+            label: c => {
+              const i = c.dataIndex;
+              return c.datasetIndex === 0
+                ? ` ${pctPend[i]}% pendiente — $${deudas[i].saldo.toLocaleString()}`
+                : ` ${pctPag[i]}% pagado — $${(deudas[i].capital - deudas[i].saldo).toLocaleString()}`;
+            }
+          }
+        }
       },
       scales: {
-        x: { stacked:true, grid:{display:false}, ticks:{font} },
-        y: { stacked:true, grid:{color:'#e2e0d8'}, ticks:{font, callback:v=>'$'+v.toLocaleString()} }
+        x: { stacked: true, grid: { display: false }, ticks: { font } },
+        y: {
+          stacked: true,
+          min: 0,
+          max: 100,
+          grid: { color: '#e2e0d8' },
+          ticks: { font, callback: v => v + '%' }
+        }
       },
-      responsive:true, maintainAspectRatio:false
+      responsive: true,
+      maintainAspectRatio: false
     }
   });
 }
