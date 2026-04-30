@@ -358,7 +358,7 @@ const CATS = {
 };
 
 let tipoSel = '', subtipoSel = '';
-let cobrosData = JSON.parse(localStorage.getItem('cobros_byron') || '[]');
+let cobrosData = [];
 let movimientos = [];
 
 document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
@@ -371,11 +371,26 @@ async function cargarMovimientos() {
   try {
     const res = await fetch(SCRIPT_URL);
     const data = await res.json();
-    if (data.status === 'ok' && data.movimientos.length > 0) {
-      movimientos = data.movimientos;
+    if (data.status === 'ok') {
+      movimientos = data.movimientos || [];
+      cobrosData  = (data.cobros || []).map(c => ({
+        id:          c.fecha + '_' + c.monto,
+        fecha:       c.fecha,
+        categoria:   c.categoria,
+        descripcion: c.descripcion.includes('(debe:')
+                       ? c.descripcion.split('(debe:')[0].trim()
+                       : c.descripcion,
+        deudor:      c.descripcion.includes('(debe:')
+                       ? c.descripcion.split('(debe:')[1].replace(')','').trim()
+                       : '—',
+        monto:       c.monto,
+        fechaCobro:  '',
+        cobrado:     false
+      }));
       renderHistorial();
       renderCompromisos();
       renderDeudas();
+      renderCobros();
       actualizarResumen();
     } else {
       lista.innerHTML = '<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Sin movimientos registrados</div>';
@@ -699,7 +714,6 @@ async function guardar(){
     const [y,m,d]=fecha.split('-');
     const item={id:Date.now(),fecha:d+'/'+m+'/'+y,categoria,descripcion,deudor,monto,fechaCobro,cobrado:false};
     cobrosData.unshift(item);
-    localStorage.setItem('cobros_byron',JSON.stringify(cobrosData));
     renderCobros();
     await enviarDrive({fecha:item.fecha,tipo:'Por cobrar',categoria,descripcion:descripcion+' (debe: '+deudor+')',cuenta:'—',monto});
     showToast('✓ Cobro registrado','success');
@@ -775,7 +789,6 @@ function marcarCobrado(id){
   const item=cobrosData.find(c=>c.id===id);
   if(!item)return;
   item.cobrado=true;
-  localStorage.setItem('cobros_byron',JSON.stringify(cobrosData));
   renderCobros();
   const hoy=new Date(),d=String(hoy.getDate()).padStart(2,'0'),m=String(hoy.getMonth()+1).padStart(2,'0'),y=hoy.getFullYear();
   enviarDrive({fecha:d+'/'+m+'/'+y,tipo:'Ingreso',categoria:item.categoria,descripcion:item.descripcion+' — COBRADO',cuenta:'Pichincha cte 2203',monto:item.monto});
