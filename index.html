@@ -295,41 +295,7 @@
   <div id="tab-deudas" class="section">
     <div class="card">
       <div class="card-title">Estrategia avalanche</div>
-      <div class="row" style="align-items:flex-start;padding-top:0">
-        <div style="flex:1">
-          <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
-            <div class="row-label">Visa Pichincha</div><span class="priority">URGENTE</span>
-          </div>
-          <div class="row-sub">4454···6210 · día 30 · $105.95/mes</div>
-          <div class="bar-wrap"><div class="bar danger" style="width:97%"></div></div>
-          <div class="row-sub" style="margin-top:4px">97% utilizado</div>
-        </div>
-        <div style="margin-left:12px;text-align:right;flex-shrink:0">
-          <div class="row-value red">$1,361</div><div class="row-sub">15.60%</div>
-        </div>
-      </div>
-      <div class="row" style="align-items:flex-start">
-        <div style="flex:1">
-          <div class="row-label">Visa JEP</div>
-          <div class="row-sub">4770···8442 · día 4 · $239.07/mes</div>
-          <div class="bar-wrap"><div class="bar warning" style="width:75%"></div></div>
-          <div class="row-sub" style="margin-top:4px">75% utilizado</div>
-        </div>
-        <div style="margin-left:12px;text-align:right;flex-shrink:0">
-          <div class="row-value">$2,926</div><div class="row-sub">15.60%</div>
-        </div>
-      </div>
-      <div class="row" style="align-items:flex-start">
-        <div style="flex:1">
-          <div class="row-label">Préstamo Jardín Azuayo</div>
-          <div class="row-sub">#1156747 · día 1 · ~$345/mes</div>
-          <div class="bar-wrap"><div class="bar ok" style="width:50%"></div></div>
-          <div class="row-sub" style="margin-top:4px">50% pagado</div>
-        </div>
-        <div style="margin-left:12px;text-align:right;flex-shrink:0">
-          <div class="row-value">$6,500</div><div class="row-sub">14.22%</div>
-        </div>
-      </div>
+      <div id="listaDeudas"></div>
     </div>
     <div class="card">
       <div class="card-title">Proyección Visa Pichincha</div>
@@ -411,6 +377,7 @@ async function cargarMovimientos() {
       movimientos = data.movimientos;
       renderHistorial();
       renderCompromisos();
+      renderDeudas();
       actualizarResumen();
     } else {
       lista.innerHTML = '<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Sin movimientos registrados</div>';
@@ -436,10 +403,9 @@ function renderCompromisos() {
   const mesActual = hoy.getMonth();
   const anioActual = hoy.getFullYear();
 
-  // Buscar abonos del mes actual
+  // Buscar pagos del mes actual — acepta Abono deuda o Gasto con palabras clave de tarjeta
   const abonosMes = movimientos.filter(m => {
-    if (m.tipo !== 'Abono deuda') return false;
-    // Fecha puede venir como d/m/yyyy o dd/mm/yyyy
+    if (m.tipo !== 'Abono deuda' && m.tipo !== 'Gasto') return false;
     const partes = m.fecha.split('/');
     if (partes.length < 3) return false;
     const mes  = parseInt(partes[1], 10) - 1;
@@ -461,6 +427,106 @@ function renderCompromisos() {
       <span class="badge ${pagado ? 'ok' : 'pend'}">${pagado ? '✓ Pagado' : 'Pendiente'}</span>
     </div>`;
   }).join('');
+}
+
+// Deudas base hardcodeadas (las 3 originales con sus datos completos)
+const DEUDAS_BASE = [
+  { nombre:'Visa Pichincha', sub:'4454···6210 · día 30 · $105.95/mes', saldo:1361.27, capital:1400,   tasa:'15.60%', urgente:true  },
+  { nombre:'Visa JEP',       sub:'4770···8442 · día 4 · $239.07/mes',  saldo:2926.42, capital:3900,   tasa:'15.60%', urgente:false },
+  { nombre:'Jardín Azuayo',  sub:'#1156747 · día 1 · ~$345/mes',       saldo:6500.08, capital:13000,  tasa:'14.22%', urgente:false },
+];
+
+function renderDeudas() {
+  const lista = document.getElementById('listaDeudas');
+  if (!lista) return;
+
+  // Detectar nuevas deudas desde movimientos tipo 'Nueva deuda'
+  const nuevas = movimientos.filter(m => m.tipo === 'Nueva deuda');
+
+  // Combinar base + nuevas (evitar duplicados por nombre)
+  const nombresBase = DEUDAS_BASE.map(d => d.nombre.toLowerCase());
+  const nuevasUnicas = nuevas.filter(m => {
+    const desc = m.descripcion.toLowerCase();
+    return !nombresBase.some(n => desc.includes(n));
+  });
+
+  const todasDeudas = [
+    ...DEUDAS_BASE,
+    ...nuevasUnicas.map(m => ({
+      nombre: m.descripcion.split('—')[0].trim() || m.categoria,
+      sub: m.categoria + (m.descripcion.includes('|') ? ' · ' + m.descripcion.split('|')[1].trim() : ''),
+      saldo: m.monto,
+      capital: m.monto, // capital original = monto registrado
+      tasa: m.descripcion.includes('%') ? m.descripcion.match(/[\d.]+%/)?.[0] || '—' : '—',
+      urgente: false,
+      nueva: true
+    }))
+  ];
+
+  lista.innerHTML = todasDeudas.map((d, i) => {
+    const pct    = Math.round((d.saldo / d.capital) * 100);
+    const pagPct = 100 - pct;
+    const barClass = pct >= 90 ? 'danger' : pct >= 60 ? 'warning' : 'ok';
+    const isLast = i === todasDeudas.length - 1;
+    return `
+      <div class="row" style="align-items:flex-start;${i===0?'padding-top:0':''}${isLast?'border-bottom:none;padding-bottom:0':''}">
+        <div style="flex:1">
+          <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+            <div class="row-label">${d.nombre}</div>
+            ${d.urgente ? '<span class="priority">URGENTE</span>' : ''}
+            ${d.nueva ? '<span class="priority" style="background:var(--blue-bg);color:var(--blue)">NUEVA</span>' : ''}
+          </div>
+          <div class="row-sub">${d.sub}</div>
+          <div class="bar-wrap"><div class="bar ${barClass}" style="width:${pct}%"></div></div>
+          <div class="row-sub" style="margin-top:4px">${pct}% pendiente · ${pagPct}% pagado</div>
+        </div>
+        <div style="margin-left:12px;text-align:right;flex-shrink:0">
+          <div class="row-value ${pct>=90?'red':''}">${d.nueva?'$'+d.saldo.toFixed(0):'$'+d.saldo.toLocaleString()}</div>
+          <div class="row-sub">${d.tasa}</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  // Actualizar también el gráfico de deudas
+  buildDeudaChart(todasDeudas);
+}
+
+function buildDeudaChart(deudas) {
+  const cupos   = deudas.map(d => d.capital);
+  const saldos  = deudas.map(d => d.saldo);
+  const pagados = cupos.map((c,i) => +(c - saldos[i]).toFixed(2));
+  const labels  = deudas.map(d => d.nombre);
+  const coloresPend = ['#a32d2d','#e09b2d','#7a7a72','#185fa5','#854f0b','#2d7a4f'];
+  const coloresPag  = ['#f7c1c1','#fac775','#d3d1c7','#e6f1fb','#faeeda','#eaf3de'];
+
+  if (chartDeudas) chartDeudas.destroy();
+  chartDeudas = new Chart(document.getElementById('chartDeudas'), {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        { label:'Pendiente', data:saldos,  backgroundColor:coloresPend.slice(0,deudas.length), borderRadius:0, borderWidth:0, borderSkipped:'bottom' },
+        { label:'Pagado',    data:pagados, backgroundColor:coloresPag.slice(0,deudas.length),  borderRadius:{topLeft:6,topRight:6}, borderWidth:0, borderSkipped:'bottom' }
+      ]
+    },
+    options: {
+      plugins: {
+        legend: { position:'bottom', labels:{ font, boxWidth:10, padding:12 } },
+        tooltip: { callbacks: { label: c => {
+          const i = c.dataIndex;
+          const pct = c.datasetIndex===0
+            ? Math.round(saldos[i]/cupos[i]*100)+'% pendiente — $'+saldos[i].toLocaleString()
+            : Math.round(pagados[i]/cupos[i]*100)+'% pagado — $'+pagados[i].toLocaleString();
+          return ' '+pct;
+        }}}
+      },
+      scales: {
+        x: { stacked:true, grid:{display:false}, ticks:{font} },
+        y: { stacked:true, grid:{color:'#e2e0d8'}, ticks:{font, callback:v=>'$'+v.toLocaleString()} }
+      },
+      responsive:true, maintainAspectRatio:false
+    }
+  });
 }
 
 function renderHistorial() {
@@ -535,64 +601,13 @@ function buildCharts() {
     }
   });
 
-  // Deudas — barra apilada: pagado (claro) + pendiente (oscuro)
-  const cupos    = [1400, 3900, 13000];
-  const saldos   = [1361.27, 2926.42, 6500.08];
-  const pagados  = cupos.map((c, i) => +(c - saldos[i]).toFixed(2));
-  const coloresPend  = ['#a32d2d', '#e09b2d', '#7a7a72'];
-  const coloresPag   = ['#f7c1c1', '#fac775', '#d3d1c7'];
-
-  if (chartDeudas) chartDeudas.destroy();
-  chartDeudas = new Chart(document.getElementById('chartDeudas'), {
-    type: 'bar',
-    data: {
-      labels: ['Visa Pichincha', 'Visa JEP', 'Préstamo JA'],
-      datasets: [
-        {
-          label: 'Pendiente',
-          data: saldos,
-          backgroundColor: coloresPend,
-          borderRadius: 0,
-          borderWidth: 0,
-          borderSkipped: 'bottom'
-        },
-        {
-          label: 'Pagado',
-          data: pagados,
-          backgroundColor: coloresPag,
-          borderRadius: { topLeft: 6, topRight: 6 },
-          borderWidth: 0,
-          borderSkipped: 'bottom'
-        }
-      ]
-    },
-    options: {
-      plugins: {
-        legend: { position:'bottom', labels:{ font, boxWidth:10, padding:12 } },
-        tooltip: {
-          callbacks: {
-            label: c => {
-              const i = c.dataIndex;
-              const pct = c.datasetIndex === 0
-                ? Math.round(saldos[i] / cupos[i] * 100) + '% pendiente — $' + saldos[i].toLocaleString()
-                : Math.round(pagados[i] / cupos[i] * 100) + '% pagado — $' + pagados[i].toLocaleString();
-              return ' ' + pct;
-            }
-          }
-        }
-      },
-      scales: {
-        x: { stacked: true, grid:{ display:false }, ticks:{ font } },
-        y: { stacked: true, grid:{ color:'#e2e0d8' }, ticks:{ font, callback: v=>'$'+v.toLocaleString() } }
-      },
-      responsive: true, maintainAspectRatio: false
-    }
-  });
+  // El gráfico de deudas se construye en buildDeudaChart() llamado desde renderDeudas()
 }
 
 buildCharts();
 renderCobros();
 renderCompromisos();
+renderDeudas();
 cargarMovimientos();
 
 // ── MODAL ────────────────────────────────────────────────
@@ -763,6 +778,7 @@ function agregarAlHistorial(mov){
   movimientos.unshift(mov);
   renderHistorial();
   renderCompromisos();
+  renderDeudas();
 }
 </script>
 </body>
