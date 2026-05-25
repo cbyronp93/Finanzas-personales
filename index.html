@@ -15,6 +15,7 @@
     --red: #a32d2d; --red-bg: #fcebeb;
     --warning: #854f0b; --warning-bg: #faeeda;
     --blue: #185fa5; --blue-bg: #e6f1fb;
+    --purple: #6b3fa0; --purple-bg: #f0e8fb;
     --radius: 14px; --radius-sm: 8px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -28,9 +29,9 @@
   .corte-badge { font-size: 11px; background: var(--warning-bg); color: var(--warning); padding: 3px 10px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
 
   .tab-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: var(--card); border-top: 1px solid var(--border); display: flex; z-index: 20; padding-bottom: env(safe-area-inset-bottom); }
-  .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 2px 8px; cursor: pointer; border: none; background: none; color: var(--muted); font-size: 9px; gap: 3px; }
+  .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 8px 2px 6px; cursor: pointer; border: none; background: none; color: var(--muted); font-size: 8px; gap: 3px; }
   .tab-item.active { color: var(--text); }
-  .tab-icon { font-size: 18px; line-height: 1; }
+  .tab-icon { font-size: 17px; line-height: 1; }
   .tab-item.active .tab-label { font-weight: 600; }
 
   .section { display: none; padding: 16px; }
@@ -60,9 +61,8 @@
   /* Chart */
   .chart-wrap { position: relative; width: 100%; }
   .chart-wrap.combo { height: 200px; }
-  .chart-wrap.bar-v { height: 180px; }
 
-  /* Leyenda manual */
+  /* Leyenda */
   .legend { display: flex; gap: 16px; margin-bottom: 14px; }
   .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
   .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
@@ -83,6 +83,7 @@
   .detail-monto { font-size: 15px; font-weight: 700; white-space: nowrap; margin-left: 12px; }
   .detail-monto.green { color: var(--green); }
   .detail-monto.red   { color: var(--red); }
+  .detail-monto.purple { color: var(--purple); }
 
   /* Rows */
   .row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
@@ -94,6 +95,7 @@
   .row-value.green { color: var(--green); }
   .row-value.red   { color: var(--red); }
   .row-value.blue  { color: var(--blue); }
+  .row-value.purple { color: var(--purple); }
 
   .badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
   .badge.ok   { background: var(--green-bg); color: var(--green); }
@@ -104,6 +106,20 @@
   .bar.danger  { background: var(--red); }
   .bar.warning { background: #e09b2d; }
   .bar.ok      { background: var(--green); }
+
+  /* Tarjetas */
+  .tarjeta-selector { display: flex; gap: 8px; margin-bottom: 14px; }
+  .tarjeta-btn { flex: 1; padding: 12px 4px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; background: var(--card); color: var(--muted); cursor: pointer; text-align: center; transition: all 0.15s; }
+  .tarjeta-btn.sel-pichincha { border-color: var(--red); background: var(--red-bg); color: var(--red); }
+  .tarjeta-btn.sel-jep { border-color: var(--warning); background: var(--warning-bg); color: var(--warning); }
+
+  .tarjeta-card { border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
+  .tarjeta-card.pichincha { background: linear-gradient(135deg, #a32d2d, #c94040); color: #fff; }
+  .tarjeta-card.jep       { background: linear-gradient(135deg, #854f0b, #b8720f); color: #fff; }
+  .tarjeta-name { font-size: 13px; opacity: 0.85; margin-bottom: 4px; }
+  .tarjeta-saldo { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
+  .tarjeta-meta { display: flex; justify-content: space-between; margin-top: 12px; font-size: 11px; opacity: 0.8; }
+  .tarjeta-consumo-mes { font-size: 13px; margin-top: 6px; opacity: 0.9; }
 
   /* Form */
   .form-group { margin-bottom: 14px; }
@@ -144,6 +160,7 @@
   .dot.gasto   { background: var(--red); }
   .dot.deuda   { background: var(--warning); }
   .dot.cobrar  { background: var(--blue); }
+  .dot.tarjeta { background: var(--purple); }
 
   .cobrar-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 11px 0; border-bottom: 1px solid var(--border); gap: 10px; }
   .cobrar-item:last-child { border-bottom: none; padding-bottom: 0; }
@@ -158,28 +175,25 @@
   <div class="header">
     <div class="header-top">
       <div><h1>Finanzas Byron</h1><p>Cuenca · USD</p></div>
-      <span class="corte-badge">Abril 2026</span>
+      <span class="corte-badge" id="headerFecha">Mayo 2026</span>
     </div>
   </div>
 
   <!-- ═══════ RESUMEN ═══════ -->
   <div id="tab-resumen" class="section active">
+    <div class="mes-label" id="resumenMesLabel">Cargando...</div>
 
-    <div class="mes-label">Abril 2026 — datos reales</div>
-
-    <!-- Cards clickeables -->
     <div class="summary-grid">
       <div class="summary-card ingreso" onclick="abrirDetalle('ingreso')">
         <div class="summary-arrow">›</div>
         <div class="summary-label">Ingresos</div>
-        <div class="summary-value green" id="totalIngCard">$707</div>
+        <div class="summary-value green" id="totalIngCard">—</div>
         <div class="summary-tap">Ver detalle</div>
       </div>
       <div class="summary-card gasto" onclick="abrirDetalle('gasto')">
         <div class="summary-arrow">›</div>
         <div class="summary-label">Gastos</div>
-        <div class="summary-value red" id="totalGasCard">$348</div>
-
+        <div class="summary-value red" id="totalGasCard">—</div>
         <div class="summary-tap">Ver detalle</div>
       </div>
     </div>
@@ -189,10 +203,9 @@
         <div class="balance-label">Balance del mes</div>
         <div class="balance-sub">Ingresos − gastos reales</div>
       </div>
-      <div class="balance-value" id="balanceCard">+$359</div>
+      <div class="balance-value" id="balanceCard">—</div>
     </div>
 
-    <!-- Gráfico único: ingresos vs gastos agrupados -->
     <div class="card">
       <div class="card-title">Ingresos vs gastos</div>
       <div class="legend">
@@ -204,24 +217,20 @@
       </div>
     </div>
 
-    <!-- Deudas resumen -->
     <div class="card">
       <div class="card-title">Saldo de deudas</div>
-      <div id="resumenDeudas"></div>
+      <div id="resumenDeudas"><div class="empty-state">Cargando...</div></div>
     </div>
 
-    <!-- Compromisos -->
     <div class="card">
       <div class="card-title">Compromisos pendientes</div>
       <div id="listaCompromisos"></div>
     </div>
 
-    <!-- Por cobrar -->
     <div class="card">
       <div class="card-title">Por cobrar</div>
       <div id="resumenCobrar"><div class="empty-state">Sin cobros pendientes</div></div>
     </div>
-
   </div>
 
   <!-- ═══════ REGISTRAR ═══════ -->
@@ -289,6 +298,98 @@
     </div>
   </div>
 
+  <!-- ═══════ TARJETAS ═══════ -->
+  <div id="tab-tarjetas" class="section">
+
+    <!-- Cards resumen tarjetas -->
+    <div class="tarjeta-card pichincha">
+      <div class="tarjeta-name">Visa Pichincha · 4454···6210</div>
+      <div class="tarjeta-saldo" id="saldoPichincha">$1,361</div>
+      <div class="tarjeta-consumo-mes">Consumido este mes: <strong id="consumoMesPichincha">$0</strong></div>
+      <div class="tarjeta-meta">
+        <span>Cupo $1,400</span>
+        <span>Vence día 30</span>
+        <span>15.60%</span>
+      </div>
+    </div>
+
+    <div class="tarjeta-card jep">
+      <div class="tarjeta-name">Visa JEP · 4770···8442</div>
+      <div class="tarjeta-saldo" id="saldoJEP">$2,926</div>
+      <div class="tarjeta-consumo-mes">Consumido este mes: <strong id="consumoMesJEP">$0</strong></div>
+      <div class="tarjeta-meta">
+        <span>Cupo $3,900</span>
+        <span>Vence día 4</span>
+        <span>15.60%</span>
+      </div>
+    </div>
+
+    <!-- Formulario nuevo consumo -->
+    <div class="card">
+      <div class="card-title">Registrar consumo</div>
+
+      <div class="form-group">
+        <label>Tarjeta</label>
+        <div class="tarjeta-selector">
+          <button class="tarjeta-btn" id="tBtn-Pichincha" onclick="selTarjeta('Pichincha')">💳 Visa Pichincha</button>
+          <button class="tarjeta-btn" id="tBtn-JEP"       onclick="selTarjeta('JEP')">💳 Visa JEP</button>
+        </div>
+      </div>
+
+      <div class="form-group"><label>Fecha</label><input type="date" id="tFecha"></div>
+
+      <div class="form-group">
+        <label>Categoría</label>
+        <select id="tCategoria">
+          <option value="">Seleccioná...</option>
+          <option>Alimentación</option>
+          <option>Restaurantes / delivery</option>
+          <option>Supermercado</option>
+          <option>Farmacia / salud</option>
+          <option>Ropa / calzado</option>
+          <option>Tecnología / electrónica</option>
+          <option>Combustible</option>
+          <option>Servicios básicos</option>
+          <option>Suscripciones</option>
+          <option>Entretenimiento</option>
+          <option>Smart House EC</option>
+          <option>Otros</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Descripción</label>
+        <input type="text" id="tDescripcion" placeholder="Ej: Supermercado Coral, Netflix...">
+      </div>
+
+      <div class="form-group">
+        <label>Monto ($)</label>
+        <input type="number" id="tMonto" placeholder="0.00" step="0.01" min="0">
+      </div>
+
+      <div class="form-group">
+        <label>¿Cuotas?</label>
+        <select id="tCuotas">
+          <option value="1">Pago directo (sin cuotas)</option>
+          <option value="3">3 cuotas</option>
+          <option value="6">6 cuotas</option>
+          <option value="9">9 cuotas</option>
+          <option value="12">12 cuotas</option>
+          <option value="18">18 cuotas</option>
+          <option value="24">24 cuotas</option>
+        </select>
+      </div>
+
+      <button class="btn-primary" id="btnGuardarTarjeta" onclick="guardarConsumo()">Guardar consumo</button>
+    </div>
+
+    <!-- Historial consumos del mes -->
+    <div class="card">
+      <div class="card-title">Consumos del mes</div>
+      <div id="listaConsumos"><div class="empty-state">Cargando...</div></div>
+    </div>
+  </div>
+
   <!-- ═══════ DEUDAS ═══════ -->
   <div id="tab-deudas" class="section">
     <div class="card">
@@ -316,9 +417,7 @@
   <div id="tab-historial" class="section">
     <div class="card">
       <div class="card-title">Movimientos registrados</div>
-      <div id="listaMovimientos">
-        <div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Cargando...</div>
-      </div>
+      <div id="listaMovimientos"><div class="empty-state">Cargando...</div></div>
     </div>
   </div>
 
@@ -339,8 +438,9 @@
 <nav class="tab-bar">
   <button class="tab-item active" id="nav-resumen"   onclick="showTab('resumen')">  <span class="tab-icon">◎</span><span class="tab-label">Resumen</span></button>
   <button class="tab-item"        id="nav-registrar" onclick="showTab('registrar')"><span class="tab-icon">＋</span><span class="tab-label">Registrar</span></button>
+  <button class="tab-item"        id="nav-tarjetas"  onclick="showTab('tarjetas')"> <span class="tab-icon">💳</span><span class="tab-label">Tarjetas</span></button>
   <button class="tab-item"        id="nav-deudas"    onclick="showTab('deudas')">   <span class="tab-icon">◈</span><span class="tab-label">Deudas</span></button>
-  <button class="tab-item"        id="nav-cobrar"    onclick="showTab('cobrar')">   <span class="tab-icon">◷</span><span class="tab-label">Por cobrar</span></button>
+  <button class="tab-item"        id="nav-cobrar"    onclick="showTab('cobrar')">   <span class="tab-icon">◷</span><span class="tab-label">Cobrar</span></button>
   <button class="tab-item"        id="nav-historial" onclick="showTab('historial')"><span class="tab-icon">☰</span><span class="tab-label">Historial</span></button>
 </nav>
 
@@ -350,24 +450,51 @@
 const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwEvq3sFjJx0PVNEmq7-PLTmJwXxc573fiVgwBQuuLCdRt02NDCV4-XzdK4c_xFpFM81w/exec';
 
 const CATS = {
-  Ingreso:     ['Smart House EC','Airbnb','Apoyo familiar','Otros ingresos'],
-  Gasto:       ['Alimentación','Transporte','Servicios básicos','Internet / telefonía','Salud','Suscripciones','Restaurantes / delivery','Compras / ropa','Recreación','Comisiones bancarias','Otros gastos'],
+  Ingreso: ['Smart House EC','Airbnb','Apoyo familiar','Otros ingresos'],
+  Gasto:   ['Alimentación','Transporte','Servicios básicos','Internet / telefonía','Salud','Suscripciones','Restaurantes / delivery','Compras / ropa','Recreación','Comisiones bancarias','Otros gastos'],
   Deuda_abono: ['Visa Pichincha','Visa JEP','Cuota Jardín Azuayo','Préstamo negocio'],
   Deuda_nueva: ['Tarjeta de crédito','Préstamo personal','Préstamo negocio','Otro'],
-  Cobrar:      ['Cliente Smart House EC','Airbnb por acreditar','Préstamo a tercero','Otro']
+  Cobrar: ['Cliente Smart House EC','Airbnb por acreditar','Préstamo a tercero','Otro']
 };
 
-let tipoSel = '', subtipoSel = '';
+const DEUDAS_BASE = [
+  { nombre:'Visa Pichincha', sub:'4454···6210 · día 30 · $105.95/mes', saldo:1361.27, capital:1400,  tasa:'15.60%', urgente:true  },
+  { nombre:'Visa JEP',       sub:'4770···8442 · día 4 · $239.07/mes',  saldo:2926.42, capital:3900,  tasa:'15.60%', urgente:false },
+  { nombre:'Jardín Azuayo',  sub:'#1156747 · día 1 · ~$345/mes',       saldo:6500.08, capital:13000, tasa:'14.22%', urgente:false },
+];
+
+const COMPROMISOS = [
+  { label:'Visa Pichincha', sub:'Día 30 · $105.95', keys:['visa pichincha','pichincha'] },
+  { label:'Visa JEP',       sub:'Día 04 · $239.07', keys:['visa jep','jep'] },
+  { label:'Jardín Azuayo',  sub:'Día 01 · ~$345',   keys:['jardín azuayo','jardin azuayo','azuayo'] }
+];
+
+let tipoSel = '', subtipoSel = '', tarjetaSel = '';
 let cobrosData = [];
 let movimientos = [];
+let consumos = []; // consumos de tarjeta
 
-document.getElementById('fecha').value = new Date().toISOString().split('T')[0];
-document.getElementById('fechaCobro').value = new Date().toISOString().split('T')[0];
+const hoy = new Date();
+const mesActual = hoy.getMonth();
+const anioActual = hoy.getFullYear();
+const mesesNombre = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 
-// Cargar movimientos reales desde el Sheet al iniciar
+document.getElementById('fecha').value = hoy.toISOString().split('T')[0];
+document.getElementById('fechaCobro').value = hoy.toISOString().split('T')[0];
+document.getElementById('tFecha').value = hoy.toISOString().split('T')[0];
+
+// Actualizar labels con mes actual
+const mesLabel = mesesNombre[mesActual] + ' ' + anioActual;
+document.getElementById('headerFecha').textContent = mesesNombre[mesActual] + ' ' + anioActual;
+document.getElementById('resumenMesLabel').textContent = mesLabel + ' — datos reales';
+
+const font = { family: '-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif', size: 11 };
+let chartCombo;
+
+// ── CARGAR DATOS DESDE SHEET ──────────────────────────────
 async function cargarMovimientos() {
   const lista = document.getElementById('listaMovimientos');
-  lista.innerHTML = '<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Cargando...</div>';
+  lista.innerHTML = '<div class="empty-state">Cargando...</div>';
   try {
     const res = await fetch(SCRIPT_URL);
     const data = await res.json();
@@ -377,252 +504,250 @@ async function cargarMovimientos() {
         id:          c.fecha + '_' + c.monto,
         fecha:       c.fecha,
         categoria:   c.categoria,
-        descripcion: c.descripcion.includes('(debe:')
-                       ? c.descripcion.split('(debe:')[0].trim()
-                       : c.descripcion,
-        deudor:      c.descripcion.includes('(debe:')
-                       ? c.descripcion.split('(debe:')[1].replace(')','').trim()
-                       : '—',
+        descripcion: c.descripcion.includes('(debe:') ? c.descripcion.split('(debe:')[0].trim() : c.descripcion,
+        deudor:      c.descripcion.includes('(debe:') ? c.descripcion.split('(debe:')[1].replace(')','').trim() : '—',
         monto:       c.monto,
         fechaCobro:  '',
         cobrado:     false
       }));
+      // Separar consumos de tarjeta del historial general
+      consumos = movimientos.filter(m => m.tipo === 'Consumo tarjeta');
       renderHistorial();
       renderCompromisos();
       renderDeudas();
       renderCobros();
+      renderConsumos();
       actualizarResumen();
     } else {
-      lista.innerHTML = '<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Sin movimientos registrados</div>';
+      lista.innerHTML = '<div class="empty-state">Sin movimientos</div>';
     }
   } catch(e) {
-    lista.innerHTML = '<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Error al cargar — verificá tu conexión</div>';
+    lista.innerHTML = '<div class="empty-state">Error al cargar — verificá tu conexión</div>';
   }
 }
 
-// Compromisos definidos: { label, sub, keywords en categoria/descripcion }
-const COMPROMISOS = [
-  { label:'Visa Pichincha', sub:'Día 30 · $105.95', keys:['visa pichincha','pichincha'] },
-  { label:'Visa JEP',       sub:'Día 04 · $239.07', keys:['visa jep','jep'] },
-  { label:'Jardín Azuayo',  sub:'Día 01 · ~$345',   keys:['jardín azuayo','jardin azuayo','azuayo'] }
-];
+function parseFecha(f) {
+  const p = String(f).split('/');
+  if (p.length < 3) return null;
+  return { d: parseInt(p[0],10), m: parseInt(p[1],10)-1, y: parseInt(p[2],10) };
+}
 
-function renderCompromisos() {
-  const lista = document.getElementById('listaCompromisos');
-  if (!lista) return;
+function esMesActual(fechaStr) {
+  const f = parseFecha(fechaStr);
+  if (!f) return false;
+  return f.m === mesActual && f.y === anioActual;
+}
 
-  // Mes y año actuales
-  const hoy = new Date();
-  const mesActual = hoy.getMonth();
-  const anioActual = hoy.getFullYear();
+function calcTotales() {
+  const ing = movimientos.filter(m => m.tipo==='Ingreso' && esMesActual(m.fecha));
+  const gas = movimientos.filter(m => (m.tipo==='Gasto'||m.tipo==='Abono deuda') && esMesActual(m.fecha));
+  return { ing, gas, totalIng: ing.reduce((s,m)=>s+m.monto,0), totalGas: gas.reduce((s,m)=>s+m.monto,0) };
+}
 
-  // Buscar pagos del mes actual — acepta Abono deuda o Gasto con palabras clave de tarjeta
-  const abonosMes = movimientos.filter(m => {
-    if (m.tipo !== 'Abono deuda' && m.tipo !== 'Gasto') return false;
-    const partes = m.fecha.split('/');
-    if (partes.length < 3) return false;
-    const mes  = parseInt(partes[1], 10) - 1;
-    const anio = parseInt(partes[2], 10);
-    return mes === mesActual && anio === anioActual;
+function actualizarResumen() {
+  const {totalIng,totalGas} = calcTotales();
+  document.getElementById('totalIngCard').textContent = '$'+Math.round(totalIng);
+  document.getElementById('totalGasCard').textContent = '$'+Math.round(totalGas);
+  const bal = totalIng - totalGas;
+  document.getElementById('balanceCard').textContent = (bal>=0?'+':'') + '$' + Math.abs(bal).toFixed(0);
+  buildCharts();
+  actualizarConsumosMes();
+}
+
+function actualizarConsumosMes() {
+  const consumosMes = consumos.filter(c => esMesActual(c.fecha));
+  const totPich = consumosMes.filter(c => c.cuenta==='Visa Pichincha').reduce((s,c)=>s+c.monto,0);
+  const totJep  = consumosMes.filter(c => c.cuenta==='Visa JEP').reduce((s,c)=>s+c.monto,0);
+  document.getElementById('consumoMesPichincha').textContent = '$' + totPich.toFixed(2);
+  document.getElementById('consumoMesJEP').textContent = '$' + totJep.toFixed(2);
+}
+
+function buildCharts() {
+  const {totalIng,totalGas} = calcTotales();
+  if (chartCombo) chartCombo.destroy();
+  chartCombo = new Chart(document.getElementById('chartCombo'), {
+    type: 'bar',
+    data: {
+      labels: ['Ingresos','Gastos'],
+      datasets: [{ data:[totalIng,totalGas], backgroundColor:['#2d7a4f','#a32d2d'], borderRadius:8, borderWidth:0, barPercentage:0.5 }]
+    },
+    options: {
+      plugins: { legend:{display:false}, tooltip:{callbacks:{label:c=>' $'+c.parsed.y.toFixed(2)}} },
+      scales: {
+        x: { grid:{display:false}, ticks:{font:{...font,size:13,weight:'600'}} },
+        y: { grid:{color:'#e2e0d8'}, ticks:{font, callback:v=>'$'+v} }
+      },
+      responsive:true, maintainAspectRatio:false
+    }
   });
-
-  lista.innerHTML = COMPROMISOS.map((c, idx) => {
-    const pagado = abonosMes.some(m => {
-      const texto = (m.categoria + ' ' + m.descripcion).toLowerCase();
-      return c.keys.some(k => texto.includes(k));
-    });
-    const isLast = idx === COMPROMISOS.length - 1;
-    return `<div class="row" ${isLast ? 'style="border-bottom:none;padding-bottom:0"' : ''}>
-      <div>
-        <div class="row-label">${c.label}</div>
-        <div class="row-sub">${c.sub}</div>
-      </div>
-      <span class="badge ${pagado ? 'ok' : 'pend'}">${pagado ? '✓ Pagado' : 'Pendiente'}</span>
-    </div>`;
-  }).join('');
 }
-
-// Deudas base hardcodeadas (las 3 originales con sus datos completos)
-const DEUDAS_BASE = [
-  { nombre:'Visa Pichincha', sub:'4454···6210 · día 30 · $105.95/mes', saldo:1361.27, capital:1400,   tasa:'15.60%', urgente:true  },
-  { nombre:'Visa JEP',       sub:'4770···8442 · día 4 · $239.07/mes',  saldo:2926.42, capital:3900,   tasa:'15.60%', urgente:false },
-  { nombre:'Jardín Azuayo',  sub:'#1156747 · día 1 · ~$345/mes',       saldo:6500.08, capital:13000,  tasa:'14.22%', urgente:false },
-];
-
-function renderResumenDeudas(deudas) {
-  const el = document.getElementById('resumenDeudas');
-  if (!el) return;
-  el.innerHTML = deudas.map((d, i) => {
-    const pct      = Math.round((d.saldo / d.capital) * 100);
-    const barClass = pct >= 90 ? 'danger' : pct >= 60 ? 'warning' : 'ok';
-    const isLast   = i === deudas.length - 1;
-    return `
-      <div style="${i===0?'padding-top:0;':''}${isLast?'':'border-bottom:1px solid var(--border);'}padding-bottom:10px;margin-bottom:${isLast?'0':'10px'}">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-          <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
-            <span style="font-size:14px;font-weight:500">${d.nombre}</span>
-            ${d.urgente ? '<span class="priority">URGENTE</span>' : ''}
-            ${d.nueva   ? '<span class="priority" style="background:var(--blue-bg);color:var(--blue)">NUEVA</span>' : ''}
-          </div>
-          <span style="font-size:14px;font-weight:600;color:${pct>=90?'var(--red)':'var(--text)'}">$${d.saldo.toLocaleString('es-EC',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
-        </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:6px">${d.sub} · ${d.tasa}</div>
-        <div class="bar-wrap"><div class="bar ${barClass}" style="width:${pct}%"></div></div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px">${pct}% pendiente · ${100-pct}% pagado</div>
-      </div>`;
-  }).join('');
-}
-
-function renderDeudas() {
-  const lista = document.getElementById('listaDeudas');
-  if (!lista) return;
-
-  // Detectar nuevas deudas desde movimientos tipo 'Nueva deuda'
-  const nuevas = movimientos.filter(m => m.tipo === 'Nueva deuda');
-
-  // Combinar base + nuevas (evitar duplicados por nombre)
-  const nombresBase = DEUDAS_BASE.map(d => d.nombre.toLowerCase());
-  const nuevasUnicas = nuevas.filter(m => {
-    const desc = m.descripcion.toLowerCase();
-    return !nombresBase.some(n => desc.includes(n));
-  });
-
-  const todasDeudas = [
-    ...DEUDAS_BASE,
-    ...nuevasUnicas.map(m => {
-      const nombreDeuda = m.descripcion.split('—')[0].trim() || m.categoria;
-      // Calcular saldo real restando abonos registrados
-      const totalAbonado = movimientos
-        .filter(a => a.tipo === 'Abono deuda' && a.categoria.toLowerCase() === nombreDeuda.toLowerCase())
-        .reduce((s, a) => s + a.monto, 0);
-      const saldoReal = Math.max(0, m.monto - totalAbonado);
-      return {
-        nombre: nombreDeuda,
-        sub: m.categoria + (m.descripcion.includes('|') ? ' · ' + m.descripcion.split('|')[1].trim() : ''),
-        saldo: saldoReal,
-        capital: m.monto,
-        tasa: m.descripcion.includes('%') ? m.descripcion.match(/[\d.]+%/)?.[0] || '—' : '—',
-        urgente: false,
-        nueva: true
-      };
-    })
-  ];
-
-  lista.innerHTML = todasDeudas.map((d, i) => {
-    const pct    = Math.round((d.saldo / d.capital) * 100);
-    const pagPct = 100 - pct;
-    const barClass = pct >= 90 ? 'danger' : pct >= 60 ? 'warning' : 'ok';
-    const isLast = i === todasDeudas.length - 1;
-    return `
-      <div class="row" style="align-items:flex-start;${i===0?'padding-top:0':''}${isLast?'border-bottom:none;padding-bottom:0':''}">
-        <div style="flex:1">
-          <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
-            <div class="row-label">${d.nombre}</div>
-            ${d.urgente ? '<span class="priority">URGENTE</span>' : ''}
-            ${d.nueva ? '<span class="priority" style="background:var(--blue-bg);color:var(--blue)">NUEVA</span>' : ''}
-          </div>
-          <div class="row-sub">${d.sub}</div>
-          <div class="bar-wrap"><div class="bar ${barClass}" style="width:${pct}%"></div></div>
-          <div class="row-sub" style="margin-top:4px">${pct}% pendiente · ${pagPct}% pagado</div>
-        </div>
-        <div style="margin-left:12px;text-align:right;flex-shrink:0">
-          <div class="row-value ${pct>=90?'red':''}">${d.nueva?'$'+d.saldo.toFixed(0):'$'+d.saldo.toLocaleString()}</div>
-          <div class="row-sub">${d.tasa}</div>
-        </div>
-      </div>`;
-  }).join('');
-
-  // Resumen visual con barras CSS
-  renderResumenDeudas(todasDeudas);
-}
-
-
-
 
 function renderHistorial() {
   const lista = document.getElementById('listaMovimientos');
-  if (movimientos.length === 0) {
-    lista.innerHTML = '<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Sin movimientos</div>';
-    return;
-  }
-  lista.innerHTML = movimientos.map(m => {
+  const todos = movimientos;
+  if (todos.length === 0) { lista.innerHTML = '<div class="empty-state">Sin movimientos</div>'; return; }
+  lista.innerHTML = todos.map(m => {
     const esI = m.tipo==='Ingreso'||m.tipo==='Por cobrar';
-    const clase = esI ? 'ingreso' : 'gasto';
-    const colorVal = esI ? 'green' : 'red';
-    const signo = esI ? '+' : '-';
+    const esT = m.tipo==='Consumo tarjeta';
+    const clase = esI?'ingreso': esT?'tarjeta':'gasto';
+    const colorVal = esI?'green': esT?'purple':'red';
+    const signo = esI?'+':'-';
     return `<div class="row">
       <div style="display:flex;align-items:flex-start">
         <div class="dot ${clase}"></div>
-        <div>
-          <div class="row-label">${m.descripcion}</div>
-          <div class="row-sub">${m.fecha} · ${m.categoria} · ${m.cuenta}</div>
-        </div>
+        <div><div class="row-label">${m.descripcion}</div>
+        <div class="row-sub">${m.fecha} · ${m.categoria} · ${m.cuenta}</div></div>
       </div>
       <div class="row-value ${colorVal}">${signo}$${parseFloat(m.monto).toFixed(2)}</div>
     </div>`;
   }).join('');
 }
 
-function actualizarResumen() {
-  const {totalIng, totalGas} = calcTotales();
-  document.getElementById('totalIngCard').textContent = '$' + Math.round(totalIng);
-  document.getElementById('totalGasCard').textContent = '$' + Math.round(totalGas);
-  const bal = totalIng - totalGas;
-  document.getElementById('balanceCard').textContent = (bal >= 0 ? '+' : '') + '$' + Math.abs(bal).toFixed(0);
-  buildCharts();
-}
-
-const font = { family: '-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif', size: 11 };
-let chartCombo;
-
-function calcTotales() {
-  const ing = movimientos.filter(m => m.tipo==='Ingreso');
-  const gas = movimientos.filter(m => m.tipo==='Gasto' || m.tipo==='Abono deuda');
-  return { ing, gas, totalIng: ing.reduce((s,m)=>s+m.monto,0), totalGas: gas.reduce((s,m)=>s+m.monto,0) };
-}
-
-function buildCharts() {
-  const { totalIng, totalGas } = calcTotales();
-
-  // Gráfico único: dos barras — Ingresos | Gastos
-  if (chartCombo) chartCombo.destroy();
-  chartCombo = new Chart(document.getElementById('chartCombo'), {
-    type: 'bar',
-    data: {
-      labels: ['Ingresos', 'Gastos'],
-      datasets: [{
-        data: [totalIng, totalGas],
-        backgroundColor: ['#2d7a4f', '#a32d2d'],
-        borderRadius: 8,
-        borderWidth: 0,
-        barPercentage: 0.5
-      }]
-    },
-    options: {
-      plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: c => ' $' + c.parsed.y.toFixed(2) } }
-      },
-      scales: {
-        x: { grid: { display: false }, ticks: { font: { ...font, size: 13, weight: '600' } } },
-        y: { grid: { color: '#e2e0d8' }, ticks: { font, callback: v => '$' + v } }
-      },
-      responsive: true, maintainAspectRatio: false
-    }
+function renderCompromisos() {
+  const lista = document.getElementById('listaCompromisos');
+  if (!lista) return;
+  const abonosMes = movimientos.filter(m => {
+    if (m.tipo !== 'Abono deuda' && m.tipo !== 'Gasto') return false;
+    return esMesActual(m.fecha);
   });
-
-  // El gráfico de deudas se construye en buildDeudaChart() llamado desde renderDeudas()
+  lista.innerHTML = COMPROMISOS.map((c,i) => {
+    const pagado = abonosMes.some(m => {
+      const texto = (m.categoria+' '+m.descripcion).toLowerCase();
+      return c.keys.some(k => texto.includes(k));
+    });
+    const isLast = i === COMPROMISOS.length-1;
+    return `<div class="row" ${isLast?'style="border-bottom:none;padding-bottom:0"':''}>
+      <div><div class="row-label">${c.label}</div><div class="row-sub">${c.sub}</div></div>
+      <span class="badge ${pagado?'ok':'pend'}">${pagado?'✓ Pagado':'Pendiente'}</span>
+    </div>`;
+  }).join('');
 }
 
-buildCharts();
-renderCobros();
-renderCompromisos();
-renderDeudas();
-cargarMovimientos();
+function renderDeudas() {
+  const lista = document.getElementById('listaDeudas');
+  if (!lista) return;
+  const nuevas = movimientos.filter(m => m.tipo==='Nueva deuda');
+  const nombresBase = DEUDAS_BASE.map(d=>d.nombre.toLowerCase());
+  const nuevasUnicas = nuevas.filter(m => {
+    const desc = m.descripcion.toLowerCase();
+    return !nombresBase.some(n=>desc.includes(n));
+  });
+  const todas = [
+    ...DEUDAS_BASE,
+    ...nuevasUnicas.map(m => {
+      const nombre = m.descripcion.split('—')[0].trim()||m.categoria;
+      const totalAbonado = movimientos.filter(a=>a.tipo==='Abono deuda'&&a.categoria.toLowerCase()===nombre.toLowerCase()).reduce((s,a)=>s+a.monto,0);
+      return { nombre, sub:m.categoria+(m.descripcion.includes('|')?' · '+m.descripcion.split('|')[1].trim():''), saldo:Math.max(0,m.monto-totalAbonado), capital:m.monto, tasa:m.descripcion.match(/[\d.]+%/)?.[0]||'—', urgente:false, nueva:true };
+    })
+  ];
+  lista.innerHTML = todas.map((d,i) => {
+    const pct = Math.round((d.saldo/d.capital)*100);
+    const barClass = pct>=90?'danger':pct>=60?'warning':'ok';
+    const isLast = i===todas.length-1;
+    return `<div class="row" style="align-items:flex-start;${i===0?'padding-top:0':''}${isLast?';border-bottom:none;padding-bottom:0':''}">
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+          <div class="row-label">${d.nombre}</div>
+          ${d.urgente?'<span class="priority">URGENTE</span>':''}
+          ${d.nueva?'<span class="priority" style="background:var(--blue-bg);color:var(--blue)">NUEVA</span>':''}
+        </div>
+        <div class="row-sub">${d.sub}</div>
+        <div class="bar-wrap"><div class="bar ${barClass}" style="width:${pct}%"></div></div>
+        <div class="row-sub" style="margin-top:4px">${pct}% pendiente · ${100-pct}% pagado</div>
+      </div>
+      <div style="margin-left:12px;text-align:right;flex-shrink:0">
+        <div class="row-value ${pct>=90?'red':''}">$${d.saldo.toLocaleString('es-EC',{minimumFractionDigits:0,maximumFractionDigits:0})}</div>
+        <div class="row-sub">${d.tasa}</div>
+      </div>
+    </div>`;
+  }).join('');
 
-// ── MODAL ────────────────────────────────────────────────
+  // Mismo render en resumen
+  const resumenDeudas = document.getElementById('resumenDeudas');
+  if (resumenDeudas) resumenDeudas.innerHTML = lista.innerHTML;
+}
+
+function renderConsumos() {
+  const lista = document.getElementById('listaConsumos');
+  if (!lista) return;
+  const consumosMes = consumos.filter(c => esMesActual(c.fecha));
+  if (consumosMes.length === 0) { lista.innerHTML = '<div class="empty-state">Sin consumos este mes</div>'; return; }
+
+  const totPich = consumosMes.filter(c=>c.cuenta==='Visa Pichincha').reduce((s,c)=>s+c.monto,0);
+  const totJep  = consumosMes.filter(c=>c.cuenta==='Visa JEP').reduce((s,c)=>s+c.monto,0);
+
+  lista.innerHTML = consumosMes.map(c => {
+    const color = c.cuenta==='Visa Pichincha' ? 'red' : 'warning';
+    const tag   = c.cuenta==='Visa Pichincha' ? '#a32d2d' : '#854f0b';
+    return `<div class="row">
+      <div style="display:flex;align-items:flex-start">
+        <div class="dot" style="background:${tag};margin-right:10px;margin-top:4px;flex-shrink:0"></div>
+        <div>
+          <div class="row-label">${c.descripcion}</div>
+          <div class="row-sub">${c.fecha} · ${c.categoria} · ${c.cuenta}${c.cuotas&&c.cuotas>1?' · '+c.cuotas+' cuotas':''}</div>
+        </div>
+      </div>
+      <div class="row-value red">-$${parseFloat(c.monto).toFixed(2)}</div>
+    </div>`;
+  }).join('') +
+  `<div class="row" style="border-top:1px solid var(--border);margin-top:4px">
+    <div><div class="row-label" style="font-size:12px;color:var(--muted)">Pichincha este mes</div></div>
+    <div class="row-value red">$${totPich.toFixed(2)}</div>
+  </div>
+  <div class="row" style="border-bottom:none;padding-bottom:0">
+    <div><div class="row-label" style="font-size:12px;color:var(--muted)">JEP este mes</div></div>
+    <div class="row-value" style="color:var(--warning)">$${totJep.toFixed(2)}</div>
+  </div>`;
+}
+
+// ── TARJETAS ──────────────────────────────────────────────
+function selTarjeta(t) {
+  tarjetaSel = t;
+  document.getElementById('tBtn-Pichincha').className = 'tarjeta-btn' + (t==='Pichincha'?' sel-pichincha':'');
+  document.getElementById('tBtn-JEP').className       = 'tarjeta-btn' + (t==='JEP'?' sel-jep':'');
+}
+
+async function guardarConsumo() {
+  if (!tarjetaSel) { showToast('Seleccioná la tarjeta','error'); return; }
+  const fecha       = document.getElementById('tFecha').value;
+  const categoria   = document.getElementById('tCategoria').value;
+  const descripcion = document.getElementById('tDescripcion').value.trim();
+  const monto       = parseFloat(document.getElementById('tMonto').value);
+  const cuotas      = parseInt(document.getElementById('tCuotas').value);
+
+  if (!fecha||!categoria||!descripcion||!monto||monto<=0) { showToast('Completá todos los campos','error'); return; }
+
+  const [y,m,d] = fecha.split('-');
+  const fechaFmt = d+'/'+m+'/'+y;
+  const cuenta = tarjetaSel==='Pichincha' ? 'Visa Pichincha' : 'Visa JEP';
+  const descFinal = descripcion + (cuotas>1 ? ' ('+cuotas+' cuotas)' : '');
+
+  const btn = document.getElementById('btnGuardarTarjeta');
+  btn.disabled=true; btn.textContent='Guardando...';
+
+  await enviarDrive({ fecha:fechaFmt, tipo:'Consumo tarjeta', categoria, descripcion:descFinal, cuenta, monto });
+
+  const nuevo = { fecha:fechaFmt, tipo:'Consumo tarjeta', categoria, descripcion:descFinal, cuenta, monto, cuotas };
+  consumos.unshift(nuevo);
+  movimientos.unshift(nuevo);
+
+  renderConsumos();
+  actualizarConsumosMes();
+  showToast('✓ Consumo guardado','success');
+
+  document.getElementById('tDescripcion').value='';
+  document.getElementById('tMonto').value='';
+  document.getElementById('tCategoria').value='';
+  document.getElementById('tCuotas').value='1';
+  tarjetaSel='';
+  document.getElementById('tBtn-Pichincha').className='tarjeta-btn';
+  document.getElementById('tBtn-JEP').className='tarjeta-btn';
+  btn.disabled=false; btn.textContent='Guardar consumo';
+}
+
+// ── MODAL DETALLE ─────────────────────────────────────────
 function abrirDetalle(tipo) {
-  const items = movimientos.filter(m => tipo==='ingreso' ? m.tipo==='Ingreso' : (m.tipo==='Gasto'||m.tipo==='Abono deuda'));
+  const items = movimientos.filter(m => esMesActual(m.fecha) && (tipo==='ingreso' ? m.tipo==='Ingreso' : (m.tipo==='Gasto'||m.tipo==='Abono deuda')));
   const total = items.reduce((s,m)=>s+m.monto,0);
   const esIng = tipo==='ingreso';
   document.getElementById('modalTitulo').textContent = esIng ? '↑ Detalle de ingresos' : '↓ Detalle de gastos';
@@ -640,7 +765,7 @@ function cerrarDetalle(e) {
     document.getElementById('modalOverlay').classList.remove('open');
 }
 
-// ── TABS ─────────────────────────────────────────────────
+// ── TABS ──────────────────────────────────────────────────
 function showTab(id) {
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.tab-item').forEach(b=>b.classList.remove('active'));
@@ -648,7 +773,7 @@ function showTab(id) {
   document.getElementById('nav-'+id).classList.add('active');
 }
 
-// ── FORM ─────────────────────────────────────────────────
+// ── FORM REGISTRAR ────────────────────────────────────────
 function selTipo(t) {
   tipoSel=t; subtipoSel='';
   ['Ingreso','Gasto','Deuda','Cobrar'].forEach(x=>
@@ -676,29 +801,22 @@ function selSubtipo(s) {
   document.getElementById('labelDescripcion').textContent=s==='nueva'?'Nombre / referencia':'Descripción';
   const sel=document.getElementById('categoria');
   sel.innerHTML='<option value="">Seleccioná...</option>';
-
-  if (s === 'abono') {
-    // Categorías base
-    const baseAbono = [...CATS['Deuda_abono']];
-    // Agregar nuevas deudas registradas (sin duplicar)
-    const nuevasDeudas = movimientos
-      .filter(m => m.tipo === 'Nueva deuda')
-      .map(m => m.descripcion.split('—')[0].trim())
-      .filter(nombre => !baseAbono.some(b => b.toLowerCase() === nombre.toLowerCase()));
-    const todas = [...baseAbono, ...nuevasDeudas];
-    todas.forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+  const baseAbono = [...CATS['Deuda_abono']];
+  if (s==='abono') {
+    const nuevasDeudas = movimientos.filter(m=>m.tipo==='Nueva deuda').map(m=>m.descripcion.split('—')[0].trim()).filter(n=>!baseAbono.some(b=>b.toLowerCase()===n.toLowerCase()));
+    [...baseAbono,...nuevasDeudas].forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
   } else {
-    CATS['Deuda_nueva'].forEach(c => { const o=document.createElement('option'); o.value=c; o.textContent=c; sel.appendChild(o); });
+    CATS['Deuda_nueva'].forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
   }
 }
 
-function showToast(msg,tipo=''){
+function showToast(msg,tipo='') {
   const t=document.getElementById('toast');
   t.textContent=msg; t.className='toast show '+tipo;
   setTimeout(()=>t.className='toast',3000);
 }
 
-async function guardar(){
+async function guardar() {
   if(!tipoSel){showToast('Seleccioná el tipo de movimiento','error');return;}
   if(tipoSel==='Deuda'&&!subtipoSel){showToast('Seleccioná abono o nueva deuda','error');return;}
   const fecha=document.getElementById('fecha').value;
@@ -740,16 +858,10 @@ async function guardar(){
 
   const nuevoMov={fecha:fechaFmt,tipo:tipoFinal,categoria,descripcion:descFinal,cuenta,monto};
   movimientos.unshift(nuevoMov);
-  agregarAlHistorial(nuevoMov);
-
-  // Actualizar cards y gráfico
-  const {totalIng,totalGas}=calcTotales();
-  document.getElementById('totalIngCard').textContent='$'+Math.round(totalIng);
-  document.getElementById('totalGasCard').textContent='$'+Math.round(totalGas);
-  const bal=totalIng-totalGas;
-  document.getElementById('balanceCard').textContent=(bal>=0?'+':'')+' $'+Math.abs(bal).toFixed(0);
-  buildCharts();
-
+  renderHistorial();
+  renderCompromisos();
+  renderDeudas();
+  actualizarResumen();
   showToast('✓ Guardado en tu Excel','success');
   limpiarForm();
   btn.disabled=false; btn.textContent='Guardar en Drive';
@@ -775,14 +887,16 @@ function limpiarForm(){
 }
 
 function renderCobros(){
+  const lista=document.getElementById('listaCobrar');
+  const resumen=document.getElementById('resumenCobrar');
   const pendientes=cobrosData.filter(c=>!c.cobrado);
-  document.getElementById('resumenCobrar').innerHTML=pendientes.length===0
+  if(resumen) resumen.innerHTML=pendientes.length===0
     ?'<div class="empty-state">Sin cobros pendientes</div>'
     :pendientes.map(c=>`<div class="row"><div><div class="row-label">${c.descripcion}</div><div class="row-sub">${c.deudor} · esperado ${c.fechaCobro||'—'}</div></div><div class="row-value blue">+$${parseFloat(c.monto).toFixed(2)}</div></div>`).join('')
     +`<div class="row"><div class="row-label" style="font-weight:700">Total</div><div class="row-value blue" style="font-weight:700">$${pendientes.reduce((s,c)=>s+c.monto,0).toFixed(2)}</div></div>`;
-  document.getElementById('listaCobrar').innerHTML=cobrosData.length===0
+  if(lista) lista.innerHTML=cobrosData.length===0
     ?'<div class="empty-state">No tenés cobros registrados</div>'
-    :cobrosData.map(c=>`<div class="cobrar-item ${c.cobrado?'cobrado':''}"><div style="flex:1"><div class="row-label">${c.descripcion}</div><div class="row-sub">${c.deudor} · ${c.fecha}${c.fechaCobro?' · cobrar: '+c.fechaCobro:''}</div><div class="row-sub" style="color:var(--blue)">${c.categoria}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0"><div class="row-value blue">$${parseFloat(c.monto).toFixed(2)}</div>${!c.cobrado?`<button class="btn-sm" onclick="marcarCobrado(${c.id})">Marcar cobrado</button>`:'<span style="font-size:11px;color:var(--green)">✓ Cobrado</span>'}</div></div>`).join('');
+    :cobrosData.map(c=>`<div class="cobrar-item ${c.cobrado?'cobrado':''}"><div style="flex:1"><div class="row-label">${c.descripcion}</div><div class="row-sub">${c.deudor} · ${c.fecha}${c.fechaCobro?' · cobrar: '+c.fechaCobro:''}</div><div class="row-sub" style="color:var(--blue)">${c.categoria}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0"><div class="row-value blue">$${parseFloat(c.monto).toFixed(2)}</div>${!c.cobrado?`<button class="btn-sm" onclick="marcarCobrado('${c.id}')">Marcar cobrado</button>`:'<span style="font-size:11px;color:var(--green)">✓ Cobrado</span>'}</div></div>`).join('');
 }
 
 function marcarCobrado(id){
@@ -790,17 +904,16 @@ function marcarCobrado(id){
   if(!item)return;
   item.cobrado=true;
   renderCobros();
-  const hoy=new Date(),d=String(hoy.getDate()).padStart(2,'0'),m=String(hoy.getMonth()+1).padStart(2,'0'),y=hoy.getFullYear();
+  const hoyD=new Date(),d=String(hoyD.getDate()).padStart(2,'0'),m=String(hoyD.getMonth()+1).padStart(2,'0'),y=hoyD.getFullYear();
   enviarDrive({fecha:d+'/'+m+'/'+y,tipo:'Ingreso',categoria:item.categoria,descripcion:item.descripcion+' — COBRADO',cuenta:'Pichincha cte 2203',monto:item.monto});
   showToast('✓ Marcado como cobrado','success');
 }
 
-function agregarAlHistorial(mov){
-  movimientos.unshift(mov);
-  renderHistorial();
-  renderCompromisos();
-  renderDeudas();
-}
+// Iniciar
+buildCharts();
+renderCompromisos();
+renderDeudas();
+cargarMovimientos();
 </script>
 </body>
 </html>
