@@ -15,7 +15,8 @@
     --red: #a32d2d; --red-bg: #fcebeb;
     --warning: #854f0b; --warning-bg: #faeeda;
     --blue: #185fa5; --blue-bg: #e6f1fb;
-    --purple: #6b3fa0; --purple-bg: #f0e8fb;
+    --purple: #6b3fa0; --purple-bg: #f0eafc;
+    --teal: #1a7a6e; --teal-bg: #e0f4f2;
     --radius: 14px; --radius-sm: 8px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -28,28 +29,33 @@
   .header p { font-size: 12px; color: var(--muted); margin-top: 2px; }
   .corte-badge { font-size: 11px; background: var(--warning-bg); color: var(--warning); padding: 3px 10px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
 
+  /* ── TAB BAR ── */
   .tab-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: var(--card); border-top: 1px solid var(--border); display: flex; z-index: 20; padding-bottom: env(safe-area-inset-bottom); }
-  .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 8px 2px 6px; cursor: pointer; border: none; background: none; color: var(--muted); font-size: 8px; gap: 3px; }
+  .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 2px 8px; cursor: pointer; border: none; background: none; color: var(--muted); font-size: 9px; gap: 3px; }
   .tab-item.active { color: var(--text); }
-  .tab-icon { font-size: 17px; line-height: 1; }
+  .tab-icon { font-size: 18px; line-height: 1; }
   .tab-item.active .tab-label { font-weight: 600; }
 
+  /* ── SECTIONS ── */
   .section { display: none; padding: 16px; }
   .section.active { display: block; }
 
+  /* ── CARDS ── */
   .card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 16px; margin-bottom: 12px; }
   .card-title { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; }
 
-  /* Cards clickeables */
+  /* Summary grid */
   .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
   .summary-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 16px 14px; cursor: pointer; position: relative; transition: transform 0.1s; }
   .summary-card:active { transform: scale(0.97); }
   .summary-card.ingreso { border-left: 4px solid var(--green); }
   .summary-card.gasto   { border-left: 4px solid var(--red); }
+  .summary-card.airbnb  { border-left: 4px solid var(--teal); }
   .summary-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
   .summary-value { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
-  .summary-value.green { color: var(--green); }
-  .summary-value.red   { color: var(--red); }
+  .summary-value.green  { color: var(--green); }
+  .summary-value.red    { color: var(--red); }
+  .summary-value.teal   { color: var(--teal); }
   .summary-tap { font-size: 10px; color: var(--muted); margin-top: 6px; }
   .summary-arrow { position: absolute; top: 14px; right: 12px; font-size: 16px; color: var(--muted); }
 
@@ -58,19 +64,36 @@
   .balance-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
   .balance-value { font-size: 22px; font-weight: 700; color: var(--blue); }
 
+  /* ── TARJETA CARDS ── */
+  .tarjeta-card { border-radius: var(--radius); padding: 18px 16px; margin-bottom: 12px; color: #fff; position: relative; overflow: hidden; }
+  .tarjeta-card.pichincha { background: linear-gradient(135deg, #1a3a6e 0%, #185fa5 100%); }
+  .tarjeta-card.jep       { background: linear-gradient(135deg, #1a5c3a 0%, #2d7a4f 100%); }
+  .tarjeta-nombre { font-size: 13px; font-weight: 600; opacity: 0.85; margin-bottom: 12px; }
+  .tarjeta-numero { font-size: 13px; letter-spacing: 2px; opacity: 0.7; margin-bottom: 14px; font-family: monospace; }
+  .tarjeta-row { display: flex; justify-content: space-between; align-items: flex-end; }
+  .tarjeta-saldo-label { font-size: 10px; opacity: 0.7; margin-bottom: 2px; }
+  .tarjeta-saldo { font-size: 22px; font-weight: 700; }
+  .tarjeta-cupo-label { font-size: 10px; opacity: 0.7; text-align: right; margin-bottom: 2px; }
+  .tarjeta-cupo { font-size: 13px; font-weight: 600; text-align: right; opacity: 0.9; }
+  .tarjeta-bar-wrap { height: 4px; background: rgba(255,255,255,0.25); border-radius: 3px; margin-top: 12px; overflow: hidden; }
+  .tarjeta-bar { height: 4px; border-radius: 3px; background: rgba(255,255,255,0.85); }
+  .tarjeta-pct { font-size: 10px; opacity: 0.75; margin-top: 5px; }
+
   /* Chart */
   .chart-wrap { position: relative; width: 100%; }
-  .chart-wrap.combo { height: 200px; }
+  .chart-wrap.combo  { height: 200px; }
+  .chart-wrap.bar-v  { height: 180px; }
+  .chart-wrap.small  { height: 150px; }
 
-  /* Leyenda */
-  .legend { display: flex; gap: 16px; margin-bottom: 14px; }
+  /* Legend */
+  .legend { display: flex; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
   .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
   .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
 
   /* Modal */
   .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 50; display: none; align-items: flex-end; justify-content: center; }
   .modal-overlay.open { display: flex; }
-  .modal { background: var(--card); border-radius: var(--radius) var(--radius) 0 0; width: 100%; max-width: 430px; max-height: 70vh; overflow-y: auto; padding: 20px 16px 40px; }
+  .modal { background: var(--card); border-radius: var(--radius) var(--radius) 0 0; width: 100%; max-width: 430px; max-height: 75vh; overflow-y: auto; padding: 20px 16px 40px; }
   .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
   .modal-title { font-size: 16px; font-weight: 700; }
   .modal-close { font-size: 24px; color: var(--muted); background: none; border: none; cursor: pointer; line-height: 1; }
@@ -81,9 +104,9 @@
   .detail-desc { font-size: 14px; font-weight: 500; }
   .detail-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
   .detail-monto { font-size: 15px; font-weight: 700; white-space: nowrap; margin-left: 12px; }
-  .detail-monto.green { color: var(--green); }
-  .detail-monto.red   { color: var(--red); }
-  .detail-monto.purple { color: var(--purple); }
+  .detail-monto.green  { color: var(--green); }
+  .detail-monto.red    { color: var(--red); }
+  .detail-monto.teal   { color: var(--teal); }
 
   /* Rows */
   .row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
@@ -92,10 +115,10 @@
   .row-label { font-size: 14px; }
   .row-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
   .row-value { font-size: 14px; font-weight: 600; }
-  .row-value.green { color: var(--green); }
-  .row-value.red   { color: var(--red); }
-  .row-value.blue  { color: var(--blue); }
-  .row-value.purple { color: var(--purple); }
+  .row-value.green  { color: var(--green); }
+  .row-value.red    { color: var(--red); }
+  .row-value.blue   { color: var(--blue); }
+  .row-value.teal   { color: var(--teal); }
 
   .badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
   .badge.ok   { background: var(--green-bg); color: var(--green); }
@@ -107,24 +130,10 @@
   .bar.warning { background: #e09b2d; }
   .bar.ok      { background: var(--green); }
 
-  /* Tarjetas */
-  .tarjeta-selector { display: flex; gap: 8px; margin-bottom: 14px; }
-  .tarjeta-btn { flex: 1; padding: 12px 4px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-weight: 600; background: var(--card); color: var(--muted); cursor: pointer; text-align: center; transition: all 0.15s; }
-  .tarjeta-btn.sel-pichincha { border-color: var(--red); background: var(--red-bg); color: var(--red); }
-  .tarjeta-btn.sel-jep { border-color: var(--warning); background: var(--warning-bg); color: var(--warning); }
-
-  .tarjeta-card { border-radius: var(--radius); padding: 16px; margin-bottom: 12px; }
-  .tarjeta-card.pichincha { background: linear-gradient(135deg, #a32d2d, #c94040); color: #fff; }
-  .tarjeta-card.jep       { background: linear-gradient(135deg, #854f0b, #b8720f); color: #fff; }
-  .tarjeta-name { font-size: 13px; opacity: 0.85; margin-bottom: 4px; }
-  .tarjeta-saldo { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
-  .tarjeta-meta { display: flex; justify-content: space-between; margin-top: 12px; font-size: 11px; opacity: 0.8; }
-  .tarjeta-consumo-mes { font-size: 13px; margin-top: 6px; opacity: 0.9; }
-
-  /* Form */
+  /* ── FORM ── */
   .form-group { margin-bottom: 14px; }
   .form-group label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 6px; }
-  .form-group input, .form-group select {
+  .form-group input, .form-group select, .form-group textarea {
     width: 100%; padding: 13px 14px; font-size: 15px;
     border: 1.5px solid var(--border); border-radius: var(--radius-sm);
     background: var(--card); color: var(--text);
@@ -136,10 +145,14 @@
 
   .tipo-btns { display: flex; gap: 8px; margin-bottom: 10px; }
   .tipo-btn { flex: 1; padding: 11px 4px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; background: var(--card); color: var(--muted); cursor: pointer; text-align: center; }
-  .tipo-btn.sel-ingreso { border-color: var(--green);   background: var(--green-bg);   color: var(--green); }
-  .tipo-btn.sel-gasto   { border-color: var(--red);     background: var(--red-bg);     color: var(--red); }
-  .tipo-btn.sel-deuda   { border-color: var(--warning); background: var(--warning-bg); color: var(--warning); }
-  .tipo-btn.sel-cobrar  { border-color: var(--blue);    background: var(--blue-bg);    color: var(--blue); }
+  .tipo-btn.sel-ingreso  { border-color: var(--green);   background: var(--green-bg);   color: var(--green); }
+  .tipo-btn.sel-gasto    { border-color: var(--red);     background: var(--red-bg);     color: var(--red); }
+  .tipo-btn.sel-deuda    { border-color: var(--warning); background: var(--warning-bg); color: var(--warning); }
+  .tipo-btn.sel-cobrar   { border-color: var(--blue);    background: var(--blue-bg);    color: var(--blue); }
+  .tipo-btn.sel-compra   { border-color: var(--purple);  background: var(--purple-bg);  color: var(--purple); }
+  .tipo-btn.sel-pago     { border-color: var(--green);   background: var(--green-bg);   color: var(--green); }
+  .tipo-btn.sel-airbnb-i { border-color: var(--teal);    background: var(--teal-bg);    color: var(--teal); }
+  .tipo-btn.sel-airbnb-g { border-color: var(--red);     background: var(--red-bg);     color: var(--red); }
 
   .subtipo-btns { display: flex; gap: 8px; margin-bottom: 14px; }
   .subtipo-btn { flex: 1; padding: 9px 4px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-weight: 500; background: var(--card); color: var(--muted); cursor: pointer; text-align: center; }
@@ -149,24 +162,53 @@
   .btn-primary { width: 100%; padding: 15px; font-size: 16px; font-weight: 700; background: var(--text); color: #fff; border: none; border-radius: var(--radius-sm); cursor: pointer; margin-top: 4px; }
   .btn-primary:disabled { opacity: 0.4; }
   .btn-sm { padding: 6px 14px; font-size: 12px; font-weight: 600; border: 1.5px solid var(--border); border-radius: 20px; background: none; cursor: pointer; color: var(--muted); }
+  .btn-outline { padding: 9px 18px; font-size: 13px; font-weight: 600; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: none; cursor: pointer; color: var(--text); }
 
+  /* Toast */
   .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px); padding: 12px 20px; border-radius: 30px; font-size: 14px; font-weight: 500; z-index: 100; transition: transform 0.3s; white-space: nowrap; background: var(--text); color: #fff; }
   .toast.show { transform: translateX(-50%) translateY(0); }
   .toast.error   { background: var(--red); }
   .toast.success { background: var(--green); }
 
   .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-right: 10px; margin-top: 4px; }
-  .dot.ingreso { background: var(--green); }
-  .dot.gasto   { background: var(--red); }
-  .dot.deuda   { background: var(--warning); }
-  .dot.cobrar  { background: var(--blue); }
-  .dot.tarjeta { background: var(--purple); }
+  .dot.ingreso  { background: var(--green); }
+  .dot.gasto    { background: var(--red); }
+  .dot.deuda    { background: var(--warning); }
+  .dot.cobrar   { background: var(--blue); }
+  .dot.airbnb   { background: var(--teal); }
+  .dot.tarjeta  { background: var(--purple); }
 
   .cobrar-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 11px 0; border-bottom: 1px solid var(--border); gap: 10px; }
   .cobrar-item:last-child { border-bottom: none; padding-bottom: 0; }
   .cobrar-item.cobrado { opacity: 0.4; }
   .empty-state { text-align: center; padding: 28px 0; color: var(--muted); font-size: 14px; }
   .mes-label { font-size: 16px; font-weight: 700; text-align: center; margin-bottom: 14px; }
+
+  /* Airbnb section header */
+  .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .section-header h2 { font-size: 18px; font-weight: 700; }
+  .airbnb-badge { font-size: 11px; background: var(--teal-bg); color: var(--teal); padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+  .tarjeta-badge { font-size: 11px; background: var(--purple-bg); color: var(--purple); padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+
+  /* Net balance card */
+  .net-card { border-radius: var(--radius); padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+  .net-card.positive { background: var(--green-bg); border: 1px solid #b8ddc0; }
+  .net-card.negative { background: var(--red-bg);   border: 1px solid #f0b8b8; }
+  .net-label { font-size: 13px; font-weight: 600; color: var(--muted); }
+  .net-value { font-size: 26px; font-weight: 700; }
+  .net-value.pos { color: var(--green); }
+  .net-value.neg { color: var(--red); }
+
+  /* Airbnb stats grid */
+  .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
+  .stat-card { background: var(--card); border-radius: var(--radius-sm); border: 1px solid var(--border); padding: 12px 10px; text-align: center; }
+  .stat-label { font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+  .stat-value { font-size: 16px; font-weight: 700; }
+
+  /* Tarjeta historial tabs */
+  .inner-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+  .inner-tab { flex: 1; padding: 9px 4px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-weight: 500; background: var(--card); color: var(--muted); cursor: pointer; text-align: center; }
+  .inner-tab.active { background: var(--text); color: #fff; border-color: var(--text); }
 </style>
 </head>
 <body>
@@ -175,25 +217,27 @@
   <div class="header">
     <div class="header-top">
       <div><h1>Finanzas Byron</h1><p>Cuenca · USD</p></div>
-      <span class="corte-badge" id="headerFecha">Mayo 2026</span>
+      <span class="corte-badge" id="badgeMes">Junio 2026</span>
     </div>
   </div>
 
-  <!-- ═══════ RESUMEN ═══════ -->
+  <!-- ══════════════════════════════════
+       RESUMEN
+  ══════════════════════════════════ -->
   <div id="tab-resumen" class="section active">
-    <div class="mes-label" id="resumenMesLabel">Cargando...</div>
+    <div class="mes-label" id="labelMesResumen">Junio 2026</div>
 
     <div class="summary-grid">
       <div class="summary-card ingreso" onclick="abrirDetalle('ingreso')">
         <div class="summary-arrow">›</div>
         <div class="summary-label">Ingresos</div>
-        <div class="summary-value green" id="totalIngCard">—</div>
+        <div class="summary-value green" id="totalIngCard">$0</div>
         <div class="summary-tap">Ver detalle</div>
       </div>
       <div class="summary-card gasto" onclick="abrirDetalle('gasto')">
         <div class="summary-arrow">›</div>
         <div class="summary-label">Gastos</div>
-        <div class="summary-value red" id="totalGasCard">—</div>
+        <div class="summary-value red" id="totalGasCard">$0</div>
         <div class="summary-tap">Ver detalle</div>
       </div>
     </div>
@@ -201,42 +245,51 @@
     <div class="balance-card">
       <div>
         <div class="balance-label">Balance del mes</div>
-        <div class="balance-sub">Ingresos − gastos reales</div>
+        <div class="balance-sub">Ingresos − gastos + pagos tarjeta</div>
       </div>
-      <div class="balance-value" id="balanceCard">—</div>
+      <div class="balance-value" id="balanceCard">$0</div>
     </div>
 
     <div class="card">
-      <div class="card-title">Ingresos vs gastos</div>
+      <div class="card-title">Ingresos vs Gastos</div>
       <div class="legend">
         <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Ingresos</div>
         <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Gastos</div>
       </div>
-      <div class="chart-wrap combo">
-        <canvas id="chartCombo"></canvas>
-      </div>
+      <div class="chart-wrap combo"><canvas id="chartCombo"></canvas></div>
     </div>
 
     <div class="card">
       <div class="card-title">Saldo de deudas</div>
-      <div id="resumenDeudas"><div class="empty-state">Cargando...</div></div>
+      <div class="chart-wrap bar-v"><canvas id="chartDeudas"></canvas></div>
     </div>
 
     <div class="card">
       <div class="card-title">Compromisos pendientes</div>
-      <div id="listaCompromisos"></div>
+      <div id="listaCompromisos">
+        <div class="empty-state" style="padding:16px 0">Cargando...</div>
+      </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">Por cobrar</div>
-      <div id="resumenCobrar"><div class="empty-state">Sin cobros pendientes</div></div>
+    <!-- Acceso rápido a Por cobrar -->
+    <div class="card" style="cursor:pointer" onclick="showTab('cobrar')">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div class="card-title" style="margin-bottom:4px">Por cobrar</div>
+          <div id="resumenCobrarLabel" style="font-size:14px;color:var(--muted)">Sin cobros pendientes</div>
+        </div>
+        <span style="font-size:20px;color:var(--muted)">›</span>
+      </div>
     </div>
   </div>
 
-  <!-- ═══════ REGISTRAR ═══════ -->
+  <!-- ══════════════════════════════════
+       REGISTRAR
+  ══════════════════════════════════ -->
   <div id="tab-registrar" class="section">
     <div class="card">
       <div class="card-title">Nuevo movimiento</div>
+
       <div class="form-group">
         <label>Tipo</label>
         <div class="tipo-btns">
@@ -244,10 +297,16 @@
           <button class="tipo-btn" id="btn-Gasto"   onclick="selTipo('Gasto')">↓ Gasto</button>
         </div>
         <div class="tipo-btns">
-          <button class="tipo-btn" id="btn-Deuda"  onclick="selTipo('Deuda')">⬟ Deuda</button>
+          <button class="tipo-btn" id="btn-Tarjeta" onclick="selTipo('Tarjeta')">💳 Tarjeta</button>
+          <button class="tipo-btn" id="btn-Airbnb"  onclick="selTipo('Airbnb')">🏠 Airbnb</button>
+        </div>
+        <div class="tipo-btns">
+          <button class="tipo-btn" id="btn-Deuda"  onclick="selTipo('Deuda')">⬟ Préstamo</button>
           <button class="tipo-btn" id="btn-Cobrar" onclick="selTipo('Cobrar')">◷ Por cobrar</button>
         </div>
       </div>
+
+      <!-- Subtipo Deuda -->
       <div id="subtipoDeuda" class="hidden">
         <div class="form-group">
           <label>¿Qué tipo de movimiento?</label>
@@ -257,6 +316,38 @@
           </div>
         </div>
       </div>
+
+      <!-- Subtipo Tarjeta -->
+      <div id="subtipoTarjeta" class="hidden">
+        <div class="form-group">
+          <label>¿Compra o pago?</label>
+          <div class="tipo-btns">
+            <button class="tipo-btn" id="btn-Compra" onclick="selSubtipoTarjeta('Compra')">🛒 Compra</button>
+            <button class="tipo-btn" id="btn-Pago"   onclick="selSubtipoTarjeta('Pago')">✓ Pago</button>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Tarjeta</label>
+          <select id="tarjetaSel">
+            <option value="">Seleccioná...</option>
+            <option value="Visa Pichincha">Visa Pichincha ···6210</option>
+            <option value="Visa JEP">Visa JEP ···8442</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Subtipo Airbnb -->
+      <div id="subtipoAirbnb" class="hidden">
+        <div class="form-group">
+          <label>¿Ingreso o gasto del Airbnb?</label>
+          <div class="tipo-btns">
+            <button class="tipo-btn" id="btn-AirbnbI" onclick="selSubtipoAirbnb('Ingreso')">↑ Ingreso</button>
+            <button class="tipo-btn" id="btn-AirbnbG" onclick="selSubtipoAirbnb('Gasto')">↓ Gasto</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Campos comunes -->
       <div id="camposComunes">
         <div class="form-group"><label>Fecha</label><input type="date" id="fecha"></div>
         <div class="form-group">
@@ -282,7 +373,20 @@
           <label id="labelMonto">Monto ($)</label>
           <input type="number" id="monto" placeholder="0.00" step="0.01" min="0">
         </div>
+        <!-- Cuotas (solo Compra tarjeta) -->
+        <div class="form-group hidden" id="wrapCuotas">
+          <label>Cuotas</label>
+          <select id="cuotas">
+            <option value="1">Sin cuotas (corriente)</option>
+            <option value="3">3 cuotas</option>
+            <option value="6">6 cuotas</option>
+            <option value="12">12 cuotas</option>
+            <option value="24">24 cuotas</option>
+          </select>
+        </div>
       </div>
+
+      <!-- Campos solo Nueva Deuda -->
       <div id="camposNuevaDeuda" class="hidden">
         <div class="form-row">
           <div class="form-group"><label>Tasa anual (%)</label><input type="number" id="tasa" placeholder="15.60" step="0.01" min="0"></div>
@@ -290,112 +394,120 @@
         </div>
         <div class="form-group"><label>Acreedor</label><input type="text" id="acreedor" placeholder="Ej: Banco Pichincha, JEP..."></div>
       </div>
+
+      <!-- Campos Cobrar -->
       <div id="camposCobrar" class="hidden">
         <div class="form-group"><label>Quién debe</label><input type="text" id="deudor" placeholder="Ej: Cliente Juan..."></div>
         <div class="form-group"><label>Fecha esperada de cobro</label><input type="date" id="fechaCobro"></div>
       </div>
+
       <button class="btn-primary" id="btnGuardar" onclick="guardar()">Guardar en Drive</button>
     </div>
   </div>
 
-  <!-- ═══════ TARJETAS ═══════ -->
-  <div id="tab-tarjetas" class="section">
+  <!-- ══════════════════════════════════
+       AIRBNB
+  ══════════════════════════════════ -->
+  <div id="tab-airbnb" class="section">
+    <div class="section-header">
+      <h2>🏠 Airbnb</h2>
+      <span class="airbnb-badge" id="labelMesAirbnb">Junio 2026</span>
+    </div>
 
-    <!-- Cards resumen tarjetas -->
-    <div class="tarjeta-card pichincha">
-      <div class="tarjeta-name">Visa Pichincha · 4454···6210</div>
-      <div class="tarjeta-saldo" id="saldoPichincha">$1,361</div>
-      <div class="tarjeta-consumo-mes">Consumido este mes: <strong id="consumoMesPichincha">$0</strong></div>
-      <div class="tarjeta-meta">
-        <span>Cupo $1,400</span>
-        <span>Vence día 30</span>
-        <span>15.60%</span>
+    <!-- Balance neto -->
+    <div class="net-card positive" id="netAirbnbCard">
+      <div>
+        <div class="net-label">Balance neto Airbnb</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:2px">Ingresos − gastos del alquiler</div>
+      </div>
+      <div class="net-value pos" id="netAirbnbVal">$0</div>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-label">Ingresos</div>
+        <div class="stat-value" style="color:var(--teal)" id="airbnbIngTotal">$0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Gastos</div>
+        <div class="stat-value" style="color:var(--red)" id="airbnbGasTotal">$0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Reservas</div>
+        <div class="stat-value" id="airbnbReservas">0</div>
       </div>
     </div>
 
-    <div class="tarjeta-card jep">
-      <div class="tarjeta-name">Visa JEP · 4770···8442</div>
-      <div class="tarjeta-saldo" id="saldoJEP">$2,926</div>
-      <div class="tarjeta-consumo-mes">Consumido este mes: <strong id="consumoMesJEP">$0</strong></div>
-      <div class="tarjeta-meta">
-        <span>Cupo $3,900</span>
-        <span>Vence día 4</span>
-        <span>15.60%</span>
-      </div>
-    </div>
-
-    <!-- Formulario nuevo consumo -->
+    <!-- Gráfico Airbnb -->
     <div class="card">
-      <div class="card-title">Registrar consumo</div>
-
-      <div class="form-group">
-        <label>Tarjeta</label>
-        <div class="tarjeta-selector">
-          <button class="tarjeta-btn" id="tBtn-Pichincha" onclick="selTarjeta('Pichincha')">💳 Visa Pichincha</button>
-          <button class="tarjeta-btn" id="tBtn-JEP"       onclick="selTarjeta('JEP')">💳 Visa JEP</button>
-        </div>
-      </div>
-
-      <div class="form-group"><label>Fecha</label><input type="date" id="tFecha"></div>
-
-      <div class="form-group">
-        <label>Categoría</label>
-        <select id="tCategoria">
-          <option value="">Seleccioná...</option>
-          <option>Alimentación</option>
-          <option>Restaurantes / delivery</option>
-          <option>Supermercado</option>
-          <option>Farmacia / salud</option>
-          <option>Ropa / calzado</option>
-          <option>Tecnología / electrónica</option>
-          <option>Combustible</option>
-          <option>Servicios básicos</option>
-          <option>Suscripciones</option>
-          <option>Entretenimiento</option>
-          <option>Smart House EC</option>
-          <option>Otros</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label>Descripción</label>
-        <input type="text" id="tDescripcion" placeholder="Ej: Supermercado Coral, Netflix...">
-      </div>
-
-      <div class="form-group">
-        <label>Monto ($)</label>
-        <input type="number" id="tMonto" placeholder="0.00" step="0.01" min="0">
-      </div>
-
-      <div class="form-group">
-        <label>¿Cuotas?</label>
-        <select id="tCuotas">
-          <option value="1">Pago directo (sin cuotas)</option>
-          <option value="3">3 cuotas</option>
-          <option value="6">6 cuotas</option>
-          <option value="9">9 cuotas</option>
-          <option value="12">12 cuotas</option>
-          <option value="18">18 cuotas</option>
-          <option value="24">24 cuotas</option>
-        </select>
-      </div>
-
-      <button class="btn-primary" id="btnGuardarTarjeta" onclick="guardarConsumo()">Guardar consumo</button>
+      <div class="card-title">Ingresos vs Gastos Airbnb</div>
+      <div class="chart-wrap small"><canvas id="chartAirbnb"></canvas></div>
     </div>
 
-    <!-- Historial consumos del mes -->
+    <!-- Ingresos Airbnb -->
     <div class="card">
-      <div class="card-title">Consumos del mes</div>
-      <div id="listaConsumos"><div class="empty-state">Cargando...</div></div>
+      <div class="card-title">Ingresos</div>
+      <div id="listaAirbnbIngresos"><div class="empty-state">Sin ingresos registrados</div></div>
+    </div>
+
+    <!-- Gastos Airbnb -->
+    <div class="card">
+      <div class="card-title">Gastos del alquiler</div>
+      <div id="listaAirbnbGastos"><div class="empty-state">Sin gastos registrados</div></div>
     </div>
   </div>
 
-  <!-- ═══════ DEUDAS ═══════ -->
-  <div id="tab-deudas" class="section">
-    <div class="card">
-      <div class="card-title">Estrategia avalanche</div>
-      <div id="listaDeudas"></div>
+  <!-- ══════════════════════════════════
+       TARJETAS
+  ══════════════════════════════════ -->
+  <div id="tab-tarjetas" class="section">
+    <div class="section-header">
+      <h2>💳 Tarjetas</h2>
+      <span class="tarjeta-badge">Estrategia avalanche</span>
     </div>
+
+    <!-- Tarjeta Pichincha -->
+    <div class="tarjeta-card pichincha">
+      <div class="tarjeta-nombre">Visa Banco Pichincha</div>
+      <div class="tarjeta-numero">···· ···· ···· 6210</div>
+      <div class="tarjeta-row">
+        <div>
+          <div class="tarjeta-saldo-label">Saldo actual</div>
+          <div class="tarjeta-saldo" id="saldoPichincha">$1,361</div>
+        </div>
+        <div>
+          <div class="tarjeta-cupo-label">Cupo disponible</div>
+          <div class="tarjeta-cupo" id="cupoDisponiblePichincha">$39</div>
+        </div>
+      </div>
+      <div class="tarjeta-bar-wrap">
+        <div class="tarjeta-bar" id="barPichincha" style="width:97%"></div>
+      </div>
+      <div class="tarjeta-pct" id="pctPichincha">97% utilizado · cupo $1,400 · vence día 30 · mín $105.95</div>
+    </div>
+
+    <!-- Tarjeta JEP -->
+    <div class="tarjeta-card jep">
+      <div class="tarjeta-nombre">Visa Cooperativa JEP</div>
+      <div class="tarjeta-numero">···· ···· ···· 8442</div>
+      <div class="tarjeta-row">
+        <div>
+          <div class="tarjeta-saldo-label">Saldo actual</div>
+          <div class="tarjeta-saldo" id="saldoJEP">$2,926</div>
+        </div>
+        <div>
+          <div class="tarjeta-cupo-label">Cupo disponible</div>
+          <div class="tarjeta-cupo" id="cupoDisponibleJEP">$974</div>
+        </div>
+      </div>
+      <div class="tarjeta-bar-wrap">
+        <div class="tarjeta-bar" id="barJEP" style="width:75%"></div>
+      </div>
+      <div class="tarjeta-pct" id="pctJEP">75% utilizado · cupo $3,900 · vence día 4 · mín $239.07</div>
+    </div>
+
+    <!-- Proyección -->
     <div class="card">
       <div class="card-title">Proyección Visa Pichincha</div>
       <div class="row"><div class="row-label">Solo el mínimo ($106)</div><div class="row-value red">27 meses</div></div>
@@ -403,27 +515,48 @@
       <div class="row"><div class="row-label">Pagando $300/mes</div><div class="row-value">5 meses</div></div>
       <div class="row"><div class="row-label">Pagando $400/mes</div><div class="row-value green">4 meses</div></div>
     </div>
+
+    <!-- Historial tarjetas con tabs -->
+    <div class="card">
+      <div class="card-title">Movimientos</div>
+      <div class="inner-tabs">
+        <button class="inner-tab active" id="itab-todas"     onclick="selInnerTab('todas')">Todas</button>
+        <button class="inner-tab"        id="itab-pichincha" onclick="selInnerTab('pichincha')">Pichincha</button>
+        <button class="inner-tab"        id="itab-jep"       onclick="selInnerTab('jep')">JEP</button>
+      </div>
+      <div id="listaTarjetasMov"><div class="empty-state">Sin movimientos</div></div>
+    </div>
   </div>
 
-  <!-- ═══════ POR COBRAR ═══════ -->
+  <!-- ══════════════════════════════════
+       HISTORIAL
+  ══════════════════════════════════ -->
+  <div id="tab-historial" class="section">
+    <div class="card">
+      <div class="card-title">Todos los movimientos</div>
+      <div id="listaMovimientos">
+        <div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Cargando...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════
+       POR COBRAR (sin tab, acceso desde resumen)
+  ══════════════════════════════════ -->
   <div id="tab-cobrar" class="section">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+      <button class="btn-outline" onclick="showTab('resumen')" style="padding:6px 12px;font-size:12px">← Volver</button>
+      <div style="font-size:16px;font-weight:700">Por cobrar</div>
+    </div>
     <div class="card">
       <div class="card-title">Cobros pendientes</div>
       <div id="listaCobrar"><div class="empty-state">No tenés cobros registrados</div></div>
     </div>
   </div>
 
-  <!-- ═══════ HISTORIAL ═══════ -->
-  <div id="tab-historial" class="section">
-    <div class="card">
-      <div class="card-title">Movimientos registrados</div>
-      <div id="listaMovimientos"><div class="empty-state">Cargando...</div></div>
-    </div>
-  </div>
+</div><!-- /app -->
 
-</div>
-
-<!-- MODAL DETALLE -->
+<!-- ── MODAL DETALLE ── -->
 <div class="modal-overlay" id="modalOverlay" onclick="cerrarDetalle(event)">
   <div class="modal">
     <div class="modal-header">
@@ -435,135 +568,346 @@
   </div>
 </div>
 
+<!-- ── TAB BAR ── -->
 <nav class="tab-bar">
-  <button class="tab-item active" id="nav-resumen"   onclick="showTab('resumen')">  <span class="tab-icon">◎</span><span class="tab-label">Resumen</span></button>
-  <button class="tab-item"        id="nav-registrar" onclick="showTab('registrar')"><span class="tab-icon">＋</span><span class="tab-label">Registrar</span></button>
-  <button class="tab-item"        id="nav-tarjetas"  onclick="showTab('tarjetas')"> <span class="tab-icon">💳</span><span class="tab-label">Tarjetas</span></button>
-  <button class="tab-item"        id="nav-deudas"    onclick="showTab('deudas')">   <span class="tab-icon">◈</span><span class="tab-label">Deudas</span></button>
-  <button class="tab-item"        id="nav-cobrar"    onclick="showTab('cobrar')">   <span class="tab-icon">◷</span><span class="tab-label">Cobrar</span></button>
-  <button class="tab-item"        id="nav-historial" onclick="showTab('historial')"><span class="tab-icon">☰</span><span class="tab-label">Historial</span></button>
+  <button class="tab-item active"  id="nav-resumen"   onclick="showTab('resumen')">  <span class="tab-icon">◎</span><span class="tab-label">Resumen</span></button>
+  <button class="tab-item"         id="nav-registrar" onclick="showTab('registrar')"><span class="tab-icon">＋</span><span class="tab-label">Registrar</span></button>
+  <button class="tab-item"         id="nav-airbnb"    onclick="showTab('airbnb')">   <span class="tab-icon">🏠</span><span class="tab-label">Airbnb</span></button>
+  <button class="tab-item"         id="nav-tarjetas"  onclick="showTab('tarjetas')"> <span class="tab-icon">💳</span><span class="tab-label">Tarjetas</span></button>
+  <button class="tab-item"         id="nav-historial" onclick="showTab('historial')"><span class="tab-icon">☰</span><span class="tab-label">Historial</span></button>
 </nav>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwEvq3sFjJx0PVNEmq7-PLTmJwXxc573fiVgwBQuuLCdRt02NDCV4-XzdK4c_xFpFM81w/exec';
+// ════════════════════════════════════════
+// CONFIG
+// ════════════════════════════════════════
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwHRkRdqgd548fDSSKQgXYB16ChmjNBGq-crv27h-Ao3hvQAxTe3ZdyyiICI98ojvtu/exec';
 
-const CATS = {
-  Ingreso: ['Smart House EC','Airbnb','Apoyo familiar','Otros ingresos'],
-  Gasto:   ['Alimentación','Transporte','Servicios básicos','Internet / telefonía','Salud','Suscripciones','Restaurantes / delivery','Compras / ropa','Recreación','Comisiones bancarias','Otros gastos'],
-  Deuda_abono: ['Visa Pichincha','Visa JEP','Cuota Jardín Azuayo','Préstamo negocio'],
-  Deuda_nueva: ['Tarjeta de crédito','Préstamo personal','Préstamo negocio','Otro'],
-  Cobrar: ['Cliente Smart House EC','Airbnb por acreditar','Préstamo a tercero','Otro']
+const TARJETAS_DATA = {
+  'Visa Pichincha': { cupo: 1400,  saldoBase: 1361.27, vence: 30, min: 105.95 },
+  'Visa JEP':       { cupo: 3900,  saldoBase: 2926.42, vence: 4,  min: 239.07 }
 };
 
-const DEUDAS_BASE = [
-  { nombre:'Visa Pichincha', sub:'4454···6210 · día 30 · $105.95/mes', saldo:1361.27, capital:1400,  tasa:'15.60%', urgente:true  },
-  { nombre:'Visa JEP',       sub:'4770···8442 · día 4 · $239.07/mes',  saldo:2926.42, capital:3900,  tasa:'15.60%', urgente:false },
-  { nombre:'Jardín Azuayo',  sub:'#1156747 · día 1 · ~$345/mes',       saldo:6500.08, capital:13000, tasa:'14.22%', urgente:false },
-];
+// Saldos dinámicos (se ajustan con compras y pagos registrados en sesión)
+let saldosTarjeta = {
+  'Visa Pichincha': TARJETAS_DATA['Visa Pichincha'].saldoBase,
+  'Visa JEP':       TARJETAS_DATA['Visa JEP'].saldoBase
+};
 
-const COMPROMISOS = [
+const CATS = {
+  Ingreso:       ['Smart House EC','Otros ingresos','Apoyo familiar'],
+  Gasto:         ['Alimentación','Transporte','Servicios básicos','Internet / telefonía','Salud','Suscripciones','Restaurantes / delivery','Compras / ropa','Recreación','Comisiones bancarias','Otros gastos'],
+  Tarjeta_Compra:['Alimentación','Ropa / calzado','Electrodomésticos','Farmacia / salud','Restaurante','Entretenimiento','Combustible','Smart House EC','Suscripciones','Otros'],
+  Tarjeta_Pago:  ['Pago mínimo','Abono extra','Pago total'],
+  Airbnb_Ingreso:['Reserva huésped','Depósito Airbnb','Bono Airbnb','Otro ingreso'],
+  Airbnb_Gasto:  ['Limpieza','Suministros (papel, shampoo, etc.)','Comisión Airbnb','Mantenimiento','Electricidad / agua','Internet','Lavandería','Otros gastos Airbnb'],
+  Deuda_abono:   ['Cuota Jardín Azuayo','Préstamo negocio'],
+  Deuda_nueva:   ['Préstamo personal','Préstamo negocio','Otro'],
+  Cobrar:        ['Cliente Smart House EC','Airbnb por acreditar','Préstamo a tercero','Otro']
+};
+
+const COMPROMISOS_DEF = [
   { label:'Visa Pichincha', sub:'Día 30 · $105.95', keys:['visa pichincha','pichincha'] },
   { label:'Visa JEP',       sub:'Día 04 · $239.07', keys:['visa jep','jep'] },
   { label:'Jardín Azuayo',  sub:'Día 01 · ~$345',   keys:['jardín azuayo','jardin azuayo','azuayo'] }
 ];
 
-let tipoSel = '', subtipoSel = '', tarjetaSel = '';
-let cobrosData = [];
-let movimientos = [];
-let consumos = []; // consumos de tarjeta
+// Estado de form
+let tipoSel = '', subtipoSel = '', subtipoTarjetaSel = '', subtipoAirbnbSel = '';
+let innerTabActiva = 'todas';
 
-const hoy = new Date();
-const mesActual = hoy.getMonth();
-const anioActual = hoy.getFullYear();
-const mesesNombre = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+// Datos en memoria
+let movimientos    = [];
+let movTarjetas    = [];  // {fecha, tarjeta, subtipo, categoria, descripcion, monto, cuotas}
+let movAirbnb      = [];  // {fecha, subtipo(Ingreso|Gasto), categoria, descripcion, monto}
+let cobrosData     = JSON.parse(localStorage.getItem('cobros_byron') || '[]');
 
-document.getElementById('fecha').value = hoy.toISOString().split('T')[0];
-document.getElementById('fechaCobro').value = hoy.toISOString().split('T')[0];
-document.getElementById('tFecha').value = hoy.toISOString().split('T')[0];
-
-// Actualizar labels con mes actual
-const mesLabel = mesesNombre[mesActual] + ' ' + anioActual;
-document.getElementById('headerFecha').textContent = mesesNombre[mesActual] + ' ' + anioActual;
-document.getElementById('resumenMesLabel').textContent = mesLabel + ' — datos reales';
-
+// Charts
 const font = { family: '-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif', size: 11 };
-let chartCombo;
+let chartCombo, chartDeudas, chartAirbnb;
 
-// ── CARGAR DATOS DESDE SHEET ──────────────────────────────
+// Mes actual
+const HOY = new Date();
+const MES_LABEL = HOY.toLocaleString('es-EC', { month:'long', year:'numeric' }).replace(/^\w/, c=>c.toUpperCase());
+
+// ════════════════════════════════════════
+// INIT
+// ════════════════════════════════════════
+document.getElementById('fecha').value      = HOY.toISOString().split('T')[0];
+document.getElementById('fechaCobro').value = HOY.toISOString().split('T')[0];
+document.getElementById('badgeMes').textContent     = MES_LABEL;
+document.getElementById('labelMesResumen').textContent = MES_LABEL + ' — datos reales';
+document.getElementById('labelMesAirbnb').textContent  = MES_LABEL;
+
+buildCharts();
+renderCobros();
+renderCompromisos();
+cargarMovimientos();
+
+// ════════════════════════════════════════
+// CARGA DATOS DESDE SHEET
+// ════════════════════════════════════════
 async function cargarMovimientos() {
   const lista = document.getElementById('listaMovimientos');
-  lista.innerHTML = '<div class="empty-state">Cargando...</div>';
+  lista.innerHTML = '<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Cargando...</div>';
   try {
-    const res = await fetch(SCRIPT_URL);
+    const res  = await fetch(SCRIPT_URL);
     const data = await res.json();
     if (data.status === 'ok') {
-      movimientos = data.movimientos || [];
-      cobrosData  = (data.cobros || []).map(c => ({
-        id:          c.fecha + '_' + c.monto,
-        fecha:       c.fecha,
-        categoria:   c.categoria,
-        descripcion: c.descripcion.includes('(debe:') ? c.descripcion.split('(debe:')[0].trim() : c.descripcion,
-        deudor:      c.descripcion.includes('(debe:') ? c.descripcion.split('(debe:')[1].replace(')','').trim() : '—',
-        monto:       c.monto,
-        fechaCobro:  '',
-        cobrado:     false
-      }));
-      // Separar consumos de tarjeta del historial general
-      consumos = movimientos.filter(m => m.tipo === 'Consumo tarjeta');
+      // Separar por tipo
+      movimientos = (data.movimientos || []).filter(m =>
+        !['Compra tarjeta','Pago tarjeta','Airbnb Ingreso','Airbnb Gasto'].includes(m.tipo)
+      );
+      movTarjetas = (data.movimientos || []).filter(m =>
+        ['Compra tarjeta','Pago tarjeta'].includes(m.tipo)
+      );
+      movAirbnb = (data.movimientos || []).filter(m =>
+        ['Airbnb Ingreso','Airbnb Gasto'].includes(m.tipo)
+      );
+      // Recalcular saldos tarjeta desde movimientos
+      recalcularSaldosTarjeta();
       renderHistorial();
       renderCompromisos();
-      renderDeudas();
-      renderCobros();
-      renderConsumos();
       actualizarResumen();
+      renderAirbnb();
+      renderTarjetas();
     } else {
-      lista.innerHTML = '<div class="empty-state">Sin movimientos</div>';
+      lista.innerHTML = '<div class="empty-state">Sin movimientos registrados</div>';
+      actualizarResumen();
+      renderAirbnb();
     }
   } catch(e) {
     lista.innerHTML = '<div class="empty-state">Error al cargar — verificá tu conexión</div>';
+    actualizarResumen();
+    renderAirbnb();
   }
 }
 
-function parseFecha(f) {
-  const p = String(f).split('/');
-  if (p.length < 3) return null;
-  return { d: parseInt(p[0],10), m: parseInt(p[1],10)-1, y: parseInt(p[2],10) };
+function recalcularSaldosTarjeta() {
+  // Partir del saldo base y aplicar movimientos
+  saldosTarjeta['Visa Pichincha'] = TARJETAS_DATA['Visa Pichincha'].saldoBase;
+  saldosTarjeta['Visa JEP']       = TARJETAS_DATA['Visa JEP'].saldoBase;
+  movTarjetas.forEach(m => {
+    if (!m.tarjeta) return;
+    if (m.tipo === 'Compra tarjeta') saldosTarjeta[m.tarjeta] = (saldosTarjeta[m.tarjeta]||0) + m.monto;
+    if (m.tipo === 'Pago tarjeta')   saldosTarjeta[m.tarjeta] = (saldosTarjeta[m.tarjeta]||0) - m.monto;
+  });
 }
 
-function esMesActual(fechaStr) {
-  const f = parseFecha(fechaStr);
-  if (!f) return false;
-  return f.m === mesActual && f.y === anioActual;
+// ════════════════════════════════════════
+// TABS
+// ════════════════════════════════════════
+function showTab(id) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  const nav = document.getElementById('nav-'+id);
+  if (nav) nav.classList.add('active');
 }
 
+function selInnerTab(t) {
+  innerTabActiva = t;
+  ['todas','pichincha','jep'].forEach(x => {
+    document.getElementById('itab-'+x).classList.toggle('active', x===t);
+  });
+  renderTarjetasMov();
+}
+
+// ════════════════════════════════════════
+// RESUMEN
+// ════════════════════════════════════════
 function calcTotales() {
-  const ing = movimientos.filter(m => m.tipo==='Ingreso' && esMesActual(m.fecha));
-  const gas = movimientos.filter(m => (m.tipo==='Gasto'||m.tipo==='Abono deuda') && esMesActual(m.fecha));
-  return { ing, gas, totalIng: ing.reduce((s,m)=>s+m.monto,0), totalGas: gas.reduce((s,m)=>s+m.monto,0) };
+  const ing = movimientos.filter(m => m.tipo==='Ingreso');
+  const gas = movimientos.filter(m => m.tipo==='Gasto' || m.tipo==='Abono deuda');
+  return {
+    ing, gas,
+    totalIng: ing.reduce((s,m)=>s+parseFloat(m.monto),0),
+    totalGas: gas.reduce((s,m)=>s+parseFloat(m.monto),0)
+  };
 }
 
 function actualizarResumen() {
-  const {totalIng,totalGas} = calcTotales();
-  document.getElementById('totalIngCard').textContent = '$'+Math.round(totalIng);
-  document.getElementById('totalGasCard').textContent = '$'+Math.round(totalGas);
+  const { totalIng, totalGas } = calcTotales();
+  document.getElementById('totalIngCard').textContent = '$' + Math.round(totalIng);
+  document.getElementById('totalGasCard').textContent = '$' + Math.round(totalGas);
   const bal = totalIng - totalGas;
-  document.getElementById('balanceCard').textContent = (bal>=0?'+':'') + '$' + Math.abs(bal).toFixed(0);
+  const el = document.getElementById('balanceCard');
+  el.textContent = (bal>=0?'+':'') + '$' + Math.abs(bal).toFixed(0);
+  el.style.color = bal >= 0 ? 'var(--green)' : 'var(--red)';
   buildCharts();
-  actualizarConsumosMes();
 }
 
-function actualizarConsumosMes() {
-  const consumosMes = consumos.filter(c => esMesActual(c.fecha));
-  const totPich = consumosMes.filter(c => c.cuenta==='Visa Pichincha').reduce((s,c)=>s+c.monto,0);
-  const totJep  = consumosMes.filter(c => c.cuenta==='Visa JEP').reduce((s,c)=>s+c.monto,0);
-  document.getElementById('consumoMesPichincha').textContent = '$' + totPich.toFixed(2);
-  document.getElementById('consumoMesJEP').textContent = '$' + totJep.toFixed(2);
+// ════════════════════════════════════════
+// COMPROMISOS
+// ════════════════════════════════════════
+function renderCompromisos() {
+  const lista = document.getElementById('listaCompromisos');
+  const hoy = new Date();
+  const mesActual = hoy.getMonth();
+  const anioActual = hoy.getFullYear();
+
+  const abonosMes = [...movimientos, ...movTarjetas].filter(m => {
+    const tipo = m.tipo || '';
+    if (!['Abono deuda','Pago tarjeta'].includes(tipo)) return false;
+    const partes = (m.fecha||'').split('/');
+    if (partes.length < 3) return false;
+    const mes  = parseInt(partes[1]) - 1;
+    const anio = parseInt(partes[2].length === 2 ? '20'+partes[2] : partes[2]);
+    return mes === mesActual && anio === anioActual;
+  });
+
+  lista.innerHTML = COMPROMISOS_DEF.map((c, idx) => {
+    const pagado = abonosMes.some(m => {
+      const texto = ((m.categoria||'') + ' ' + (m.descripcion||'') + ' ' + (m.tarjeta||'')).toLowerCase();
+      return c.keys.some(k => texto.includes(k));
+    });
+    return `<div class="row" ${idx===COMPROMISOS_DEF.length-1?'style="border-bottom:none;padding-bottom:0"':''}>
+      <div><div class="row-label">${c.label}</div><div class="row-sub">${c.sub}</div></div>
+      <span class="badge ${pagado?'ok':'pend'}">${pagado?'✓ Pagado':'Pendiente'}</span>
+    </div>`;
+  }).join('');
 }
 
+// ════════════════════════════════════════
+// AIRBNB
+// ════════════════════════════════════════
+let chartAirbnbInst;
+function renderAirbnb() {
+  const ingresos = movAirbnb.filter(m => m.tipo==='Airbnb Ingreso');
+  const gastos   = movAirbnb.filter(m => m.tipo==='Airbnb Gasto');
+  const totalIng = ingresos.reduce((s,m)=>s+parseFloat(m.monto),0);
+  const totalGas = gastos.reduce((s,m)=>s+parseFloat(m.monto),0);
+  const neto     = totalIng - totalGas;
+
+  document.getElementById('airbnbIngTotal').textContent = '$' + totalIng.toFixed(2);
+  document.getElementById('airbnbGasTotal').textContent = '$' + totalGas.toFixed(2);
+  document.getElementById('airbnbReservas').textContent = ingresos.length;
+  document.getElementById('netAirbnbVal').textContent   = (neto>=0?'+':'') + '$' + Math.abs(neto).toFixed(2);
+  const netCard = document.getElementById('netAirbnbCard');
+  netCard.className = 'net-card ' + (neto>=0?'positive':'negative');
+  document.getElementById('netAirbnbVal').className = 'net-value ' + (neto>=0?'pos':'neg');
+
+  // Lista ingresos
+  document.getElementById('listaAirbnbIngresos').innerHTML = ingresos.length === 0
+    ? '<div class="empty-state">Sin ingresos registrados</div>'
+    : ingresos.map(m=>`<div class="row">
+        <div><div class="row-label">${m.descripcion}</div><div class="row-sub">${m.fecha} · ${m.categoria}</div></div>
+        <div class="row-value teal">+$${parseFloat(m.monto).toFixed(2)}</div>
+      </div>`).join('');
+
+  // Lista gastos
+  document.getElementById('listaAirbnbGastos').innerHTML = gastos.length === 0
+    ? '<div class="empty-state">Sin gastos registrados</div>'
+    : gastos.map(m=>`<div class="row">
+        <div><div class="row-label">${m.descripcion}</div><div class="row-sub">${m.fecha} · ${m.categoria}</div></div>
+        <div class="row-value red">-$${parseFloat(m.monto).toFixed(2)}</div>
+      </div>`).join('');
+
+  // Gráfico
+  if (chartAirbnbInst) chartAirbnbInst.destroy();
+  chartAirbnbInst = new Chart(document.getElementById('chartAirbnb'), {
+    type: 'bar',
+    data: {
+      labels: ['Ingresos','Gastos'],
+      datasets: [{ data:[totalIng,totalGas], backgroundColor:['#1a7a6e','#a32d2d'], borderRadius:8, borderWidth:0, barPercentage:0.5 }]
+    },
+    options: {
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>' $'+c.parsed.y.toFixed(2)}} },
+      scales:{
+        x:{ grid:{display:false}, ticks:{font:{...font,size:12,weight:'600'}} },
+        y:{ grid:{color:'#e2e0d8'}, ticks:{font, callback:v=>'$'+v} }
+      },
+      responsive:true, maintainAspectRatio:false
+    }
+  });
+}
+
+// ════════════════════════════════════════
+// TARJETAS
+// ════════════════════════════════════════
+function renderTarjetas() {
+  // Actualizar visual de cada tarjeta
+  ['Visa Pichincha','Visa JEP'].forEach(t => {
+    const data  = TARJETAS_DATA[t];
+    const saldo = saldosTarjeta[t];
+    const pct   = Math.min(100, Math.round(saldo / data.cupo * 100));
+    const disp  = Math.max(0, data.cupo - saldo);
+    const key   = t === 'Visa Pichincha' ? 'Pichincha' : 'JEP';
+    document.getElementById('saldo'+key).textContent         = '$' + saldo.toLocaleString('es-EC',{minimumFractionDigits:0,maximumFractionDigits:0});
+    document.getElementById('cupoDisponible'+key).textContent = '$' + disp.toLocaleString('es-EC',{minimumFractionDigits:0,maximumFractionDigits:0});
+    document.getElementById('bar'+key).style.width            = pct + '%';
+    document.getElementById('pct'+key).textContent            = `${pct}% utilizado · cupo $${data.cupo.toLocaleString()} · vence día ${data.vence} · mín $${data.min}`;
+  });
+  renderTarjetasMov();
+}
+
+function renderTarjetasMov() {
+  const lista = document.getElementById('listaTarjetasMov');
+  let filtrado = movTarjetas;
+  if (innerTabActiva === 'pichincha') filtrado = movTarjetas.filter(m=>m.tarjeta==='Visa Pichincha');
+  if (innerTabActiva === 'jep')       filtrado = movTarjetas.filter(m=>m.tarjeta==='Visa JEP');
+
+  if (filtrado.length === 0) {
+    lista.innerHTML = '<div class="empty-state">Sin movimientos</div>';
+    return;
+  }
+  lista.innerHTML = filtrado.map(m => {
+    const esCompra = m.tipo === 'Compra tarjeta';
+    const cuotasTxt = m.cuotas && parseInt(m.cuotas)>1 ? ` · ${m.cuotas} cuotas` : '';
+    return `<div class="row">
+      <div style="display:flex;align-items:flex-start">
+        <div class="dot ${esCompra?'tarjeta':'ingreso'}"></div>
+        <div>
+          <div class="row-label">${m.descripcion}</div>
+          <div class="row-sub">${m.fecha} · ${m.tarjeta} · ${m.categoria}${cuotasTxt}</div>
+        </div>
+      </div>
+      <div class="row-value ${esCompra?'red':'green'}">${esCompra?'-':'+'}$${parseFloat(m.monto).toFixed(2)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════
+// HISTORIAL GENERAL
+// ════════════════════════════════════════
+function renderHistorial() {
+  const lista = document.getElementById('listaMovimientos');
+  const todos = [
+    ...movimientos.map(m=>({...m, _src:'general'})),
+    ...movTarjetas.map(m=>({...m, _src:'tarjeta'})),
+    ...movAirbnb.map(m=>({...m, _src:'airbnb'}))
+  ];
+  if (todos.length === 0) {
+    lista.innerHTML = '<div class="empty-state">Sin movimientos</div>';
+    return;
+  }
+  lista.innerHTML = todos.map(m => {
+    const esI   = ['Ingreso','Airbnb Ingreso','Pago tarjeta'].includes(m.tipo);
+    const clase  = m._src==='airbnb'?'airbnb': m._src==='tarjeta'?'tarjeta': esI?'ingreso':'gasto';
+    const color  = esI ? 'green' : 'red';
+    const signo  = esI ? '+' : '-';
+    const sub2   = m.tarjeta ? ` · ${m.tarjeta}` : '';
+    return `<div class="row">
+      <div style="display:flex;align-items:flex-start">
+        <div class="dot ${clase}"></div>
+        <div>
+          <div class="row-label">${m.descripcion}</div>
+          <div class="row-sub">${m.fecha} · ${m.categoria||m.tipo}${sub2}</div>
+        </div>
+      </div>
+      <div class="row-value ${color}">${signo}$${parseFloat(m.monto).toFixed(2)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ════════════════════════════════════════
+// CHARTS
+// ════════════════════════════════════════
 function buildCharts() {
-  const {totalIng,totalGas} = calcTotales();
+  const { totalIng, totalGas } = calcTotales();
+
   if (chartCombo) chartCombo.destroy();
   chartCombo = new Chart(document.getElementById('chartCombo'), {
     type: 'bar',
@@ -572,225 +916,100 @@ function buildCharts() {
       datasets: [{ data:[totalIng,totalGas], backgroundColor:['#2d7a4f','#a32d2d'], borderRadius:8, borderWidth:0, barPercentage:0.5 }]
     },
     options: {
-      plugins: { legend:{display:false}, tooltip:{callbacks:{label:c=>' $'+c.parsed.y.toFixed(2)}} },
-      scales: {
-        x: { grid:{display:false}, ticks:{font:{...font,size:13,weight:'600'}} },
-        y: { grid:{color:'#e2e0d8'}, ticks:{font, callback:v=>'$'+v} }
+      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>' $'+c.parsed.y.toFixed(2)}} },
+      scales:{
+        x:{ grid:{display:false}, ticks:{font:{...font,size:13,weight:'600'}} },
+        y:{ grid:{color:'#e2e0d8'}, ticks:{font,callback:v=>'$'+v} }
+      },
+      responsive:true, maintainAspectRatio:false
+    }
+  });
+
+  // Deudas (stacked)
+  const cupos   = [1400, 3900, 13000];
+  const saldos  = [saldosTarjeta['Visa Pichincha'], saldosTarjeta['Visa JEP'], 6500.08];
+  const pagados = cupos.map((c,i) => +(c - saldos[i]).toFixed(2));
+
+  if (chartDeudas) chartDeudas.destroy();
+  chartDeudas = new Chart(document.getElementById('chartDeudas'), {
+    type: 'bar',
+    data: {
+      labels: ['Visa Pichincha','Visa JEP','Préstamo JA'],
+      datasets: [
+        { label:'Pendiente', data:saldos,  backgroundColor:['#a32d2d','#e09b2d','#7a7a72'], borderRadius:0, borderWidth:0, borderSkipped:'bottom' },
+        { label:'Pagado',    data:pagados, backgroundColor:['#f7c1c1','#fac775','#d3d1c7'], borderRadius:{topLeft:6,topRight:6}, borderWidth:0, borderSkipped:'bottom' }
+      ]
+    },
+    options: {
+      plugins:{
+        legend:{ position:'bottom', labels:{ font, boxWidth:10, padding:12 } },
+        tooltip:{ callbacks:{ label:c=>' $'+c.parsed.y.toLocaleString() } }
+      },
+      scales:{
+        x:{ stacked:true, grid:{display:false}, ticks:{font} },
+        y:{ stacked:true, grid:{color:'#e2e0d8'}, ticks:{font,callback:v=>'$'+v.toLocaleString()} }
       },
       responsive:true, maintainAspectRatio:false
     }
   });
 }
 
-function renderHistorial() {
-  const lista = document.getElementById('listaMovimientos');
-  const todos = movimientos;
-  if (todos.length === 0) { lista.innerHTML = '<div class="empty-state">Sin movimientos</div>'; return; }
-  lista.innerHTML = todos.map(m => {
-    const esI = m.tipo==='Ingreso'||m.tipo==='Por cobrar';
-    const esT = m.tipo==='Consumo tarjeta';
-    const clase = esI?'ingreso': esT?'tarjeta':'gasto';
-    const colorVal = esI?'green': esT?'purple':'red';
-    const signo = esI?'+':'-';
-    return `<div class="row">
-      <div style="display:flex;align-items:flex-start">
-        <div class="dot ${clase}"></div>
-        <div><div class="row-label">${m.descripcion}</div>
-        <div class="row-sub">${m.fecha} · ${m.categoria} · ${m.cuenta}</div></div>
-      </div>
-      <div class="row-value ${colorVal}">${signo}$${parseFloat(m.monto).toFixed(2)}</div>
-    </div>`;
-  }).join('');
-}
-
-function renderCompromisos() {
-  const lista = document.getElementById('listaCompromisos');
-  if (!lista) return;
-  const abonosMes = movimientos.filter(m => {
-    if (m.tipo !== 'Abono deuda' && m.tipo !== 'Gasto') return false;
-    return esMesActual(m.fecha);
-  });
-  lista.innerHTML = COMPROMISOS.map((c,i) => {
-    const pagado = abonosMes.some(m => {
-      const texto = (m.categoria+' '+m.descripcion).toLowerCase();
-      return c.keys.some(k => texto.includes(k));
-    });
-    const isLast = i === COMPROMISOS.length-1;
-    return `<div class="row" ${isLast?'style="border-bottom:none;padding-bottom:0"':''}>
-      <div><div class="row-label">${c.label}</div><div class="row-sub">${c.sub}</div></div>
-      <span class="badge ${pagado?'ok':'pend'}">${pagado?'✓ Pagado':'Pendiente'}</span>
-    </div>`;
-  }).join('');
-}
-
-function renderDeudas() {
-  const lista = document.getElementById('listaDeudas');
-  if (!lista) return;
-  const nuevas = movimientos.filter(m => m.tipo==='Nueva deuda');
-  const nombresBase = DEUDAS_BASE.map(d=>d.nombre.toLowerCase());
-  const nuevasUnicas = nuevas.filter(m => {
-    const desc = m.descripcion.toLowerCase();
-    return !nombresBase.some(n=>desc.includes(n));
-  });
-  const todas = [
-    ...DEUDAS_BASE,
-    ...nuevasUnicas.map(m => {
-      const nombre = m.descripcion.split('—')[0].trim()||m.categoria;
-      const totalAbonado = movimientos.filter(a=>a.tipo==='Abono deuda'&&a.categoria.toLowerCase()===nombre.toLowerCase()).reduce((s,a)=>s+a.monto,0);
-      return { nombre, sub:m.categoria+(m.descripcion.includes('|')?' · '+m.descripcion.split('|')[1].trim():''), saldo:Math.max(0,m.monto-totalAbonado), capital:m.monto, tasa:m.descripcion.match(/[\d.]+%/)?.[0]||'—', urgente:false, nueva:true };
-    })
-  ];
-  lista.innerHTML = todas.map((d,i) => {
-    const pct = Math.round((d.saldo/d.capital)*100);
-    const barClass = pct>=90?'danger':pct>=60?'warning':'ok';
-    const isLast = i===todas.length-1;
-    return `<div class="row" style="align-items:flex-start;${i===0?'padding-top:0':''}${isLast?';border-bottom:none;padding-bottom:0':''}">
-      <div style="flex:1">
-        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
-          <div class="row-label">${d.nombre}</div>
-          ${d.urgente?'<span class="priority">URGENTE</span>':''}
-          ${d.nueva?'<span class="priority" style="background:var(--blue-bg);color:var(--blue)">NUEVA</span>':''}
-        </div>
-        <div class="row-sub">${d.sub}</div>
-        <div class="bar-wrap"><div class="bar ${barClass}" style="width:${pct}%"></div></div>
-        <div class="row-sub" style="margin-top:4px">${pct}% pendiente · ${100-pct}% pagado</div>
-      </div>
-      <div style="margin-left:12px;text-align:right;flex-shrink:0">
-        <div class="row-value ${pct>=90?'red':''}">$${d.saldo.toLocaleString('es-EC',{minimumFractionDigits:0,maximumFractionDigits:0})}</div>
-        <div class="row-sub">${d.tasa}</div>
-      </div>
-    </div>`;
-  }).join('');
-
-  // Mismo render en resumen
-  const resumenDeudas = document.getElementById('resumenDeudas');
-  if (resumenDeudas) resumenDeudas.innerHTML = lista.innerHTML;
-}
-
-function renderConsumos() {
-  const lista = document.getElementById('listaConsumos');
-  if (!lista) return;
-  const consumosMes = consumos.filter(c => esMesActual(c.fecha));
-  if (consumosMes.length === 0) { lista.innerHTML = '<div class="empty-state">Sin consumos este mes</div>'; return; }
-
-  const totPich = consumosMes.filter(c=>c.cuenta==='Visa Pichincha').reduce((s,c)=>s+c.monto,0);
-  const totJep  = consumosMes.filter(c=>c.cuenta==='Visa JEP').reduce((s,c)=>s+c.monto,0);
-
-  lista.innerHTML = consumosMes.map(c => {
-    const color = c.cuenta==='Visa Pichincha' ? 'red' : 'warning';
-    const tag   = c.cuenta==='Visa Pichincha' ? '#a32d2d' : '#854f0b';
-    return `<div class="row">
-      <div style="display:flex;align-items:flex-start">
-        <div class="dot" style="background:${tag};margin-right:10px;margin-top:4px;flex-shrink:0"></div>
-        <div>
-          <div class="row-label">${c.descripcion}</div>
-          <div class="row-sub">${c.fecha} · ${c.categoria} · ${c.cuenta}${c.cuotas&&c.cuotas>1?' · '+c.cuotas+' cuotas':''}</div>
-        </div>
-      </div>
-      <div class="row-value red">-$${parseFloat(c.monto).toFixed(2)}</div>
-    </div>`;
-  }).join('') +
-  `<div class="row" style="border-top:1px solid var(--border);margin-top:4px">
-    <div><div class="row-label" style="font-size:12px;color:var(--muted)">Pichincha este mes</div></div>
-    <div class="row-value red">$${totPich.toFixed(2)}</div>
-  </div>
-  <div class="row" style="border-bottom:none;padding-bottom:0">
-    <div><div class="row-label" style="font-size:12px;color:var(--muted)">JEP este mes</div></div>
-    <div class="row-value" style="color:var(--warning)">$${totJep.toFixed(2)}</div>
-  </div>`;
-}
-
-// ── TARJETAS ──────────────────────────────────────────────
-function selTarjeta(t) {
-  tarjetaSel = t;
-  document.getElementById('tBtn-Pichincha').className = 'tarjeta-btn' + (t==='Pichincha'?' sel-pichincha':'');
-  document.getElementById('tBtn-JEP').className       = 'tarjeta-btn' + (t==='JEP'?' sel-jep':'');
-}
-
-async function guardarConsumo() {
-  if (!tarjetaSel) { showToast('Seleccioná la tarjeta','error'); return; }
-  const fecha       = document.getElementById('tFecha').value;
-  const categoria   = document.getElementById('tCategoria').value;
-  const descripcion = document.getElementById('tDescripcion').value.trim();
-  const monto       = parseFloat(document.getElementById('tMonto').value);
-  const cuotas      = parseInt(document.getElementById('tCuotas').value);
-
-  if (!fecha||!categoria||!descripcion||!monto||monto<=0) { showToast('Completá todos los campos','error'); return; }
-
-  const [y,m,d] = fecha.split('-');
-  const fechaFmt = d+'/'+m+'/'+y;
-  const cuenta = tarjetaSel==='Pichincha' ? 'Visa Pichincha' : 'Visa JEP';
-  const descFinal = descripcion + (cuotas>1 ? ' ('+cuotas+' cuotas)' : '');
-
-  const btn = document.getElementById('btnGuardarTarjeta');
-  btn.disabled=true; btn.textContent='Guardando...';
-
-  await enviarDrive({ fecha:fechaFmt, tipo:'Consumo tarjeta', categoria, descripcion:descFinal, cuenta, monto });
-
-  const nuevo = { fecha:fechaFmt, tipo:'Consumo tarjeta', categoria, descripcion:descFinal, cuenta, monto, cuotas };
-  consumos.unshift(nuevo);
-  movimientos.unshift(nuevo);
-
-  renderConsumos();
-  actualizarConsumosMes();
-  showToast('✓ Consumo guardado','success');
-
-  document.getElementById('tDescripcion').value='';
-  document.getElementById('tMonto').value='';
-  document.getElementById('tCategoria').value='';
-  document.getElementById('tCuotas').value='1';
-  tarjetaSel='';
-  document.getElementById('tBtn-Pichincha').className='tarjeta-btn';
-  document.getElementById('tBtn-JEP').className='tarjeta-btn';
-  btn.disabled=false; btn.textContent='Guardar consumo';
-}
-
-// ── MODAL DETALLE ─────────────────────────────────────────
+// ════════════════════════════════════════
+// MODAL
+// ════════════════════════════════════════
 function abrirDetalle(tipo) {
-  const items = movimientos.filter(m => esMesActual(m.fecha) && (tipo==='ingreso' ? m.tipo==='Ingreso' : (m.tipo==='Gasto'||m.tipo==='Abono deuda')));
-  const total = items.reduce((s,m)=>s+m.monto,0);
+  const items = movimientos.filter(m =>
+    tipo==='ingreso' ? m.tipo==='Ingreso' : (m.tipo==='Gasto'||m.tipo==='Abono deuda')
+  );
+  const total = items.reduce((s,m)=>s+parseFloat(m.monto),0);
   const esIng = tipo==='ingreso';
   document.getElementById('modalTitulo').textContent = esIng ? '↑ Detalle de ingresos' : '↓ Detalle de gastos';
-  document.getElementById('modalTotal').innerHTML = `Total: <span>$${total.toFixed(2)}</span>`;
-  document.getElementById('modalItems').innerHTML = items.map(m=>`
+  document.getElementById('modalTotal').innerHTML    = `Total: <span>$${total.toFixed(2)}</span>`;
+  document.getElementById('modalItems').innerHTML   = items.map(m=>`
     <div class="detail-row">
-      <div><div class="detail-desc">${m.descripcion}</div><div class="detail-sub">${m.fecha} · ${m.categoria} · ${m.cuenta}</div></div>
-      <div class="detail-monto ${esIng?'green':'red'}">${esIng?'+':'-'}$${m.monto.toFixed(2)}</div>
+      <div><div class="detail-desc">${m.descripcion}</div><div class="detail-sub">${m.fecha} · ${m.categoria} · ${m.cuenta||''}</div></div>
+      <div class="detail-monto ${esIng?'green':'red'}">${esIng?'+':'-'}$${parseFloat(m.monto).toFixed(2)}</div>
     </div>`).join('');
   document.getElementById('modalOverlay').classList.add('open');
 }
-
 function cerrarDetalle(e) {
   if (!e || e.target===document.getElementById('modalOverlay'))
     document.getElementById('modalOverlay').classList.remove('open');
 }
 
-// ── TABS ──────────────────────────────────────────────────
-function showTab(id) {
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.tab-item').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
-  document.getElementById('nav-'+id).classList.add('active');
-}
-
-// ── FORM REGISTRAR ────────────────────────────────────────
+// ════════════════════════════════════════
+// FORM — selección de tipo
+// ════════════════════════════════════════
 function selTipo(t) {
-  tipoSel=t; subtipoSel='';
-  ['Ingreso','Gasto','Deuda','Cobrar'].forEach(x=>
-    document.getElementById('btn-'+x).className='tipo-btn'+(x===t?' sel-'+x.toLowerCase():'')
-  );
-  document.getElementById('subtipoDeuda').classList.toggle('hidden',t!=='Deuda');
+  tipoSel=t; subtipoSel=''; subtipoTarjetaSel=''; subtipoAirbnbSel='';
+
+  const todos = ['Ingreso','Gasto','Tarjeta','Airbnb','Deuda','Cobrar'];
+  todos.forEach(x => document.getElementById('btn-'+x).className = 'tipo-btn' + (x===t?' sel-'+x.toLowerCase():''));
+
+  // Mostrar/ocultar secciones específicas
+  document.getElementById('subtipoDeuda').classList.toggle('hidden',   t!=='Deuda');
+  document.getElementById('subtipoTarjeta').classList.toggle('hidden', t!=='Tarjeta');
+  document.getElementById('subtipoAirbnb').classList.toggle('hidden',  t!=='Airbnb');
   document.getElementById('camposNuevaDeuda').classList.add('hidden');
-  document.getElementById('camposCobrar').classList.toggle('hidden',t!=='Cobrar');
-  document.getElementById('wrapCuenta').classList.toggle('hidden',t==='Cobrar');
+  document.getElementById('camposCobrar').classList.toggle('hidden',   t!=='Cobrar');
+  document.getElementById('wrapCuenta').classList.toggle('hidden',     t==='Cobrar'||t==='Tarjeta'||t==='Airbnb');
+  document.getElementById('wrapCuotas').classList.add('hidden');
+
+  // Reset subtipo btns
   ['abono','nueva'].forEach(x=>document.getElementById('sub-'+x).className='subtipo-btn');
-  document.getElementById('labelDescripcion').textContent=t==='Cobrar'?'Concepto / trabajo':'Descripción';
-  document.getElementById('labelMonto').textContent=t==='Cobrar'?'Monto a cobrar ($)':'Monto ($)';
-  const sel=document.getElementById('categoria');
-  sel.innerHTML='<option value="">Seleccioná...</option>';
-  const key=t==='Deuda'?null:(t==='Cobrar'?'Cobrar':t);
-  if(key) CATS[key].forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
-  else sel.innerHTML='<option value="">Primero elegí abono o nueva deuda...</option>';
+
+  document.getElementById('labelDescripcion').textContent = t==='Cobrar'?'Concepto / trabajo':'Descripción';
+  document.getElementById('labelMonto').textContent       = t==='Cobrar'?'Monto a cobrar ($)':'Monto ($)';
+
+  const sel = document.getElementById('categoria');
+  sel.innerHTML = '<option value="">Seleccioná...</option>';
+
+  if (t==='Ingreso') { CATS.Ingreso.forEach(c=>sel.add(new Option(c,c))); }
+  if (t==='Gasto')   { CATS.Gasto.forEach(c=>sel.add(new Option(c,c))); }
+  if (t==='Cobrar')  { CATS.Cobrar.forEach(c=>sel.add(new Option(c,c))); }
+  if (t==='Tarjeta'||t==='Airbnb'||t==='Deuda') {
+    sel.innerHTML = '<option value="">Primero completá la selección arriba...</option>';
+  }
 }
 
 function selSubtipo(s) {
@@ -798,122 +1017,211 @@ function selSubtipo(s) {
   ['abono','nueva'].forEach(x=>document.getElementById('sub-'+x).className='subtipo-btn'+(x===s?' sel':''));
   document.getElementById('camposNuevaDeuda').classList.toggle('hidden',s!=='nueva');
   document.getElementById('wrapCuenta').classList.toggle('hidden',s==='abono');
-  document.getElementById('labelDescripcion').textContent=s==='nueva'?'Nombre / referencia':'Descripción';
-  const sel=document.getElementById('categoria');
-  sel.innerHTML='<option value="">Seleccioná...</option>';
-  const baseAbono = [...CATS['Deuda_abono']];
-  if (s==='abono') {
-    const nuevasDeudas = movimientos.filter(m=>m.tipo==='Nueva deuda').map(m=>m.descripcion.split('—')[0].trim()).filter(n=>!baseAbono.some(b=>b.toLowerCase()===n.toLowerCase()));
-    [...baseAbono,...nuevasDeudas].forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
-  } else {
-    CATS['Deuda_nueva'].forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
-  }
+  document.getElementById('labelDescripcion').textContent = s==='nueva'?'Nombre / referencia':'Descripción';
+  const sel = document.getElementById('categoria');
+  sel.innerHTML = '<option value="">Seleccioná...</option>';
+  CATS[s==='abono'?'Deuda_abono':'Deuda_nueva'].forEach(c=>sel.add(new Option(c,c)));
 }
 
+function selSubtipoTarjeta(s) {
+  subtipoTarjetaSel = s;
+  document.getElementById('btn-Compra').className = 'tipo-btn' + (s==='Compra'?' sel-compra':'');
+  document.getElementById('btn-Pago').className   = 'tipo-btn' + (s==='Pago'  ?' sel-pago':'');
+  document.getElementById('wrapCuotas').classList.toggle('hidden', s!=='Compra');
+  document.getElementById('wrapCuenta').classList.toggle('hidden', s!=='Pago');
+  const sel = document.getElementById('categoria');
+  sel.innerHTML = '<option value="">Seleccioná...</option>';
+  CATS[s==='Compra'?'Tarjeta_Compra':'Tarjeta_Pago'].forEach(c=>sel.add(new Option(c,c)));
+}
+
+function selSubtipoAirbnb(s) {
+  subtipoAirbnbSel = s;
+  document.getElementById('btn-AirbnbI').className = 'tipo-btn' + (s==='Ingreso'?' sel-airbnb-i':'');
+  document.getElementById('btn-AirbnbG').className = 'tipo-btn' + (s==='Gasto'  ?' sel-airbnb-g':'');
+  const sel = document.getElementById('categoria');
+  sel.innerHTML = '<option value="">Seleccioná...</option>';
+  CATS[s==='Ingreso'?'Airbnb_Ingreso':'Airbnb_Gasto'].forEach(c=>sel.add(new Option(c,c)));
+}
+
+// ════════════════════════════════════════
+// GUARDAR
+// ════════════════════════════════════════
 function showToast(msg,tipo='') {
-  const t=document.getElementById('toast');
+  const t = document.getElementById('toast');
   t.textContent=msg; t.className='toast show '+tipo;
   setTimeout(()=>t.className='toast',3000);
 }
 
 async function guardar() {
-  if(!tipoSel){showToast('Seleccioná el tipo de movimiento','error');return;}
-  if(tipoSel==='Deuda'&&!subtipoSel){showToast('Seleccioná abono o nueva deuda','error');return;}
-  const fecha=document.getElementById('fecha').value;
-  const categoria=document.getElementById('categoria').value;
-  const descripcion=document.getElementById('descripcion').value.trim();
-  const monto=parseFloat(document.getElementById('monto').value);
-  if(!fecha||!categoria||!descripcion||!monto||monto<=0){showToast('Completá todos los campos','error');return;}
+  if (!tipoSel) { showToast('Seleccioná el tipo de movimiento','error'); return; }
 
-  if(tipoSel==='Cobrar'){
-    const deudor=document.getElementById('deudor').value.trim();
-    const fechaCobro=document.getElementById('fechaCobro').value;
-    if(!deudor){showToast('Ingresá quién debe','error');return;}
-    const [y,m,d]=fecha.split('-');
-    const item={id:Date.now(),fecha:d+'/'+m+'/'+y,categoria,descripcion,deudor,monto,fechaCobro,cobrado:false};
+  const fecha       = document.getElementById('fecha').value;
+  const categoria   = document.getElementById('categoria').value;
+  const descripcion = document.getElementById('descripcion').value.trim();
+  const monto       = parseFloat(document.getElementById('monto').value);
+
+  if (!fecha||!categoria||!descripcion||!monto||monto<=0) {
+    showToast('Completá todos los campos','error'); return;
+  }
+
+  const [y,m,d] = fecha.split('-');
+  const fechaFmt = d+'/'+m+'/'+y;
+
+  // ── Por cobrar ──
+  if (tipoSel === 'Cobrar') {
+    const deudor    = document.getElementById('deudor').value.trim();
+    const fechaCobro= document.getElementById('fechaCobro').value;
+    if (!deudor) { showToast('Ingresá quién debe','error'); return; }
+    const item = {id:Date.now(),fecha:fechaFmt,categoria,descripcion,deudor,monto,fechaCobro,cobrado:false};
     cobrosData.unshift(item);
+    localStorage.setItem('cobros_byron',JSON.stringify(cobrosData));
     renderCobros();
-    await enviarDrive({fecha:item.fecha,tipo:'Por cobrar',categoria,descripcion:descripcion+' (debe: '+deudor+')',cuenta:'—',monto});
+    await enviarDrive({fecha:fechaFmt,tipo:'Por cobrar',categoria,descripcion:descripcion+' (debe: '+deudor+')',cuenta:'—',monto});
     showToast('✓ Cobro registrado','success');
     limpiarForm(); return;
   }
 
-  const cuenta=tipoSel==='Deuda'&&subtipoSel==='abono'
-    ?(categoria==='Visa Pichincha'?'Tarjeta Pichincha':categoria==='Visa JEP'?'Coop. JEP':'Jardín Azuayo')
-    :document.getElementById('cuenta').value;
-  if(!cuenta){showToast('Seleccioná la cuenta','error');return;}
+  // ── Tarjeta ──
+  if (tipoSel === 'Tarjeta') {
+    if (!subtipoTarjetaSel) { showToast('Elegí Compra o Pago','error'); return; }
+    const tarjeta = document.getElementById('tarjetaSel').value;
+    if (!tarjeta)           { showToast('Seleccioná la tarjeta','error'); return; }
+    const cuotas  = document.getElementById('cuotas').value || '1';
+    const tipoFinal = subtipoTarjetaSel==='Compra' ? 'Compra tarjeta' : 'Pago tarjeta';
 
-  const [y,m,d]=fecha.split('-');
-  const fechaFmt=d+'/'+m+'/'+y;
-  let tipoFinal=tipoSel==='Deuda'?(subtipoSel==='abono'?'Abono deuda':'Nueva deuda'):tipoSel;
-  let descFinal=descripcion;
-  if(subtipoSel==='nueva'){
-    const tasa=document.getElementById('tasa').value,plazo=document.getElementById('plazo').value,acr=document.getElementById('acreedor').value.trim();
-    descFinal+=(acr?' — '+acr:'')+(tasa?' | '+tasa+'% / '+plazo+'m':'');
+    const mov = {fecha:fechaFmt,tipo:tipoFinal,tarjeta,categoria,descripcion,monto,cuotas};
+    movTarjetas.unshift(mov);
+
+    // Ajustar saldo en memoria
+    if (subtipoTarjetaSel==='Compra') saldosTarjeta[tarjeta] = (saldosTarjeta[tarjeta]||0) + monto;
+    if (subtipoTarjetaSel==='Pago')   saldosTarjeta[tarjeta] = (saldosTarjeta[tarjeta]||0) - monto;
+
+    await enviarDrive({fecha:fechaFmt,tipo:tipoFinal,categoria,descripcion,cuenta:tarjeta,monto,extra:cuotas});
+    renderTarjetas();
+    buildCharts();
+    renderHistorial();
+    renderCompromisos();
+    showToast('✓ Guardado en tarjeta','success');
+    limpiarForm(); return;
   }
 
-  const btn=document.getElementById('btnGuardar');
+  // ── Airbnb ──
+  if (tipoSel === 'Airbnb') {
+    if (!subtipoAirbnbSel) { showToast('Elegí Ingreso o Gasto','error'); return; }
+    const tipoFinal = 'Airbnb ' + subtipoAirbnbSel;
+    const mov = {fecha:fechaFmt,tipo:tipoFinal,categoria,descripcion,monto};
+    movAirbnb.unshift(mov);
+
+    // Si es ingreso Airbnb también suma a ingresos generales
+    if (subtipoAirbnbSel==='Ingreso') {
+      movimientos.unshift({fecha:fechaFmt,tipo:'Ingreso',categoria:'Airbnb',descripcion,cuenta:'Pichincha CA2',monto});
+    }
+
+    await enviarDrive({fecha:fechaFmt,tipo:tipoFinal,categoria,descripcion,cuenta:'Pichincha CA2',monto});
+    renderAirbnb();
+    actualizarResumen();
+    renderHistorial();
+    showToast('✓ Guardado en Airbnb','success');
+    limpiarForm(); return;
+  }
+
+  // ── Ingreso / Gasto / Deuda general ──
+  if (tipoSel==='Deuda' && !subtipoSel) { showToast('Seleccioná abono o nueva deuda','error'); return; }
+  const cuenta = document.getElementById('cuenta').value;
+  if (!cuenta) { showToast('Seleccioná la cuenta','error'); return; }
+
+  let tipoFinal = tipoSel==='Deuda' ? (subtipoSel==='abono'?'Abono deuda':'Nueva deuda') : tipoSel;
+  let descFinal = descripcion;
+  if (subtipoSel==='nueva') {
+    const tasa = document.getElementById('tasa').value;
+    const plazo= document.getElementById('plazo').value;
+    const acr  = document.getElementById('acreedor').value.trim();
+    descFinal += (acr?' — '+acr:'')+(tasa?' | '+tasa+'% / '+plazo+'m':'');
+  }
+
+  const btn = document.getElementById('btnGuardar');
   btn.disabled=true; btn.textContent='Guardando...';
+
   await enviarDrive({fecha:fechaFmt,tipo:tipoFinal,categoria,descripcion:descFinal,cuenta,monto});
 
-  const nuevoMov={fecha:fechaFmt,tipo:tipoFinal,categoria,descripcion:descFinal,cuenta,monto};
-  movimientos.unshift(nuevoMov);
+  movimientos.unshift({fecha:fechaFmt,tipo:tipoFinal,categoria,descripcion:descFinal,cuenta,monto});
+  actualizarResumen();
   renderHistorial();
   renderCompromisos();
-  renderDeudas();
-  actualizarResumen();
-  showToast('✓ Guardado en tu Excel','success');
+
+  showToast('✓ Guardado en Drive','success');
   limpiarForm();
   btn.disabled=false; btn.textContent='Guardar en Drive';
 }
 
-async function enviarDrive(data){
-  try{await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(data)});}
-  catch(e){showToast('Error al conectar con Drive','error');}
+async function enviarDrive(data) {
+  try { await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(data)}); }
+  catch(e) { showToast('Error al conectar con Drive','error'); }
 }
 
-function limpiarForm(){
+function limpiarForm() {
   ['descripcion','monto','tasa','plazo','acreedor','deudor'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('categoria').value=''; document.getElementById('cuenta').value='';
-  tipoSel=''; subtipoSel='';
-  ['Ingreso','Gasto','Deuda','Cobrar'].forEach(x=>document.getElementById('btn-'+x).className='tipo-btn');
+  document.getElementById('categoria').value='';
+  document.getElementById('cuenta').value='';
+  document.getElementById('tarjetaSel').value='';
+  document.getElementById('cuotas').value='1';
+  tipoSel=''; subtipoSel=''; subtipoTarjetaSel=''; subtipoAirbnbSel='';
+  ['Ingreso','Gasto','Tarjeta','Airbnb','Deuda','Cobrar'].forEach(x=>document.getElementById('btn-'+x).className='tipo-btn');
   ['abono','nueva'].forEach(x=>document.getElementById('sub-'+x).className='subtipo-btn');
+  ['btn-Compra','btn-Pago','btn-AirbnbI','btn-AirbnbG'].forEach(id=>{ const el=document.getElementById(id); if(el) el.className='tipo-btn'; });
   document.getElementById('subtipoDeuda').classList.add('hidden');
+  document.getElementById('subtipoTarjeta').classList.add('hidden');
+  document.getElementById('subtipoAirbnb').classList.add('hidden');
   document.getElementById('camposNuevaDeuda').classList.add('hidden');
   document.getElementById('camposCobrar').classList.add('hidden');
+  document.getElementById('wrapCuotas').classList.add('hidden');
   document.getElementById('wrapCuenta').classList.remove('hidden');
   document.getElementById('categoria').innerHTML='<option value="">Primero seleccioná el tipo...</option>';
   const btn=document.getElementById('btnGuardar'); btn.disabled=false; btn.textContent='Guardar en Drive';
 }
 
-function renderCobros(){
-  const lista=document.getElementById('listaCobrar');
-  const resumen=document.getElementById('resumenCobrar');
-  const pendientes=cobrosData.filter(c=>!c.cobrado);
-  if(resumen) resumen.innerHTML=pendientes.length===0
-    ?'<div class="empty-state">Sin cobros pendientes</div>'
-    :pendientes.map(c=>`<div class="row"><div><div class="row-label">${c.descripcion}</div><div class="row-sub">${c.deudor} · esperado ${c.fechaCobro||'—'}</div></div><div class="row-value blue">+$${parseFloat(c.monto).toFixed(2)}</div></div>`).join('')
-    +`<div class="row"><div class="row-label" style="font-weight:700">Total</div><div class="row-value blue" style="font-weight:700">$${pendientes.reduce((s,c)=>s+c.monto,0).toFixed(2)}</div></div>`;
-  if(lista) lista.innerHTML=cobrosData.length===0
-    ?'<div class="empty-state">No tenés cobros registrados</div>'
-    :cobrosData.map(c=>`<div class="cobrar-item ${c.cobrado?'cobrado':''}"><div style="flex:1"><div class="row-label">${c.descripcion}</div><div class="row-sub">${c.deudor} · ${c.fecha}${c.fechaCobro?' · cobrar: '+c.fechaCobro:''}</div><div class="row-sub" style="color:var(--blue)">${c.categoria}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0"><div class="row-value blue">$${parseFloat(c.monto).toFixed(2)}</div>${!c.cobrado?`<button class="btn-sm" onclick="marcarCobrado('${c.id}')">Marcar cobrado</button>`:'<span style="font-size:11px;color:var(--green)">✓ Cobrado</span>'}</div></div>`).join('');
+// ════════════════════════════════════════
+// COBROS
+// ════════════════════════════════════════
+function renderCobros() {
+  const pendientes = cobrosData.filter(c=>!c.cobrado);
+  // Label en resumen
+  const labelEl = document.getElementById('resumenCobrarLabel');
+  if (labelEl) {
+    labelEl.textContent = pendientes.length===0
+      ? 'Sin cobros pendientes'
+      : `${pendientes.length} cobro${pendientes.length>1?'s':''} · $${pendientes.reduce((s,c)=>s+c.monto,0).toFixed(2)} pendiente${pendientes.length>1?'s':''}`;
+    labelEl.style.color = pendientes.length>0 ? 'var(--blue)' : 'var(--muted)';
+  }
+  // Lista completa
+  document.getElementById('listaCobrar').innerHTML = cobrosData.length===0
+    ? '<div class="empty-state">No tenés cobros registrados</div>'
+    : cobrosData.map(c=>`
+      <div class="cobrar-item ${c.cobrado?'cobrado':''}">
+        <div style="flex:1">
+          <div class="row-label">${c.descripcion}</div>
+          <div class="row-sub">${c.deudor} · ${c.fecha}${c.fechaCobro?' · cobrar: '+c.fechaCobro:''}</div>
+          <div class="row-sub" style="color:var(--blue)">${c.categoria}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
+          <div class="row-value blue">$${parseFloat(c.monto).toFixed(2)}</div>
+          ${!c.cobrado
+            ? `<button class="btn-sm" onclick="marcarCobrado(${c.id})">Marcar cobrado</button>`
+            : '<span style="font-size:11px;color:var(--green)">✓ Cobrado</span>'}
+        </div>
+      </div>`).join('');
 }
 
-function marcarCobrado(id){
-  const item=cobrosData.find(c=>c.id===id);
-  if(!item)return;
-  item.cobrado=true;
+function marcarCobrado(id) {
+  const item = cobrosData.find(c=>c.id===id);
+  if (!item) return;
+  item.cobrado = true;
+  localStorage.setItem('cobros_byron',JSON.stringify(cobrosData));
   renderCobros();
-  const hoyD=new Date(),d=String(hoyD.getDate()).padStart(2,'0'),m=String(hoyD.getMonth()+1).padStart(2,'0'),y=hoyD.getFullYear();
-  enviarDrive({fecha:d+'/'+m+'/'+y,tipo:'Ingreso',categoria:item.categoria,descripcion:item.descripcion+' — COBRADO',cuenta:'Pichincha cte 2203',monto:item.monto});
+  const hoy=new Date(),d=String(hoy.getDate()).padStart(2,'0'),mo=String(hoy.getMonth()+1).padStart(2,'0'),y=hoy.getFullYear();
+  enviarDrive({fecha:d+'/'+mo+'/'+y,tipo:'Ingreso',categoria:item.categoria,descripcion:item.descripcion+' — COBRADO',cuenta:'Pichincha cte 2203',monto:item.monto});
   showToast('✓ Marcado como cobrado','success');
 }
-
-// Iniciar
-buildCharts();
-renderCompromisos();
-renderDeudas();
-cargarMovimientos();
 </script>
 </body>
 </html>
