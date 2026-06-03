@@ -707,10 +707,18 @@ async function cargarMovimientos() {
   const lista = document.getElementById('listaMovimientos');
   lista.innerHTML = '<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Cargando...</div>';
   try {
-    const res  = await fetch(SCRIPT_URL);
-    const data = await res.json();
+    const res = await fetch(SCRIPT_URL, {
+      method: 'GET',
+      redirect: 'follow',
+      cache: 'no-cache'
+    });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    let data;
+    try { data = JSON.parse(text); }
+    catch(e) { throw new Error('JSON inválido: ' + text.substring(0,100)); }
+
     if (data.status === 'ok') {
-      // Separar por tipo
       movimientos = (data.movimientos || []).filter(m =>
         !['Compra tarjeta','Pago tarjeta','Airbnb Ingreso','Airbnb Gasto'].includes(m.tipo)
       );
@@ -720,7 +728,6 @@ async function cargarMovimientos() {
       movAirbnb = (data.movimientos || []).filter(m =>
         ['Airbnb Ingreso','Airbnb Gasto'].includes(m.tipo)
       );
-      // Recalcular saldos tarjeta desde movimientos
       recalcularSaldosTarjeta();
       renderHistorial();
       renderCompromisos();
@@ -729,13 +736,12 @@ async function cargarMovimientos() {
       renderTarjetas();
     } else {
       lista.innerHTML = '<div class="empty-state">Sin movimientos registrados</div>';
-      actualizarResumen();
-      renderAirbnb();
+      actualizarResumen(); renderAirbnb();
     }
   } catch(e) {
-    lista.innerHTML = '<div class="empty-state">Error al cargar — verificá tu conexión</div>';
-    actualizarResumen();
-    renderAirbnb();
+    console.error('cargarMovimientos error:', e);
+    lista.innerHTML = `<div class="empty-state">Error al cargar<br><small style="font-size:11px;color:var(--muted)">${e.message}</small></div>`;
+    actualizarResumen(); renderAirbnb();
   }
 }
 
@@ -1193,8 +1199,24 @@ async function guardar() {
 }
 
 async function enviarDrive(data) {
-  try { await fetch(SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify(data)}); }
-  catch(e) { showToast('Error al conectar con Drive','error'); }
+  try {
+    const res = await fetch(SCRIPT_URL, {
+      method: 'POST',
+      redirect: 'follow',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(data)
+    });
+    const text = await res.text();
+    let json;
+    try { json = JSON.parse(text); } catch(e) { json = null; }
+    if (!json || json.status !== 'ok') {
+      console.error('enviarDrive respuesta inesperada:', text.substring(0,200));
+      showToast('Error al guardar en Drive','error');
+    }
+  } catch(e) {
+    console.error('enviarDrive error:', e);
+    showToast('Error al conectar con Drive','error');
+  }
 }
 
 function limpiarForm() {
