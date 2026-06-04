@@ -8,609 +8,589 @@
 <title>Finanzas Byron</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
-  :root {
-    --bg: #f5f4f0; --card: #ffffff; --border: #e2e0d8;
-    --text: #1a1a18; --muted: #7a7a72;
-    --green: #2d7a4f; --green-bg: #eaf3de;
-    --red: #a32d2d; --red-bg: #fcebeb;
-    --warning: #854f0b; --warning-bg: #faeeda;
-    --blue: #185fa5; --blue-bg: #e6f1fb;
-    --purple: #6b3fa0; --purple-bg: #f0eafc;
-    --teal: #1a7a6e; --teal-bg: #e0f4f2;
-    --radius: 14px; --radius-sm: 8px;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-  .app { max-width: 430px; margin: 0 auto; padding-bottom: 90px; }
+:root{
+  --bg:#f5f4f0;--card:#ffffff;--border:#e2e0d8;
+  --text:#1a1a18;--muted:#7a7a72;
+  --green:#2d7a4f;--green-bg:#eaf3de;
+  --red:#a32d2d;--red-bg:#fcebeb;
+  --warning:#854f0b;--warning-bg:#faeeda;
+  --blue:#185fa5;--blue-bg:#e6f1fb;
+  --purple:#6b3fa0;--purple-bg:#f0eafc;
+  --teal:#1a7a6e;--teal-bg:#e0f4f2;
+  --radius:14px;--radius-sm:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.app{max-width:430px;margin:0 auto;padding-bottom:90px}
 
-  .header { background: var(--card); border-bottom: 1px solid var(--border); padding: 18px 20px 14px; position: sticky; top: 0; z-index: 10; }
-  .header-top { display: flex; justify-content: space-between; align-items: flex-start; }
-  .header h1 { font-size: 21px; font-weight: 700; letter-spacing: -0.5px; }
-  .header p { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .corte-badge { font-size: 11px; background: var(--warning-bg); color: var(--warning); padding: 3px 10px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
+.header{background:var(--card);border-bottom:1px solid var(--border);padding:16px 20px 12px;position:sticky;top:0;z-index:10}
+.header-top{display:flex;justify-content:space-between;align-items:flex-start}
+.header h1{font-size:20px;font-weight:700;letter-spacing:-.5px}
+.header p{font-size:12px;color:var(--muted);margin-top:2px}
+.corte-badge{font-size:11px;background:var(--warning-bg);color:var(--warning);padding:3px 10px;border-radius:20px;font-weight:500;white-space:nowrap}
 
-  /* ── TAB BAR ── */
-  .tab-bar { position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); width: 100%; max-width: 430px; background: var(--card); border-top: 1px solid var(--border); display: flex; z-index: 20; padding-bottom: env(safe-area-inset-bottom); }
-  .tab-item { flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px 2px 8px; cursor: pointer; border: none; background: none; color: var(--muted); font-size: 9px; gap: 3px; }
-  .tab-item.active { color: var(--text); }
-  .tab-icon { font-size: 18px; line-height: 1; }
-  .tab-item.active .tab-label { font-weight: 600; }
+.tab-bar{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;background:var(--card);border-top:1px solid var(--border);display:flex;z-index:20;padding-bottom:env(safe-area-inset-bottom)}
+.tab-item{flex:1;display:flex;flex-direction:column;align-items:center;padding:9px 1px 7px;cursor:pointer;border:none;background:none;color:var(--muted);font-size:8.5px;gap:3px}
+.tab-item.active{color:var(--text)}
+.tab-icon{font-size:17px;line-height:1}
+.tab-item.active .tab-label{font-weight:600}
 
-  /* ── SECTIONS ── */
-  .section { display: none; padding: 16px; }
-  .section.active { display: block; }
+.section{display:none;padding:16px}
+.section.active{display:block}
 
-  /* ── CARDS ── */
-  .card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 16px; margin-bottom: 12px; }
-  .card-title { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 14px; }
+.card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:16px;margin-bottom:12px}
+.card-title{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-bottom:14px}
 
-  /* Summary grid */
-  .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-  .summary-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 16px 14px; cursor: pointer; position: relative; transition: transform 0.1s; }
-  .summary-card:active { transform: scale(0.97); }
-  .summary-card.ingreso { border-left: 4px solid var(--green); }
-  .summary-card.gasto   { border-left: 4px solid var(--red); }
-  .summary-card.airbnb  { border-left: 4px solid var(--teal); }
-  .summary-label { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
-  .summary-value { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
-  .summary-value.green  { color: var(--green); }
-  .summary-value.red    { color: var(--red); }
-  .summary-value.teal   { color: var(--teal); }
-  .summary-tap { font-size: 10px; color: var(--muted); margin-top: 6px; }
-  .summary-arrow { position: absolute; top: 14px; right: 12px; font-size: 16px; color: var(--muted); }
+/* ── RESUMEN ── */
+.summary-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.summary-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:16px 14px;cursor:pointer;position:relative;transition:transform .1s}
+.summary-card:active{transform:scale(.97)}
+.summary-card.ingreso{border-left:4px solid var(--green)}
+.summary-card.gasto{border-left:4px solid var(--red)}
+.summary-label{font-size:11px;color:var(--muted);margin-bottom:6px}
+.summary-value{font-size:24px;font-weight:700;letter-spacing:-.5px}
+.summary-value.green{color:var(--green)}
+.summary-value.red{color:var(--red)}
+.summary-tap{font-size:10px;color:var(--muted);margin-top:6px}
+.summary-arrow{position:absolute;top:14px;right:12px;font-size:16px;color:var(--muted)}
+.balance-card{background:var(--card);border-radius:var(--radius);border:1px solid var(--border);padding:14px 16px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.balance-label{font-size:12px;color:var(--muted)}
+.balance-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.balance-value{font-size:22px;font-weight:700;color:var(--blue)}
+.saldos-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
+.saldo-chip{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px}
+.saldo-chip-label{font-size:10px;color:var(--muted);margin-bottom:3px}
+.saldo-chip-val{font-size:16px;font-weight:700}
+.saldo-chip-val.green{color:var(--green)}
+.saldo-chip-val.muted{color:var(--muted)}
 
-  .balance-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 14px 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-  .balance-label { font-size: 12px; color: var(--muted); }
-  .balance-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .balance-value { font-size: 22px; font-weight: 700; color: var(--blue); }
+/* ── CHARTS ── */
+.chart-wrap{position:relative;width:100%}
+.chart-wrap.h200{height:200px}
+.chart-wrap.h180{height:180px}
+.chart-wrap.h160{height:160px}
+.legend{display:flex;gap:14px;margin-bottom:12px;flex-wrap:wrap}
+.legend-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted)}
+.legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
 
-  /* ── TARJETA CARDS ── */
-  .tarjeta-card { border-radius: var(--radius); padding: 18px 16px; margin-bottom: 12px; color: #fff; position: relative; overflow: hidden; }
-  .tarjeta-card.pichincha { background: linear-gradient(135deg, #1a3a6e 0%, #185fa5 100%); }
-  .tarjeta-card.jep       { background: linear-gradient(135deg, #1a5c3a 0%, #2d7a4f 100%); }
-  .tarjeta-nombre { font-size: 13px; font-weight: 600; opacity: 0.85; margin-bottom: 12px; }
-  .tarjeta-numero { font-size: 13px; letter-spacing: 2px; opacity: 0.7; margin-bottom: 14px; font-family: monospace; }
-  .tarjeta-row { display: flex; justify-content: space-between; align-items: flex-end; }
-  .tarjeta-saldo-label { font-size: 10px; opacity: 0.7; margin-bottom: 2px; }
-  .tarjeta-saldo { font-size: 22px; font-weight: 700; }
-  .tarjeta-cupo-label { font-size: 10px; opacity: 0.7; text-align: right; margin-bottom: 2px; }
-  .tarjeta-cupo { font-size: 13px; font-weight: 600; text-align: right; opacity: 0.9; }
-  .tarjeta-bar-wrap { height: 4px; background: rgba(255,255,255,0.25); border-radius: 3px; margin-top: 12px; overflow: hidden; }
-  .tarjeta-bar { height: 4px; border-radius: 3px; background: rgba(255,255,255,0.85); }
-  .tarjeta-pct { font-size: 10px; opacity: 0.75; margin-top: 5px; }
+/* ── MODAL ── */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--card);border-radius:var(--radius) var(--radius) 0 0;width:100%;max-width:430px;max-height:75vh;overflow-y:auto;padding:20px 16px 40px}
+.modal-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.modal-title{font-size:16px;font-weight:700}
+.modal-close{font-size:24px;color:var(--muted);background:none;border:none;cursor:pointer;line-height:1}
+.modal-total{font-size:13px;color:var(--muted);margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.modal-total span{font-weight:700;font-size:15px;color:var(--text)}
+.detail-row{display:flex;justify-content:space-between;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)}
+.detail-row:last-child{border-bottom:none}
+.detail-desc{font-size:14px;font-weight:500}
+.detail-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.detail-monto{font-size:15px;font-weight:700;white-space:nowrap;margin-left:12px}
+.detail-monto.green{color:var(--green)}
+.detail-monto.red{color:var(--red)}
+.detail-monto.purple{color:var(--purple)}
 
-  /* Chart */
-  .chart-wrap { position: relative; width: 100%; }
-  .chart-wrap.combo  { height: 200px; }
-  .chart-wrap.bar-v  { height: 180px; }
-  .chart-wrap.small  { height: 150px; }
+/* ── ROWS ── */
+.row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border)}
+.row:last-child{border-bottom:none;padding-bottom:0}
+.row:first-child{padding-top:0}
+.row-label{font-size:14px}
+.row-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.row-value{font-size:14px;font-weight:600}
+.row-value.green{color:var(--green)}
+.row-value.red{color:var(--red)}
+.row-value.blue{color:var(--blue)}
+.row-value.purple{color:var(--purple)}
+.row-value.teal{color:var(--teal)}
+.badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500;white-space:nowrap}
+.badge.ok{background:var(--green-bg);color:var(--green)}
+.badge.pend{background:var(--warning-bg);color:var(--warning)}
+.priority{font-size:10px;background:var(--red-bg);color:var(--red);padding:2px 7px;border-radius:20px;font-weight:600;margin-left:6px}
+.bar-wrap{height:5px;background:var(--border);border-radius:3px;margin-top:8px;overflow:hidden}
+.bar{height:5px;border-radius:3px}
+.bar.danger{background:var(--red)}
+.bar.warning{background:#e09b2d}
+.bar.ok{background:var(--green)}
+.bar.purple{background:var(--purple)}
 
-  /* Legend */
-  .legend { display: flex; gap: 16px; margin-bottom: 14px; flex-wrap: wrap; }
-  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
-  .legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+/* ── TARJETAS ── */
+.tc-card{background:linear-gradient(135deg,#1a4fa0,#2d6fd4);border-radius:14px;padding:18px 18px 14px;margin-bottom:10px;color:#fff;position:relative;overflow:hidden}
+.tc-card.jep{background:linear-gradient(135deg,#6b3fa0,#9b5fd4)}
+.tc-card::after{content:'';position:absolute;top:-30px;right:-30px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.08)}
+.tc-nombre{font-size:13px;font-weight:600;opacity:.85;margin-bottom:10px}
+.tc-saldo{font-size:28px;font-weight:700;letter-spacing:-.5px;margin-bottom:2px}
+.tc-sub{font-size:11px;opacity:.75;margin-bottom:12px}
+.tc-bar-wrap{height:4px;background:rgba(255,255,255,.25);border-radius:2px;overflow:hidden}
+.tc-bar{height:4px;border-radius:2px;background:#fff}
+.tc-footer{display:flex;justify-content:space-between;margin-top:10px;font-size:11px;opacity:.8}
 
-  /* Modal */
-  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.35); z-index: 50; display: none; align-items: flex-end; justify-content: center; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: var(--card); border-radius: var(--radius) var(--radius) 0 0; width: 100%; max-width: 430px; max-height: 75vh; overflow-y: auto; padding: 20px 16px 40px; }
-  .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-  .modal-title { font-size: 16px; font-weight: 700; }
-  .modal-close { font-size: 24px; color: var(--muted); background: none; border: none; cursor: pointer; line-height: 1; }
-  .modal-total { font-size: 13px; color: var(--muted); margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
-  .modal-total span { font-weight: 700; font-size: 15px; color: var(--text); }
-  .detail-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); }
-  .detail-row:last-child { border-bottom: none; }
-  .detail-desc { font-size: 14px; font-weight: 500; }
-  .detail-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .detail-monto { font-size: 15px; font-weight: 700; white-space: nowrap; margin-left: 12px; }
-  .detail-monto.green  { color: var(--green); }
-  .detail-monto.red    { color: var(--red); }
-  .detail-monto.teal   { color: var(--teal); }
+/* ── AIRBNB ── */
+.airbnb-stat{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.airbnb-chip{background:var(--teal-bg);border:1px solid #b2deda;border-radius:var(--radius-sm);padding:10px;text-align:center}
+.airbnb-chip-val{font-size:17px;font-weight:700;color:var(--teal)}
+.airbnb-chip-label{font-size:10px;color:var(--muted);margin-top:2px}
 
-  /* Rows */
-  .row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--border); }
-  .row:last-child { border-bottom: none; padding-bottom: 0; }
-  .row:first-child { padding-top: 0; }
-  .row-label { font-size: 14px; }
-  .row-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-  .row-value { font-size: 14px; font-weight: 600; }
-  .row-value.green  { color: var(--green); }
-  .row-value.red    { color: var(--red); }
-  .row-value.blue   { color: var(--blue); }
-  .row-value.teal   { color: var(--teal); }
+/* ── INNER TABS ── */
+.inner-tabs{display:flex;gap:0;margin-bottom:14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);overflow:hidden}
+.inner-tab{flex:1;padding:9px 4px;font-size:12px;font-weight:500;border:none;background:none;color:var(--muted);cursor:pointer;text-align:center}
+.inner-tab.active{background:var(--text);color:#fff;font-weight:600}
 
-  .badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 500; white-space: nowrap; }
-  .badge.ok   { background: var(--green-bg); color: var(--green); }
-  .badge.pend { background: var(--warning-bg); color: var(--warning); }
-  .priority { font-size: 10px; background: var(--red-bg); color: var(--red); padding: 2px 7px; border-radius: 20px; font-weight: 600; margin-left: 6px; }
-  .bar-wrap { height: 5px; background: var(--border); border-radius: 3px; margin-top: 8px; overflow: hidden; }
-  .bar { height: 5px; border-radius: 3px; }
-  .bar.danger  { background: var(--red); }
-  .bar.warning { background: #e09b2d; }
-  .bar.ok      { background: var(--green); }
+/* ── FORM ── */
+.form-group{margin-bottom:14px}
+.form-group label{font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;display:block;margin-bottom:6px}
+.form-group input,.form-group select{width:100%;padding:13px 14px;font-size:15px;border:1.5px solid var(--border);border-radius:var(--radius-sm);background:var(--card);color:var(--text);appearance:none;-webkit-appearance:none;font-family:inherit}
+.form-group select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7a72' fill='none' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.form-group input:focus,.form-group select:focus{outline:none;border-color:var(--text)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tipo-btns{display:flex;gap:8px;margin-bottom:10px}
+.tipo-btn{flex:1;padding:11px 4px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-weight:500;background:var(--card);color:var(--muted);cursor:pointer;text-align:center}
+.tipo-btn.sel-ingreso{border-color:var(--green);background:var(--green-bg);color:var(--green)}
+.tipo-btn.sel-gasto{border-color:var(--red);background:var(--red-bg);color:var(--red)}
+.tipo-btn.sel-deuda{border-color:var(--warning);background:var(--warning-bg);color:var(--warning)}
+.tipo-btn.sel-cobrar{border-color:var(--blue);background:var(--blue-bg);color:var(--blue)}
+.tipo-btn.sel-tarjeta{border-color:var(--purple);background:var(--purple-bg);color:var(--purple)}
+.tipo-btn.sel-airbnb{border-color:var(--teal);background:var(--teal-bg);color:var(--teal)}
+.subtipo-btns{display:flex;gap:8px;margin-bottom:14px}
+.subtipo-btn{flex:1;padding:9px 4px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:12px;font-weight:500;background:var(--card);color:var(--muted);cursor:pointer;text-align:center}
+.subtipo-btn.sel-compra{border-color:var(--purple);background:var(--purple-bg);color:var(--purple)}
+.subtipo-btn.sel-pago{border-color:var(--green);background:var(--green-bg);color:var(--green)}
+.subtipo-btn.sel-deuda{border-color:var(--warning);background:var(--warning-bg);color:var(--warning)}
+.subtipo-btn.sel-nueva{border-color:var(--red);background:var(--red-bg);color:var(--red)}
+.tipo-btn.sel-transferencia{border-color:var(--blue);background:var(--blue-bg);color:var(--blue)}
+.subtipo-btn.sel-gasto{border-color:var(--red);background:var(--red-bg);color:var(--red)}
 
-  /* ── FORM ── */
-  .form-group { margin-bottom: 14px; }
-  .form-group label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; display: block; margin-bottom: 6px; }
-  .form-group input, .form-group select, .form-group textarea {
-    width: 100%; padding: 13px 14px; font-size: 15px;
-    border: 1.5px solid var(--border); border-radius: var(--radius-sm);
-    background: var(--card); color: var(--text);
-    appearance: none; -webkit-appearance: none; font-family: inherit;
-  }
-  .form-group select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7a72' fill='none' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; }
-  .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--text); }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.hidden{display:none}
+.btn-primary{width:100%;padding:15px;font-size:16px;font-weight:700;background:var(--text);color:#fff;border:none;border-radius:var(--radius-sm);cursor:pointer;margin-top:4px}
+.btn-primary:disabled{opacity:.4}
+.btn-sm{padding:6px 14px;font-size:12px;font-weight:600;border:1.5px solid var(--border);border-radius:20px;background:none;cursor:pointer;color:var(--muted)}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%) translateY(-80px);padding:12px 20px;border-radius:30px;font-size:14px;font-weight:500;z-index:100;transition:transform .3s;white-space:nowrap;background:var(--text);color:#fff}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.error{background:var(--red)}
+.toast.success{background:var(--green)}
+.dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-right:10px;margin-top:4px}
+.dot.ingreso{background:var(--green)}.dot.gasto{background:var(--red)}.dot.deuda{background:var(--warning)}.dot.tarjeta{background:var(--purple)}.dot.airbnb{background:var(--teal)}.dot.transferencia{background:var(--blue)}
+/* ── LISTA DEUDAS RESUMEN ── */
+.drow{padding:12px 0;border-bottom:1px solid var(--border)}
+.drow:last-child{border-bottom:none;padding-bottom:0}
+.drow:first-child{padding-top:0}
+.drow-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:3px}
+.drow-left{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.drow-nombre{font-size:14px;font-weight:600}
+.drow-urgente{font-size:10px;background:var(--red-bg);color:var(--red);padding:2px 7px;border-radius:20px;font-weight:700}
+.drow-right{display:flex;flex-direction:column;align-items:flex-end;flex-shrink:0;margin-left:10px}
+.drow-monto{font-size:16px;font-weight:700}
+.drow-tasa{font-size:11px;color:var(--muted)}
+.drow-sub{font-size:11px;color:var(--muted);margin-bottom:6px}
+.drow-bar-wrap{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+.drow-bar{height:5px;border-radius:3px}
+.drow-pct{font-size:11px;color:var(--muted);margin-top:5px}
 
-  .tipo-btns { display: flex; gap: 8px; margin-bottom: 10px; }
-  .tipo-btn { flex: 1; padding: 11px 4px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 13px; font-weight: 500; background: var(--card); color: var(--muted); cursor: pointer; text-align: center; }
-  .tipo-btn.sel-ingreso  { border-color: var(--green);   background: var(--green-bg);   color: var(--green); }
-  .tipo-btn.sel-gasto    { border-color: var(--red);     background: var(--red-bg);     color: var(--red); }
-  .tipo-btn.sel-deuda    { border-color: var(--warning); background: var(--warning-bg); color: var(--warning); }
-  .tipo-btn.sel-cobrar   { border-color: var(--blue);    background: var(--blue-bg);    color: var(--blue); }
-  .tipo-btn.sel-compra   { border-color: var(--purple);  background: var(--purple-bg);  color: var(--purple); }
-  .tipo-btn.sel-pago     { border-color: var(--green);   background: var(--green-bg);   color: var(--green); }
-  .tipo-btn.sel-airbnb-i { border-color: var(--teal);    background: var(--teal-bg);    color: var(--teal); }
-  .tipo-btn.sel-airbnb-g { border-color: var(--red);     background: var(--red-bg);     color: var(--red); }
+.drow-bar.muted-bar{background:var(--muted)}
+.drow-monto.red{color:var(--red)}
 
-  .subtipo-btns { display: flex; gap: 8px; margin-bottom: 14px; }
-  .subtipo-btn { flex: 1; padding: 9px 4px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-weight: 500; background: var(--card); color: var(--muted); cursor: pointer; text-align: center; }
-  .subtipo-btn.sel { border-color: var(--warning); background: var(--warning-bg); color: var(--warning); }
-
-  .hidden { display: none; }
-  .btn-primary { width: 100%; padding: 15px; font-size: 16px; font-weight: 700; background: var(--text); color: #fff; border: none; border-radius: var(--radius-sm); cursor: pointer; margin-top: 4px; }
-  .btn-primary:disabled { opacity: 0.4; }
-  .btn-sm { padding: 6px 14px; font-size: 12px; font-weight: 600; border: 1.5px solid var(--border); border-radius: 20px; background: none; cursor: pointer; color: var(--muted); }
-  .btn-outline { padding: 9px 18px; font-size: 13px; font-weight: 600; border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: none; cursor: pointer; color: var(--text); }
-
-  /* Toast */
-  .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%) translateY(-80px); padding: 12px 20px; border-radius: 30px; font-size: 14px; font-weight: 500; z-index: 100; transition: transform 0.3s; white-space: nowrap; background: var(--text); color: #fff; }
-  .toast.show { transform: translateX(-50%) translateY(0); }
-  .toast.error   { background: var(--red); }
-  .toast.success { background: var(--green); }
-
-  .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-right: 10px; margin-top: 4px; }
-  .dot.ingreso  { background: var(--green); }
-  .dot.gasto    { background: var(--red); }
-  .dot.deuda    { background: var(--warning); }
-  .dot.cobrar   { background: var(--blue); }
-  .dot.airbnb   { background: var(--teal); }
-  .dot.tarjeta  { background: var(--purple); }
-
-  .cobrar-item { display: flex; justify-content: space-between; align-items: flex-start; padding: 11px 0; border-bottom: 1px solid var(--border); gap: 10px; }
-  .cobrar-item:last-child { border-bottom: none; padding-bottom: 0; }
-  .cobrar-item.cobrado { opacity: 0.4; }
-  .empty-state { text-align: center; padding: 28px 0; color: var(--muted); font-size: 14px; }
-  .mes-label { font-size: 16px; font-weight: 700; text-align: center; margin-bottom: 14px; }
-
-  /* Airbnb section header */
-  .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
-  .section-header h2 { font-size: 18px; font-weight: 700; }
-  .airbnb-badge { font-size: 11px; background: var(--teal-bg); color: var(--teal); padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-  .tarjeta-badge { font-size: 11px; background: var(--purple-bg); color: var(--purple); padding: 3px 10px; border-radius: 20px; font-weight: 600; }
-
-  /* Net balance card */
-  .net-card { border-radius: var(--radius); padding: 16px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-  .net-card.positive { background: var(--green-bg); border: 1px solid #b8ddc0; }
-  .net-card.negative { background: var(--red-bg);   border: 1px solid #f0b8b8; }
-  .net-label { font-size: 13px; font-weight: 600; color: var(--muted); }
-  .net-value { font-size: 26px; font-weight: 700; }
-  .net-value.pos { color: var(--green); }
-  .net-value.neg { color: var(--red); }
-
-  /* Airbnb stats grid */
-  .stats-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-  .stat-card { background: var(--card); border-radius: var(--radius-sm); border: 1px solid var(--border); padding: 12px 10px; text-align: center; }
-  .stat-label { font-size: 10px; color: var(--muted); margin-bottom: 4px; }
-  .stat-value { font-size: 16px; font-weight: 700; }
-
-  /* Tarjeta historial tabs */
-  .inner-tabs { display: flex; gap: 8px; margin-bottom: 14px; }
-  .inner-tab { flex: 1; padding: 9px 4px; border: 1.5px solid var(--border); border-radius: var(--radius-sm); font-size: 12px; font-weight: 500; background: var(--card); color: var(--muted); cursor: pointer; text-align: center; }
-  .inner-tab.active { background: var(--text); color: #fff; border-color: var(--text); }
+.cobrar-item{display:flex;justify-content:space-between;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--border);gap:10px}
+.cobrar-item:last-child{border-bottom:none;padding-bottom:0}
+.cobrar-item.cobrado{opacity:.4}
+.empty-state{text-align:center;padding:28px 0;color:var(--muted);font-size:14px}
+.mes-label{font-size:16px;font-weight:700;text-align:center;margin-bottom:14px}
+.config-banner{background:var(--warning-bg);border:1px solid #f3c97a;border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:14px;font-size:12px;color:var(--warning);line-height:1.5}
+.config-banner b{display:block;margin-bottom:4px;font-size:13px}
 </style>
 </head>
 <body>
 <div class="app">
 
-  <div class="header">
-    <div class="header-top">
-      <div><h1>Finanzas Byron</h1><p>Cuenca · USD</p></div>
-      <span class="corte-badge" id="badgeMes">Junio 2026</span>
+<div class="header">
+  <div class="header-top">
+    <div><h1>Finanzas Byron</h1><p>Cuenca · USD</p></div>
+    <span class="corte-badge">Junio 2026</span>
+  </div>
+</div>
+
+<!-- ══════════════ RESUMEN ══════════════ -->
+<div id="tab-resumen" class="section active">
+  <div class="mes-label" id="labelMes">Junio 2026 — datos reales</div>
+  <div class="summary-grid">
+    <div class="summary-card ingreso" onclick="abrirDetalle('ingreso')">
+      <div class="summary-arrow">›</div>
+      <div class="summary-label">Ingresos</div>
+      <div class="summary-value green" id="totalIngCard">$0</div>
+      <div class="summary-tap">Ver detalle</div>
+    </div>
+    <div class="summary-card gasto" onclick="abrirDetalle('gasto')">
+      <div class="summary-arrow">›</div>
+      <div class="summary-label">Gastos + Deudas</div>
+      <div class="summary-value red" id="totalGasCard">$0</div>
+      <div class="summary-tap">Ver detalle</div>
     </div>
   </div>
-
-  <!-- ══════════════════════════════════
-       RESUMEN
-  ══════════════════════════════════ -->
-  <div id="tab-resumen" class="section active">
-    <div class="mes-label" id="labelMesResumen">Junio 2026</div>
-
-    <div class="summary-grid">
-      <div class="summary-card ingreso" onclick="abrirDetalle('ingreso')">
-        <div class="summary-arrow">›</div>
-        <div class="summary-label">Ingresos</div>
-        <div class="summary-value green" id="totalIngCard">$0</div>
-        <div class="summary-tap">Ver detalle</div>
-      </div>
-      <div class="summary-card gasto" onclick="abrirDetalle('gasto')">
-        <div class="summary-arrow">›</div>
-        <div class="summary-label">Gastos</div>
-        <div class="summary-value red" id="totalGasCard">$0</div>
-        <div class="summary-tap">Ver detalle</div>
-      </div>
+  <div class="balance-card">
+    <div><div class="balance-label">Balance del mes</div><div class="balance-sub">Ingresos − gastos reales</div></div>
+    <div class="balance-value" id="balanceCard">$0</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Saldos disponibles · hoy</div>
+    <div class="saldos-grid">
+      <div class="saldo-chip"><div class="saldo-chip-label">Pichincha Cte</div><div class="saldo-chip-val green">$6.14</div></div>
+      <div class="saldo-chip"><div class="saldo-chip-label">Pichincha CA2 (Airbnb)</div><div class="saldo-chip-val green">$188.36</div></div>
+      <div class="saldo-chip"><div class="saldo-chip-label">Jardín Azuayo</div><div class="saldo-chip-val green">$18.38</div></div>
+      <div class="saldo-chip"><div class="saldo-chip-label">JEP · Efectivo</div><div class="saldo-chip-val muted">$0.00</div></div>
     </div>
-
-    <div class="balance-card">
-      <div>
-        <div class="balance-label">Balance del mes</div>
-        <div class="balance-sub">Ingresos − gastos + pagos tarjeta</div>
-      </div>
-      <div class="balance-value" id="balanceCard">$0</div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Ingresos vs Gastos</div>
-      <div class="legend">
-        <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Ingresos</div>
-        <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Gastos</div>
-      </div>
-      <div class="chart-wrap combo"><canvas id="chartCombo"></canvas></div>
-    </div>
-
-    <!-- Deudas visuales en Resumen -->
-    <div style="margin-bottom:12px">
-      <div style="font-size:12px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px">Estrategia Avalanche</div>
-
-      <!-- Visa Pichincha -->
-      <div class="tarjeta-card pichincha" style="margin-bottom:10px;cursor:pointer" onclick="showTab('tarjetas')">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div>
-            <div class="tarjeta-nombre">Visa Pichincha <span style="font-size:10px;background:rgba(255,80,80,0.35);padding:2px 8px;border-radius:20px;font-weight:700">URGENTE</span></div>
-            <div class="tarjeta-numero">4454···6210 · día 30 · $105.95/mes</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:20px;font-weight:700" id="res-saldo-pichincha">$1,361</div>
-            <div style="font-size:10px;opacity:0.7">15.60%</div>
-          </div>
-        </div>
-        <div class="tarjeta-bar-wrap">
-          <div class="tarjeta-bar" id="res-bar-pichincha" style="width:97%"></div>
-        </div>
-        <div class="tarjeta-pct" id="res-pct-pichincha">97% utilizado</div>
-      </div>
-
-      <!-- Visa JEP -->
-      <div class="tarjeta-card jep" style="margin-bottom:10px;cursor:pointer" onclick="showTab('tarjetas')">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div>
-            <div class="tarjeta-nombre">Visa JEP</div>
-            <div class="tarjeta-numero">4770···8442 · día 4 · $239.07/mes</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:20px;font-weight:700" id="res-saldo-jep">$2,926</div>
-            <div style="font-size:10px;opacity:0.7">15.60%</div>
-          </div>
-        </div>
-        <div class="tarjeta-bar-wrap">
-          <div class="tarjeta-bar" id="res-bar-jep" style="width:75%"></div>
-        </div>
-        <div class="tarjeta-pct" id="res-pct-jep">75% utilizado</div>
-      </div>
-
-      <!-- Préstamo JA -->
-      <div style="background:linear-gradient(135deg,#3a3a38 0%,#5a5a56 100%);border-radius:var(--radius);padding:16px;cursor:pointer" onclick="showTab('tarjetas')">
-        <div style="display:flex;justify-content:space-between;align-items:flex-start">
-          <div>
-            <div style="font-size:13px;font-weight:600;opacity:0.85;color:#fff;margin-bottom:6px">Préstamo Jardín Azuayo</div>
-            <div style="font-size:12px;letter-spacing:1px;opacity:0.65;color:#fff">#1156747 · día 1 · ~$345/mes</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:20px;font-weight:700;color:#fff" id="res-saldo-ja">$6,500</div>
-            <div style="font-size:10px;opacity:0.7;color:#fff">14.22%</div>
-          </div>
-        </div>
-        <div style="height:4px;background:rgba(255,255,255,0.2);border-radius:3px;margin-top:12px;overflow:hidden">
-          <div style="height:4px;border-radius:3px;background:rgba(255,255,255,0.75);width:50%"></div>
-        </div>
-        <div style="font-size:10px;opacity:0.65;color:#fff;margin-top:5px">50% pagado</div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-title">Compromisos pendientes</div>
-      <div id="listaCompromisos">
-        <div class="empty-state" style="padding:16px 0">Cargando...</div>
-      </div>
-    </div>
-
-    <!-- Acceso rápido a Por cobrar -->
-    <div class="card" style="cursor:pointer" onclick="showTab('cobrar')">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <div class="card-title" style="margin-bottom:4px">Por cobrar</div>
-          <div id="resumenCobrarLabel" style="font-size:14px;color:var(--muted)">Sin cobros pendientes</div>
-        </div>
-        <span style="font-size:20px;color:var(--muted)">›</span>
-      </div>
+    <div class="row" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+      <div class="row-label" style="font-weight:700">Total disponible</div>
+      <div class="row-value green">$212.88</div>
     </div>
   </div>
+  <div class="card">
+    <div class="card-title">Ingresos vs gastos — mes</div>
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div>Ingresos</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div>Gastos</div>
+    </div>
+    <div class="chart-wrap h200"><canvas id="chartCombo"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Saldo de deudas</div>
+    <div id="listaDeudas"></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Por cobrar</div>
+    <div id="resumenCobrar"><div class="empty-state">Sin cobros pendientes</div></div>
+  </div>
+</div>
 
-  <!-- ══════════════════════════════════
-       REGISTRAR
-  ══════════════════════════════════ -->
-  <div id="tab-registrar" class="section">
-    <div class="card">
-      <div class="card-title">Nuevo movimiento</div>
+<!-- ══════════════ REGISTRAR ══════════════ -->
+<div id="tab-registrar" class="section">
+  <div class="card">
+    <div id="configBanner" class="config-banner hidden">
+      <b>⚙️ Conectá tu Google Sheet</b>
+      Pegá la URL de tu Apps Script en la variable <code>SCRIPT_URL</code>.
+    </div>
+    <div class="card-title">Nuevo movimiento</div>
+    <div class="form-group">
+      <label>Tipo</label>
+      <div class="tipo-btns">
+        <button class="tipo-btn" id="btn-Ingreso"  onclick="selTipo('Ingreso')">↑ Ingreso</button>
+        <button class="tipo-btn" id="btn-Gasto"    onclick="selTipo('Gasto')">↓ Gasto</button>
+        <button class="tipo-btn" id="btn-Tarjeta"  onclick="selTipo('Tarjeta')">💳 Tarjeta</button>
+      </div>
+      <div class="tipo-btns">
+        <button class="tipo-btn" id="btn-Airbnb"       onclick="selTipo('Airbnb')">🏠 Airbnb</button>
+        <button class="tipo-btn" id="btn-Deuda"         onclick="selTipo('Deuda')">⬟ Deuda</button>
+        <button class="tipo-btn" id="btn-Cobrar"        onclick="selTipo('Cobrar')">◷ Cobrar</button>
+      </div>
+      <div class="tipo-btns">
+        <button class="tipo-btn" id="btn-Transferencia" onclick="selTipo('Transferencia')" style="flex:1">⇄ Transferencia</button>
+      </div>
+    </div>
 
+    <!-- Subtipo Tarjeta -->
+    <div id="subtipoTarjeta" class="hidden">
       <div class="form-group">
-        <label>Tipo</label>
-        <div class="tipo-btns">
-          <button class="tipo-btn" id="btn-Ingreso" onclick="selTipo('Ingreso')">↑ Ingreso</button>
-          <button class="tipo-btn" id="btn-Gasto"   onclick="selTipo('Gasto')">↓ Gasto</button>
-        </div>
-        <div class="tipo-btns">
-          <button class="tipo-btn" id="btn-Tarjeta" onclick="selTipo('Tarjeta')">💳 Tarjeta</button>
-          <button class="tipo-btn" id="btn-Airbnb"  onclick="selTipo('Airbnb')">🏠 Airbnb</button>
-        </div>
-        <div class="tipo-btns">
-          <button class="tipo-btn" id="btn-Deuda"  onclick="selTipo('Deuda')">⬟ Préstamo</button>
-          <button class="tipo-btn" id="btn-Cobrar" onclick="selTipo('Cobrar')">◷ Por cobrar</button>
+        <label>¿Compra o pago?</label>
+        <div class="subtipo-btns">
+          <button class="subtipo-btn" id="sub-tc-Compra" onclick="selSubtipoTC('Compra')">🛒 Compra</button>
+          <button class="subtipo-btn" id="sub-tc-Pago"   onclick="selSubtipoTC('Pago')">✓ Pago</button>
         </div>
       </div>
+      <div class="form-group" id="wrapTarjetaSel">
+        <label>Tarjeta</label>
+        <select id="tarjetaSel">
+          <option value="">Seleccioná...</option>
+          <option value="Visa Pichincha">Visa Pichincha ···6210</option>
+          <option value="Visa JEP">Visa JEP ···8442</option>
+        </select>
+      </div>
+      <div class="form-group hidden" id="wrapCuotas">
+        <label>Cuotas</label>
+        <select id="cuotas">
+          <option value="1">1 cuota (contado)</option>
+          <option value="3">3 cuotas</option>
+          <option value="6">6 cuotas</option>
+          <option value="12">12 cuotas</option>
+          <option value="24">24 cuotas</option>
+        </select>
+      </div>
+    </div>
 
-      <!-- Subtipo Deuda -->
-      <div id="subtipoDeuda" class="hidden">
-        <div class="form-group">
-          <label>¿Qué tipo de movimiento?</label>
-          <div class="subtipo-btns">
-            <button class="subtipo-btn" id="sub-abono" onclick="selSubtipo('abono')">Pago / abono</button>
-            <button class="subtipo-btn" id="sub-nueva" onclick="selSubtipo('nueva')">Nueva deuda</button>
-          </div>
+    <!-- Subtipo Airbnb -->
+    <div id="subtipoAirbnb" class="hidden">
+      <div class="form-group">
+        <label>¿Ingreso o gasto?</label>
+        <div class="subtipo-btns">
+          <button class="subtipo-btn" id="sub-ab-Ingreso" onclick="selSubtipoAB('Ingreso')">↑ Ingreso</button>
+          <button class="subtipo-btn" id="sub-ab-Gasto"   onclick="selSubtipoAB('Gasto')">↓ Gasto</button>
         </div>
       </div>
+    </div>
 
-      <!-- Subtipo Tarjeta -->
-      <div id="subtipoTarjeta" class="hidden">
-        <div class="form-group">
-          <label>¿Compra o pago?</label>
-          <div class="tipo-btns">
-            <button class="tipo-btn" id="btn-Compra" onclick="selSubtipoTarjeta('Compra')">🛒 Compra</button>
-            <button class="tipo-btn" id="btn-Pago"   onclick="selSubtipoTarjeta('Pago')">✓ Pago</button>
-          </div>
-        </div>
-        <div class="form-group">
-          <label>Tarjeta</label>
-          <select id="tarjetaSel">
-            <option value="">Seleccioná...</option>
-            <option value="Visa Pichincha">Visa Pichincha ···6210</option>
-            <option value="Visa JEP">Visa JEP ···8442</option>
-          </select>
+    <!-- Subtipo Deuda -->
+    <div id="subtipoDeuda" class="hidden">
+      <div class="form-group">
+        <label>¿Qué tipo?</label>
+        <div class="subtipo-btns">
+          <button class="subtipo-btn" id="sub-deuda-abono" onclick="selSubtipoDeuda('abono')">Pago / abono</button>
+          <button class="subtipo-btn" id="sub-deuda-nueva" onclick="selSubtipoDeuda('nueva')">Nueva deuda</button>
         </div>
       </div>
+    </div>
 
-      <!-- Subtipo Airbnb -->
-      <div id="subtipoAirbnb" class="hidden">
-        <div class="form-group">
-          <label>¿Ingreso o gasto del Airbnb?</label>
-          <div class="tipo-btns">
-            <button class="tipo-btn" id="btn-AirbnbI" onclick="selSubtipoAirbnb('Ingreso')">↑ Ingreso</button>
-            <button class="tipo-btn" id="btn-AirbnbG" onclick="selSubtipoAirbnb('Gasto')">↓ Gasto</button>
-          </div>
-        </div>
+    <div id="camposComunes">
+      <div class="form-group"><label>Fecha</label><input type="date" id="fecha"></div>
+      <div class="form-group">
+        <label>Categoría</label>
+        <select id="categoria"><option value="">Primero seleccioná el tipo...</option></select>
       </div>
-
-      <!-- Campos comunes -->
-      <div id="camposComunes">
-        <div class="form-group"><label>Fecha</label><input type="date" id="fecha"></div>
-        <div class="form-group">
-          <label>Categoría</label>
-          <select id="categoria"><option value="">Primero seleccioná el tipo...</option></select>
-        </div>
-        <div class="form-group">
-          <label id="labelDescripcion">Descripción</label>
-          <input type="text" id="descripcion" placeholder="Ej: Pago cliente Juan, mercado...">
-        </div>
-        <div class="form-group" id="wrapCuenta">
-          <label>Cuenta</label>
-          <select id="cuenta">
-            <option value="">Seleccioná...</option>
-            <option>Pichincha cte 2203</option>
-            <option>Pichincha CA2</option>
-            <option>Jardín Azuayo</option>
-            <option>Coop. JEP</option>
-            <option>Efectivo</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label id="labelMonto">Monto ($)</label>
-          <input type="number" id="monto" placeholder="0.00" step="0.01" min="0">
-        </div>
-        <!-- Cuotas (solo Compra tarjeta) -->
-        <div class="form-group hidden" id="wrapCuotas">
-          <label>Cuotas</label>
-          <select id="cuotas">
-            <option value="1">Sin cuotas (corriente)</option>
-            <option value="3">3 cuotas</option>
-            <option value="6">6 cuotas</option>
-            <option value="12">12 cuotas</option>
-            <option value="24">24 cuotas</option>
-          </select>
-        </div>
+      <div class="form-group">
+        <label id="labelDescripcion">Descripción</label>
+        <input type="text" id="descripcion" placeholder="Ej: compra en Coral, Netflix...">
       </div>
-
-      <!-- Campos solo Nueva Deuda -->
-      <div id="camposNuevaDeuda" class="hidden">
-        <div class="form-row">
-          <div class="form-group"><label>Tasa anual (%)</label><input type="number" id="tasa" placeholder="15.60" step="0.01" min="0"></div>
-          <div class="form-group"><label>Plazo (meses)</label><input type="number" id="plazo" placeholder="24" step="1" min="1"></div>
-        </div>
-        <div class="form-group"><label>Acreedor</label><input type="text" id="acreedor" placeholder="Ej: Banco Pichincha, JEP..."></div>
+      <div class="form-group" id="wrapCuenta">
+        <label>Cuenta</label>
+        <select id="cuenta">
+          <option value="">Seleccioná...</option>
+          <option>Pichincha Cte 2203</option>
+          <option>Pichincha CA2 (Airbnb)</option>
+          <option>Jardín Azuayo</option>
+          <option>Coop. JEP</option>
+          <option>Efectivo</option>
+        </select>
       </div>
-
-      <!-- Campos Cobrar -->
-      <div id="camposCobrar" class="hidden">
-        <div class="form-group"><label>Quién debe</label><input type="text" id="deudor" placeholder="Ej: Cliente Juan..."></div>
-        <div class="form-group"><label>Fecha esperada de cobro</label><input type="date" id="fechaCobro"></div>
+      <div class="form-group">
+        <label id="labelMonto">Monto ($)</label>
+        <input type="number" id="monto" placeholder="0.00" step="0.01" min="0">
       </div>
+    </div>
 
-      <button class="btn-primary" id="btnGuardar" onclick="guardar()">Guardar en Drive</button>
+    <div id="camposNuevaDeuda" class="hidden">
+      <div class="form-row">
+        <div class="form-group"><label>Tasa anual (%)</label><input type="number" id="tasa" placeholder="15.60" step="0.01"></div>
+        <div class="form-group"><label>Plazo (meses)</label><input type="number" id="plazo" placeholder="24" step="1"></div>
+      </div>
+      <div class="form-group"><label>Acreedor</label><input type="text" id="acreedor" placeholder="Ej: Banco Pichincha..."></div>
+    </div>
+
+    <div id="camposCobrar" class="hidden">
+      <div class="form-group"><label>Quién debe</label><input type="text" id="deudor" placeholder="Ej: Cliente Juan..."></div>
+      <div class="form-group"><label>Fecha esperada de cobro</label><input type="date" id="fechaCobro"></div>
+    </div>
+
+    <!-- Transferencia entre cuentas -->
+    <div id="camposTransferencia" class="hidden">
+      <div class="form-group">
+        <label>Cuenta origen (sale el dinero)</label>
+        <select id="cuentaOrigen">
+          <option value="">Seleccioná...</option>
+          <option>Pichincha Cte 2203</option>
+          <option>Pichincha CA2 (Airbnb)</option>
+          <option>Jardín Azuayo</option>
+          <option>Coop. JEP</option>
+          <option>Efectivo</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Cuenta destino (entra el dinero)</label>
+        <select id="cuentaDestino">
+          <option value="">Seleccioná...</option>
+          <option>Pichincha Cte 2203</option>
+          <option>Pichincha CA2 (Airbnb)</option>
+          <option>Jardín Azuayo</option>
+          <option>Coop. JEP</option>
+          <option>Efectivo</option>
+        </select>
+      </div>
+    </div>
+
+    <button class="btn-primary" id="btnGuardar" onclick="guardar()">Guardar en Drive</button>
+  </div>
+</div>
+
+<!-- ══════════════ TARJETAS ══════════════ -->
+<div id="tab-tarjetas" class="section">
+
+  <!-- Visa Pichincha -->
+  <div class="tc-card">
+    <div class="tc-nombre">Visa Pichincha ···6210</div>
+    <div class="tc-saldo" id="tc-saldo-pic">$1,288.11</div>
+    <div class="tc-sub" id="tc-sub-pic">de $1,400 cupo · $111.89 disponible</div>
+    <div class="tc-bar-wrap"><div class="tc-bar" id="tc-bar-pic" style="width:92%"></div></div>
+    <div class="tc-footer">
+      <span>92% utilizado</span>
+      <span>Vence día 30 · mín $105.95</span>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════
-       AIRBNB
-  ══════════════════════════════════ -->
-  <div id="tab-airbnb" class="section">
-    <div class="section-header">
-      <h2>🏠 Airbnb</h2>
-      <span class="airbnb-badge" id="labelMesAirbnb">Junio 2026</span>
-    </div>
-
-    <!-- Balance neto -->
-    <div class="net-card positive" id="netAirbnbCard">
-      <div>
-        <div class="net-label">Balance neto Airbnb</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:2px">Ingresos − gastos del alquiler</div>
-      </div>
-      <div class="net-value pos" id="netAirbnbVal">$0</div>
-    </div>
-
-    <!-- Stats -->
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-label">Ingresos</div>
-        <div class="stat-value" style="color:var(--teal)" id="airbnbIngTotal">$0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Gastos</div>
-        <div class="stat-value" style="color:var(--red)" id="airbnbGasTotal">$0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Reservas</div>
-        <div class="stat-value" id="airbnbReservas">0</div>
-      </div>
-    </div>
-
-    <!-- Gráfico Airbnb -->
-    <div class="card">
-      <div class="card-title">Ingresos vs Gastos Airbnb</div>
-      <div class="chart-wrap small"><canvas id="chartAirbnb"></canvas></div>
-    </div>
-
-    <!-- Ingresos Airbnb -->
-    <div class="card">
-      <div class="card-title">Ingresos</div>
-      <div id="listaAirbnbIngresos"><div class="empty-state">Sin ingresos registrados</div></div>
-    </div>
-
-    <!-- Gastos Airbnb -->
-    <div class="card">
-      <div class="card-title">Gastos del alquiler</div>
-      <div id="listaAirbnbGastos"><div class="empty-state">Sin gastos registrados</div></div>
+  <!-- Visa JEP -->
+  <div class="tc-card jep">
+    <div class="tc-nombre">Visa JEP ···8442</div>
+    <div class="tc-saldo" id="tc-saldo-jep">$2,569.66</div>
+    <div class="tc-sub" id="tc-sub-jep">de $3,900 cupo · $1,330.34 disponible</div>
+    <div class="tc-bar-wrap"><div class="tc-bar" id="tc-bar-jep" style="width:66%"></div></div>
+    <div class="tc-footer">
+      <span>66% utilizado</span>
+      <span>Vence día 4 · mín $239.07</span>
     </div>
   </div>
 
-  <!-- ══════════════════════════════════
-       TARJETAS
-  ══════════════════════════════════ -->
-  <div id="tab-tarjetas" class="section">
-    <div class="section-header">
-      <h2>💳 Tarjetas</h2>
-      <span class="tarjeta-badge">Estrategia avalanche</span>
-    </div>
-
-    <!-- Tarjeta Pichincha -->
-    <div class="tarjeta-card pichincha">
-      <div class="tarjeta-nombre">Visa Banco Pichincha</div>
-      <div class="tarjeta-numero">···· ···· ···· 6210</div>
-      <div class="tarjeta-row">
-        <div>
-          <div class="tarjeta-saldo-label">Saldo actual</div>
-          <div class="tarjeta-saldo" id="saldoPichincha">$1,361</div>
-        </div>
-        <div>
-          <div class="tarjeta-cupo-label">Cupo disponible</div>
-          <div class="tarjeta-cupo" id="cupoDisponiblePichincha">$39</div>
-        </div>
-      </div>
-      <div class="tarjeta-bar-wrap">
-        <div class="tarjeta-bar" id="barPichincha" style="width:97%"></div>
-      </div>
-      <div class="tarjeta-pct" id="pctPichincha">97% utilizado · cupo $1,400 · vence día 30 · mín $105.95</div>
-    </div>
-
-    <!-- Tarjeta JEP -->
-    <div class="tarjeta-card jep">
-      <div class="tarjeta-nombre">Visa Cooperativa JEP</div>
-      <div class="tarjeta-numero">···· ···· ···· 8442</div>
-      <div class="tarjeta-row">
-        <div>
-          <div class="tarjeta-saldo-label">Saldo actual</div>
-          <div class="tarjeta-saldo" id="saldoJEP">$2,926</div>
-        </div>
-        <div>
-          <div class="tarjeta-cupo-label">Cupo disponible</div>
-          <div class="tarjeta-cupo" id="cupoDisponibleJEP">$974</div>
-        </div>
-      </div>
-      <div class="tarjeta-bar-wrap">
-        <div class="tarjeta-bar" id="barJEP" style="width:75%"></div>
-      </div>
-      <div class="tarjeta-pct" id="pctJEP">75% utilizado · cupo $3,900 · vence día 4 · mín $239.07</div>
-    </div>
-
-    <!-- Proyección -->
-    <div class="card">
-      <div class="card-title">Proyección Visa Pichincha</div>
-      <div class="row"><div class="row-label">Solo el mínimo ($106)</div><div class="row-value red">27 meses</div></div>
-      <div class="row"><div class="row-label">Pagando $200/mes</div><div class="row-value">8 meses</div></div>
-      <div class="row"><div class="row-label">Pagando $300/mes</div><div class="row-value">5 meses</div></div>
-      <div class="row"><div class="row-label">Pagando $400/mes</div><div class="row-value green">4 meses</div></div>
-    </div>
-
-    <!-- Historial tarjetas con tabs -->
-    <div class="card">
-      <div class="card-title">Movimientos</div>
-      <div class="inner-tabs">
-        <button class="inner-tab active" id="itab-todas"     onclick="selInnerTab('todas')">Todas</button>
-        <button class="inner-tab"        id="itab-pichincha" onclick="selInnerTab('pichincha')">Pichincha</button>
-        <button class="inner-tab"        id="itab-jep"       onclick="selInnerTab('jep')">JEP</button>
-      </div>
-      <div id="listaTarjetasMov"><div class="empty-state">Sin movimientos</div></div>
-    </div>
+  <!-- Botones acción -->
+  <div class="tipo-btns" style="margin-bottom:14px">
+    <button class="tipo-btn sel-tarjeta" onclick="showTab('registrar');selTipo('Tarjeta');selSubtipoTC('Compra')">🛒 Nueva compra</button>
+    <button class="tipo-btn sel-pago" style="border-color:var(--green);background:var(--green-bg);color:var(--green)" onclick="showTab('registrar');selTipo('Tarjeta');selSubtipoTC('Pago')">✓ Registrar pago</button>
   </div>
 
-  <!-- ══════════════════════════════════
-       HISTORIAL
-  ══════════════════════════════════ -->
-  <div id="tab-historial" class="section">
-    <div class="card">
-      <div class="card-title">Todos los movimientos</div>
-      <div id="listaMovimientos">
-        <div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Cargando...</div>
+  <!-- Movimientos tarjetas -->
+  <div class="card">
+    <div class="card-title">Movimientos de tarjetas</div>
+    <div class="inner-tabs">
+      <button class="inner-tab active" id="itab-todas"    onclick="selInnerTab('todas')">Todas</button>
+      <button class="inner-tab"        id="itab-pichincha" onclick="selInnerTab('pichincha')">Pichincha</button>
+      <button class="inner-tab"        id="itab-jep"      onclick="selInnerTab('jep')">JEP</button>
+    </div>
+    <div id="listaTarjetasMov"><div class="empty-state">Sin movimientos registrados</div></div>
+  </div>
+
+  <!-- Resumen mes tarjetas -->
+  <div class="card">
+    <div class="card-title">Consumo este mes</div>
+    <div class="row" style="padding-top:0">
+      <div><div class="row-label">Visa Pichincha</div><div class="row-sub">compras del mes</div></div>
+      <div class="row-value purple" id="tc-mes-pic">$0.00</div>
+    </div>
+    <div class="row">
+      <div><div class="row-label">Visa JEP</div><div class="row-sub">compras del mes</div></div>
+      <div class="row-value purple" id="tc-mes-jep">$0.00</div>
+    </div>
+    <div class="row">
+      <div class="row-label" style="font-weight:700">Total compras</div>
+      <div class="row-value purple" style="font-weight:700" id="tc-mes-total">$0.00</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ AIRBNB ══════════════ -->
+<div id="tab-airbnb" class="section">
+
+  <div class="card">
+    <div class="card-title">Airbnb · Junio 2026</div>
+    <div class="airbnb-stat">
+      <div class="airbnb-chip">
+        <div class="airbnb-chip-val" id="ab-ing">$0</div>
+        <div class="airbnb-chip-label">Ingresos</div>
+      </div>
+      <div class="airbnb-chip" style="background:var(--red-bg);border-color:#f7c1c1">
+        <div class="airbnb-chip-val" style="color:var(--red)" id="ab-gas">$0</div>
+        <div class="airbnb-chip-label">Gastos</div>
+      </div>
+      <div class="airbnb-chip" style="background:var(--blue-bg);border-color:#b8d4f5">
+        <div class="airbnb-chip-val" style="color:var(--blue)" id="ab-net">$0</div>
+        <div class="airbnb-chip-label">Neto</div>
+      </div>
+    </div>
+    <div class="chart-wrap h160"><canvas id="chartAirbnb"></canvas></div>
+  </div>
+
+  <div class="tipo-btns" style="margin-bottom:14px">
+    <button class="tipo-btn sel-airbnb" onclick="showTab('registrar');selTipo('Airbnb');selSubtipoAB('Ingreso')">↑ Nuevo ingreso</button>
+    <button class="tipo-btn sel-gasto" style="border-color:var(--red);background:var(--red-bg);color:var(--red)" onclick="showTab('registrar');selTipo('Airbnb');selSubtipoAB('Gasto')">↓ Nuevo gasto</button>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Movimientos Airbnb</div>
+    <div id="listaAirbnbMov"><div class="empty-state">Sin movimientos registrados</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Cuenta Pichincha CA2</div>
+    <div class="row" style="padding-top:0">
+      <div class="row-label">Saldo actual</div>
+      <div class="row-value teal">$188.36</div>
+    </div>
+    <div class="row">
+      <div><div class="row-label">Meta de reserva</div><div class="row-sub">Dejar crecer antes de usar</div></div>
+      <div class="row-value">$500–$700</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ DEUDAS ══════════════ -->
+<div id="tab-deudas" class="section">
+  <div class="card">
+    <div class="card-title">Estrategia avalanche · jun 2026</div>
+    <div class="row" style="align-items:flex-start;padding-top:0">
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:4px;flex-wrap:wrap">
+          <div class="row-label">Visa Pichincha</div><span class="priority">URGENTE</span>
+        </div>
+        <div class="row-sub">4454···6210 · día 30 · $105.95/mes</div>
+        <div class="bar-wrap"><div class="bar danger" id="bar-pic" style="width:92%"></div></div>
+        <div class="row-sub" style="margin-top:4px" id="pct-pic">92% utilizado · $111.89 disponible</div>
+      </div>
+      <div style="margin-left:12px;text-align:right;flex-shrink:0">
+        <div class="row-value red" id="dval-pic">$1,288</div>
+        <div class="row-sub">15.60%</div>
+      </div>
+    </div>
+    <div class="row" style="align-items:flex-start">
+      <div style="flex:1">
+        <div class="row-label">Visa JEP</div>
+        <div class="row-sub">4770···8442 · día 4 · $239.07/mes</div>
+        <div class="bar-wrap"><div class="bar warning" id="bar-jep" style="width:66%"></div></div>
+        <div class="row-sub" style="margin-top:4px" id="pct-jep">66% utilizado · $1,330.34 disponible</div>
+      </div>
+      <div style="margin-left:12px;text-align:right;flex-shrink:0">
+        <div class="row-value" id="dval-jep">$2,570</div>
+        <div class="row-sub">15.60%</div>
+      </div>
+    </div>
+    <div class="row" style="align-items:flex-start">
+      <div style="flex:1">
+        <div class="row-label">Préstamo Jardín Azuayo</div>
+        <div class="row-sub">#1156747 · día 1 · ~$345/mes</div>
+        <div class="bar-wrap"><div class="bar ok" style="width:54%"></div></div>
+        <div class="row-sub" style="margin-top:4px">54% pagado · de $13,000 originales</div>
+      </div>
+      <div style="margin-left:12px;text-align:right;flex-shrink:0">
+        <div class="row-value">$5,963</div>
+        <div class="row-sub">14.22%</div>
       </div>
     </div>
   </div>
-
-  <!-- ══════════════════════════════════
-       POR COBRAR (sin tab, acceso desde resumen)
-  ══════════════════════════════════ -->
-  <div id="tab-cobrar" class="section">
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
-      <button class="btn-outline" onclick="showTab('resumen')" style="padding:6px 12px;font-size:12px">← Volver</button>
-      <div style="font-size:16px;font-weight:700">Por cobrar</div>
+  <div class="card">
+    <div class="card-title">Deudas familiares · sin interés</div>
+    <div class="row" style="padding-top:0">
+      <div><div class="row-label">Papá</div><div class="row-sub">Sin interés · coordinar plan de pago</div></div>
+      <div class="row-value red">$7,500.00</div>
     </div>
-    <div class="card">
-      <div class="card-title">Cobros pendientes</div>
-      <div id="listaCobrar"><div class="empty-state">No tenés cobros registrados</div></div>
+    <div class="row">
+      <div><div class="row-label">Mamá</div><div class="row-sub">Sin interés · monto pequeño</div></div>
+      <div class="row-value red">$371.81</div>
     </div>
   </div>
+  <div class="card">
+    <div class="card-title">Proyección Visa Pichincha</div>
+    <div class="row" style="padding-top:0"><div class="row-label">Solo el mínimo ($106)</div><div class="row-value red">~14 meses</div></div>
+    <div class="row"><div class="row-label">Pagando $200/mes</div><div class="row-value">~7 meses</div></div>
+    <div class="row"><div class="row-label">Pagando $300/mes</div><div class="row-value">~5 meses</div></div>
+    <div class="row"><div class="row-label">Pagando $400/mes</div><div class="row-value green">~4 meses</div></div>
+  </div>
+</div>
+
+<!-- ══════════════ HISTORIAL ══════════════ -->
+<div id="tab-historial" class="section">
+  <div class="card">
+    <div class="card-title">Todos los movimientos</div>
+    <div id="listaMovimientos"><div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Cargando...</div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">Cobros pendientes</div>
+    <div id="listaCobrar"><div class="empty-state">No tenés cobros registrados</div></div>
+  </div>
+</div>
 
 </div><!-- /app -->
 
-<!-- ── MODAL DETALLE ── -->
+<!-- MODAL -->
 <div class="modal-overlay" id="modalOverlay" onclick="cerrarDetalle(event)">
   <div class="modal">
     <div class="modal-header">
@@ -622,670 +602,620 @@
   </div>
 </div>
 
-<!-- ── TAB BAR ── -->
 <nav class="tab-bar">
-  <button class="tab-item active"  id="nav-resumen"   onclick="showTab('resumen')">  <span class="tab-icon">◎</span><span class="tab-label">Resumen</span></button>
-  <button class="tab-item"         id="nav-registrar" onclick="showTab('registrar')"><span class="tab-icon">＋</span><span class="tab-label">Registrar</span></button>
-  <button class="tab-item"         id="nav-airbnb"    onclick="showTab('airbnb')">   <span class="tab-icon">🏠</span><span class="tab-label">Airbnb</span></button>
-  <button class="tab-item"         id="nav-tarjetas"  onclick="showTab('tarjetas')"> <span class="tab-icon">💳</span><span class="tab-label">Tarjetas</span></button>
-  <button class="tab-item"         id="nav-historial" onclick="showTab('historial')"><span class="tab-icon">☰</span><span class="tab-label">Historial</span></button>
+  <button class="tab-item active" id="nav-resumen"   onclick="showTab('resumen')">  <span class="tab-icon">◎</span><span class="tab-label">Resumen</span></button>
+  <button class="tab-item"        id="nav-registrar" onclick="showTab('registrar')"><span class="tab-icon">＋</span><span class="tab-label">Registrar</span></button>
+  <button class="tab-item"        id="nav-tarjetas"  onclick="showTab('tarjetas')"> <span class="tab-icon">💳</span><span class="tab-label">Tarjetas</span></button>
+  <button class="tab-item"        id="nav-airbnb"    onclick="showTab('airbnb')">   <span class="tab-icon">🏠</span><span class="tab-label">Airbnb</span></button>
+  <button class="tab-item"        id="nav-deudas"    onclick="showTab('deudas')">   <span class="tab-icon">◈</span><span class="tab-label">Deudas</span></button>
+  <button class="tab-item"        id="nav-historial" onclick="showTab('historial')"><span class="tab-icon">☰</span><span class="tab-label">Historial</span></button>
 </nav>
 
 <div class="toast" id="toast"></div>
 
 <script>
-// ════════════════════════════════════════
-// CONFIG
-// ════════════════════════════════════════
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwHRkRdqgd548fDSSKQgXYB16ChmjNBGq-crv27h-Ao3hvQAxTe3ZdyyiICI98ojvtu/exec';
+// ════ CONFIG ════
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyjM2YKvDzENaYkRAH3pwWOPJx9FzWJl4__rPx8SEzwWOk-atAxxgNot1dDz-1JVEKY/exec';
 
-const TARJETAS_DATA = {
-  'Visa Pichincha': { cupo: 1400,  saldoBase: 1361.27, vence: 30, min: 105.95 },
-  'Visa JEP':       { cupo: 3900,  saldoBase: 2926.42, vence: 4,  min: 239.07 }
+// ════ DATOS TARJETAS ════
+const TARJETAS = {
+  'Visa Pichincha': { cupo:1400,  saldoBase:1288.11, vence:30, min:105.95 },
+  'Visa JEP':       { cupo:3900,  saldoBase:2569.66, vence:4,  min:239.07 }
 };
-
-// Saldos dinámicos (se ajustan con compras y pagos registrados en sesión)
 let saldosTarjeta = {
-  'Visa Pichincha': TARJETAS_DATA['Visa Pichincha'].saldoBase,
-  'Visa JEP':       TARJETAS_DATA['Visa JEP'].saldoBase
+  'Visa Pichincha': TARJETAS['Visa Pichincha'].saldoBase,
+  'Visa JEP':       TARJETAS['Visa JEP'].saldoBase
 };
 
+// ════ CATEGORÍAS ════
 const CATS = {
-  Ingreso:       ['Smart House EC','Otros ingresos','Apoyo familiar'],
-  Gasto:         ['Alimentación','Transporte','Servicios básicos','Internet / telefonía','Salud','Suscripciones','Restaurantes / delivery','Compras / ropa','Recreación','Comisiones bancarias','Otros gastos'],
-  Tarjeta_Compra:['Alimentación','Ropa / calzado','Electrodomésticos','Farmacia / salud','Restaurante','Entretenimiento','Combustible','Smart House EC','Suscripciones','Otros'],
-  Tarjeta_Pago:  ['Pago mínimo','Abono extra','Pago total'],
-  Airbnb_Ingreso:['Reserva huésped','Depósito Airbnb','Bono Airbnb','Otro ingreso'],
-  Airbnb_Gasto:  ['Limpieza','Suministros (papel, shampoo, etc.)','Comisión Airbnb','Mantenimiento','Electricidad / agua','Internet','Lavandería','Otros gastos Airbnb'],
-  Deuda_abono:   ['Cuota Jardín Azuayo','Préstamo negocio'],
-  Deuda_nueva:   ['Préstamo personal','Préstamo negocio','Otro'],
-  Cobrar:        ['Cliente Smart House EC','Airbnb por acreditar','Préstamo a tercero','Otro']
+  Ingreso:        ['Smart House EC','Apoyo familiar','Otros ingresos'],
+  Gasto:          ['Alimentación','Transporte','Hogar','Salud','Personal','Smart House EC','Otros'],
+  Tarjeta_Compra: ['Alimentación','Transporte','Hogar','Salud','Personal','Smart House EC','Otros'],
+  Tarjeta_Pago:   ['Pago mínimo','Abono extra','Pago total'],
+  Airbnb_Ingreso: ['Reserva huésped','Depósito Airbnb','Bono / extra Airbnb','Otro ingreso Airbnb'],
+  Airbnb_Gasto:   ['Operación (limpieza / suministros)','Comisión Airbnb','Mantenimiento','Otros Airbnb'],
+  Deuda_abono:    ['Visa Pichincha','Visa JEP','Cuota Jardín Azuayo','Deuda Papá','Deuda Mamá'],
+  Deuda_nueva:    ['Tarjeta de crédito','Préstamo personal','Préstamo negocio','Otro'],
+  Cobrar:         ['Cliente Smart House EC','Airbnb por acreditar','Préstamo a tercero','Otro']
 };
 
-const COMPROMISOS_DEF = [
+const COMPROMISOS = [
   { label:'Visa Pichincha', sub:'Día 30 · $105.95', keys:['visa pichincha','pichincha'] },
   { label:'Visa JEP',       sub:'Día 04 · $239.07', keys:['visa jep','jep'] },
   { label:'Jardín Azuayo',  sub:'Día 01 · ~$345',   keys:['jardín azuayo','jardin azuayo','azuayo'] }
 ];
 
-// Estado de form
-let tipoSel = '', subtipoSel = '', subtipoTarjetaSel = '', subtipoAirbnbSel = '';
-let innerTabActiva = 'todas';
+// ════ ESTADO ════
+let tipoSel='', subtipoTCSel='', subtipoABSel='', subtipoDeudaSel='';
+let movimientos=[], movTarjetas=[], movAirbnb=[];
+let cobrosData=JSON.parse(localStorage.getItem('cobros_byron')||'[]');
+let innerTabActiva='todas';
+const font={family:'-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif',size:11};
+let chartCombo, chartAirbnb;
+const HOY=new Date();
 
-// Datos en memoria
-let movimientos    = [];
-let movTarjetas    = [];  // {fecha, tarjeta, subtipo, categoria, descripcion, monto, cuotas}
-let movAirbnb      = [];  // {fecha, subtipo(Ingreso|Gasto), categoria, descripcion, monto}
-let cobrosData     = JSON.parse(localStorage.getItem('cobros_byron') || '[]');
+// ════ INIT ════
+document.getElementById('fecha').value=HOY.toISOString().split('T')[0];
+document.getElementById('fechaCobro').value=HOY.toISOString().split('T')[0];
+if(SCRIPT_URL==='PEGAR_URL_APPS_SCRIPT_AQUI') document.getElementById('configBanner').classList.remove('hidden');
+buildCharts(); renderCobros(); renderCompromisos(); renderListaDeudas(); cargarMovimientos();
 
-// Charts
-const font = { family: '-apple-system, BlinkMacSystemFont, Segoe UI, sans-serif', size: 11 };
-let chartCombo, chartDeudas, chartAirbnb;
+// ════ CARGA SHEET ════
+function fetchJSONP(url,timeout=10000){
+  return new Promise((resolve,reject)=>{
+    const cb='__gscb_'+Date.now(), sc=document.createElement('script');
+    const t=setTimeout(()=>{cleanup();reject(new Error('Timeout'));},timeout);
+    function cleanup(){clearTimeout(t);if(sc.parentNode)document.head.removeChild(sc);delete window[cb];}
+    window[cb]=data=>{cleanup();resolve(data);};
+    sc.src=url+(url.includes('?')?'&':'?')+'callback='+cb;
+    sc.onerror=()=>{cleanup();reject(new Error('Error de conexión'));};
+    document.head.appendChild(sc);
+  });
+}
 
-// Mes actual
-const HOY = new Date();
-const MES_LABEL = HOY.toLocaleString('es-EC', { month:'long', year:'numeric' }).replace(/^\w/, c=>c.toUpperCase());
-
-// ════════════════════════════════════════
-// INIT
-// ════════════════════════════════════════
-document.getElementById('fecha').value      = HOY.toISOString().split('T')[0];
-document.getElementById('fechaCobro').value = HOY.toISOString().split('T')[0];
-document.getElementById('badgeMes').textContent     = MES_LABEL;
-document.getElementById('labelMesResumen').textContent = MES_LABEL + ' — datos reales';
-document.getElementById('labelMesAirbnb').textContent  = MES_LABEL;
-
-buildCharts();
-renderCobros();
-renderCompromisos();
-cargarMovimientos();
-
-// ════════════════════════════════════════
-// CARGA DATOS DESDE SHEET
-// ════════════════════════════════════════
-async function cargarMovimientos() {
-  const lista = document.getElementById('listaMovimientos');
-  lista.innerHTML = '<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Cargando...</div>';
-  try {
-    const data = await fetchJSONP(SCRIPT_URL);
-    if (data.status === 'ok') {
-      movimientos = (data.movimientos || []).filter(m =>
-        !['Compra tarjeta','Pago tarjeta','Airbnb Ingreso','Airbnb Gasto'].includes(m.tipo)
-      );
-      movTarjetas = (data.movimientos || []).filter(m =>
-        ['Compra tarjeta','Pago tarjeta'].includes(m.tipo)
-      );
-      movAirbnb = (data.movimientos || []).filter(m =>
-        ['Airbnb Ingreso','Airbnb Gasto'].includes(m.tipo)
-      );
+async function cargarMovimientos(){
+  const lista=document.getElementById('listaMovimientos');
+  if(SCRIPT_URL==='PEGAR_URL_APPS_SCRIPT_AQUI'){lista.innerHTML='<div class="empty-state">Configura el Apps Script para ver movimientos</div>';actualizarResumen();return;}
+  lista.innerHTML='<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Cargando...</div>';
+  try{
+    const data=await fetchJSONP(SCRIPT_URL);
+    if(data.status==='ok'){
+      const todos=data.movimientos||[];
+      movimientos=todos.filter(m=>!['Compra tarjeta','Pago tarjeta','Airbnb Ingreso','Airbnb Gasto'].includes(m.tipo));
+      movTarjetas=todos.filter(m=>['Compra tarjeta','Pago tarjeta'].includes(m.tipo));
+      movAirbnb=todos.filter(m=>['Airbnb Ingreso','Airbnb Gasto'].includes(m.tipo));
       recalcularSaldosTarjeta();
-      renderHistorial();
-      renderCompromisos();
+      if(data.cobros&&data.cobros.length>0){cobrosData=data.cobros.map((c,i)=>({...c,id:c.id||i}));localStorage.setItem('cobros_byron',JSON.stringify(cobrosData));}
+      renderHistorial(); renderCompromisos(); renderCobros();
+      renderTarjetasMov(); actualizarTarjetas();
+      renderAirbnbMov(); actualizarAirbnb();
       actualizarResumen();
-      renderAirbnb();
-      renderTarjetas();
-    } else {
-      lista.innerHTML = '<div class="empty-state">Sin movimientos registrados</div>';
-      actualizarResumen(); renderAirbnb();
-    }
-  } catch(e) {
-    console.error('cargarMovimientos error:', e);
-    lista.innerHTML = `<div class="empty-state">Error al cargar<br><small style="font-size:11px;color:var(--muted)">${e.message}</small></div>`;
-    actualizarResumen(); renderAirbnb();
-  }
+    }else{lista.innerHTML='<div class="empty-state">Sin movimientos registrados</div>';actualizarResumen();}
+  }catch(e){lista.innerHTML=`<div class="empty-state">Error al cargar<br><small style="font-size:11px">${e.message}</small></div>`;actualizarResumen();}
 }
 
-// JSONP — evita el bloqueo CORS de GitHub Pages → Apps Script
-function fetchJSONP(url, timeout) {
-  timeout = timeout || 10000;
-  return new Promise(function(resolve, reject) {
-    var cbName = '__gscb_' + Date.now();
-    var script  = document.createElement('script');
-    var timer   = setTimeout(function() {
-      cleanup(); reject(new Error('Timeout al cargar datos'));
-    }, timeout);
-    function cleanup() {
-      clearTimeout(timer);
-      if (script.parentNode) document.head.removeChild(script);
-      delete window[cbName];
-    }
-    window[cbName] = function(data) { cleanup(); resolve(data); };
-    script.src = url + (url.indexOf('?') >= 0 ? '&' : '?') + 'callback=' + cbName;
-    script.onerror = function() { cleanup(); reject(new Error('No se pudo conectar con Drive')); };
-    document.head.appendChild(script);
-  });
+// ════ RESUMEN ════
+function calcTotales(){
+  const mes=HOY.getMonth(),anio=HOY.getFullYear();
+  const delMes=movimientos.filter(m=>{const p=(m.fecha||'').split('/');if(p.length<3)return false;return parseInt(p[1])-1===mes&&parseInt(p[2])===anio;});
+  const ing=delMes.filter(m=>m.tipo==='Ingreso');
+  const gas=delMes.filter(m=>m.tipo==='Gasto'||m.tipo==='Abono deuda');
+  return{ing,gas,totalIng:ing.reduce((s,m)=>s+parseFloat(m.monto),0),totalGas:gas.reduce((s,m)=>s+parseFloat(m.monto),0)};
 }
-
-function recalcularSaldosTarjeta() {
-  // Partir del saldo base y aplicar movimientos
-  saldosTarjeta['Visa Pichincha'] = TARJETAS_DATA['Visa Pichincha'].saldoBase;
-  saldosTarjeta['Visa JEP']       = TARJETAS_DATA['Visa JEP'].saldoBase;
-  movTarjetas.forEach(m => {
-    if (!m.tarjeta) return;
-    if (m.tipo === 'Compra tarjeta') saldosTarjeta[m.tarjeta] = (saldosTarjeta[m.tarjeta]||0) + m.monto;
-    if (m.tipo === 'Pago tarjeta')   saldosTarjeta[m.tarjeta] = (saldosTarjeta[m.tarjeta]||0) - m.monto;
-  });
-}
-
-// ════════════════════════════════════════
-// TABS
-// ════════════════════════════════════════
-function showTab(id) {
-  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
-  document.querySelectorAll('.tab-item').forEach(b=>b.classList.remove('active'));
-  document.getElementById('tab-'+id).classList.add('active');
-  const nav = document.getElementById('nav-'+id);
-  if (nav) nav.classList.add('active');
-}
-
-function selInnerTab(t) {
-  innerTabActiva = t;
-  ['todas','pichincha','jep'].forEach(x => {
-    document.getElementById('itab-'+x).classList.toggle('active', x===t);
-  });
-  renderTarjetasMov();
-}
-
-// ════════════════════════════════════════
-// RESUMEN
-// ════════════════════════════════════════
-function calcTotales() {
-  const ing = movimientos.filter(m => m.tipo==='Ingreso');
-  const gas = movimientos.filter(m => m.tipo==='Gasto' || m.tipo==='Abono deuda');
-  return {
-    ing, gas,
-    totalIng: ing.reduce((s,m)=>s+parseFloat(m.monto),0),
-    totalGas: gas.reduce((s,m)=>s+parseFloat(m.monto),0)
-  };
-}
-
-function actualizarResumen() {
-  const { totalIng, totalGas } = calcTotales();
-  document.getElementById('totalIngCard').textContent = '$' + Math.round(totalIng);
-  document.getElementById('totalGasCard').textContent = '$' + Math.round(totalGas);
-  const bal = totalIng - totalGas;
-  const el = document.getElementById('balanceCard');
-  el.textContent = (bal>=0?'+':'') + '$' + Math.abs(bal).toFixed(0);
-  el.style.color = bal >= 0 ? 'var(--green)' : 'var(--red)';
+function actualizarResumen(){
+  const{totalIng,totalGas}=calcTotales();
+  document.getElementById('totalIngCard').textContent='$'+Math.round(totalIng);
+  document.getElementById('totalGasCard').textContent='$'+Math.round(totalGas);
+  const bal=totalIng-totalGas, el=document.getElementById('balanceCard');
+  el.textContent=(bal>=0?'+':'')+'$'+Math.abs(bal).toFixed(0);
+  el.style.color=bal>=0?'var(--green)':'var(--red)';
   buildCharts();
 }
 
-// ════════════════════════════════════════
-// COMPROMISOS
-// ════════════════════════════════════════
-function renderCompromisos() {
-  const lista = document.getElementById('listaCompromisos');
-  const hoy = new Date();
-  const mesActual = hoy.getMonth();
-  const anioActual = hoy.getFullYear();
-
-  const abonosMes = [...movimientos, ...movTarjetas].filter(m => {
-    const tipo = m.tipo || '';
-    if (!['Abono deuda','Pago tarjeta'].includes(tipo)) return false;
-    const partes = (m.fecha||'').split('/');
-    if (partes.length < 3) return false;
-    const mes  = parseInt(partes[1]) - 1;
-    const anio = parseInt(partes[2].length === 2 ? '20'+partes[2] : partes[2]);
-    return mes === mesActual && anio === anioActual;
+// ════ COMPROMISOS ════
+function renderCompromisos(){
+  const lista=document.getElementById('listaCompromisos');if(!lista)return;
+  const mes=HOY.getMonth(),anio=HOY.getFullYear();
+  const abonos=[...movimientos,...movTarjetas].filter(m=>{
+    if(!['Abono deuda','Pago tarjeta'].includes(m.tipo))return false;
+    const p=(m.fecha||'').split('/');if(p.length<3)return false;
+    return parseInt(p[1])-1===mes&&parseInt(p[2])===anio;
   });
-
-  lista.innerHTML = COMPROMISOS_DEF.map((c, idx) => {
-    const pagado = abonosMes.some(m => {
-      const texto = ((m.categoria||'') + ' ' + (m.descripcion||'') + ' ' + (m.tarjeta||'')).toLowerCase();
-      return c.keys.some(k => texto.includes(k));
-    });
-    return `<div class="row" ${idx===COMPROMISOS_DEF.length-1?'style="border-bottom:none;padding-bottom:0"':''}>
+  lista.innerHTML=COMPROMISOS.map((c,idx)=>{
+    const pagado=abonos.some(m=>{const txt=((m.categoria||'')+' '+(m.descripcion||'')+' '+(m.tarjeta||'')).toLowerCase();return c.keys.some(k=>txt.includes(k));});
+    return`<div class="row" ${idx===COMPROMISOS.length-1?'style="border-bottom:none;padding-bottom:0"':''}>
       <div><div class="row-label">${c.label}</div><div class="row-sub">${c.sub}</div></div>
-      <span class="badge ${pagado?'ok':'pend'}">${pagado?'✓ Pagado':'Pendiente'}</span>
-    </div>`;
+      <span class="badge ${pagado?'ok':'pend'}">${pagado?'✓ Pagado':'Pendiente'}</span></div>`;
   }).join('');
 }
 
-// ════════════════════════════════════════
-// AIRBNB
-// ════════════════════════════════════════
-let chartAirbnbInst;
-function renderAirbnb() {
-  const ingresos = movAirbnb.filter(m => m.tipo==='Airbnb Ingreso');
-  const gastos   = movAirbnb.filter(m => m.tipo==='Airbnb Gasto');
-  const totalIng = ingresos.reduce((s,m)=>s+parseFloat(m.monto),0);
-  const totalGas = gastos.reduce((s,m)=>s+parseFloat(m.monto),0);
-  const neto     = totalIng - totalGas;
-
-  document.getElementById('airbnbIngTotal').textContent = '$' + totalIng.toFixed(2);
-  document.getElementById('airbnbGasTotal').textContent = '$' + totalGas.toFixed(2);
-  document.getElementById('airbnbReservas').textContent = ingresos.length;
-  document.getElementById('netAirbnbVal').textContent   = (neto>=0?'+':'') + '$' + Math.abs(neto).toFixed(2);
-  const netCard = document.getElementById('netAirbnbCard');
-  netCard.className = 'net-card ' + (neto>=0?'positive':'negative');
-  document.getElementById('netAirbnbVal').className = 'net-value ' + (neto>=0?'pos':'neg');
-
-  // Lista ingresos
-  document.getElementById('listaAirbnbIngresos').innerHTML = ingresos.length === 0
-    ? '<div class="empty-state">Sin ingresos registrados</div>'
-    : ingresos.map(m=>`<div class="row">
-        <div><div class="row-label">${m.descripcion}</div><div class="row-sub">${m.fecha} · ${m.categoria}</div></div>
-        <div class="row-value teal">+$${parseFloat(m.monto).toFixed(2)}</div>
-      </div>`).join('');
-
-  // Lista gastos
-  document.getElementById('listaAirbnbGastos').innerHTML = gastos.length === 0
-    ? '<div class="empty-state">Sin gastos registrados</div>'
-    : gastos.map(m=>`<div class="row">
-        <div><div class="row-label">${m.descripcion}</div><div class="row-sub">${m.fecha} · ${m.categoria}</div></div>
-        <div class="row-value red">-$${parseFloat(m.monto).toFixed(2)}</div>
-      </div>`).join('');
-
-  // Gráfico
-  if (chartAirbnbInst) chartAirbnbInst.destroy();
-  chartAirbnbInst = new Chart(document.getElementById('chartAirbnb'), {
-    type: 'bar',
-    data: {
-      labels: ['Ingresos','Gastos'],
-      datasets: [{ data:[totalIng,totalGas], backgroundColor:['#1a7a6e','#a32d2d'], borderRadius:8, borderWidth:0, barPercentage:0.5 }]
-    },
-    options: {
-      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>' $'+c.parsed.y.toFixed(2)}} },
-      scales:{
-        x:{ grid:{display:false}, ticks:{font:{...font,size:12,weight:'600'}} },
-        y:{ grid:{color:'#e2e0d8'}, ticks:{font, callback:v=>'$'+v} }
-      },
-      responsive:true, maintainAspectRatio:false
-    }
+// ════ HISTORIAL ════
+function renderHistorial(){
+  const lista=document.getElementById('listaMovimientos');
+  const todos=[...movimientos,...movTarjetas,...movAirbnb].sort((a,b)=>{
+    const pa=(a.fecha||'').split('/'),pb=(b.fecha||'').split('/');
+    if(pa.length<3||pb.length<3)return 0;
+    const da=new Date(pa[2],pa[1]-1,pa[0]),db=new Date(pb[2],pb[1]-1,pb[0]);
+    return db-da;
   });
+  if(!todos.length){lista.innerHTML='<div class="empty-state">Sin movimientos registrados</div>';return;}
+  const colorMap={'Ingreso':'green','Gasto':'red','Abono deuda':'warning','Nueva deuda':'warning','Compra tarjeta':'purple','Pago tarjeta':'green','Airbnb Ingreso':'teal','Airbnb Gasto':'red','Transferencia salida':'blue','Transferencia entrada':'blue'};
+  const signoMap={'Ingreso':'+','Gasto':'-','Abono deuda':'-','Nueva deuda':'+','Compra tarjeta':'+','Pago tarjeta':'-','Airbnb Ingreso':'+','Airbnb Gasto':'-','Transferencia salida':'↑','Transferencia entrada':'↓'};
+  const dotMap={'Ingreso':'ingreso','Gasto':'gasto','Abono deuda':'deuda','Nueva deuda':'deuda','Compra tarjeta':'tarjeta','Pago tarjeta':'tarjeta','Airbnb Ingreso':'airbnb','Airbnb Gasto':'airbnb','Transferencia salida':'transferencia','Transferencia entrada':'transferencia'};
+  lista.innerHTML=todos.slice(0,80).map(m=>{
+    const tipo=m.tipo||'',color=colorMap[tipo]||'muted',s=signoMap[tipo]||'',dot=dotMap[tipo]||'gasto';
+    const extra=m.tarjeta?` · ${m.tarjeta}`:m.cuenta?` · ${m.cuenta}`:'';
+    return`<div class="detail-row">
+      <div style="display:flex;align-items:flex-start"><div class="dot ${dot}"></div>
+      <div><div class="detail-desc">${m.descripcion||m.categoria||tipo}</div>
+      <div class="detail-sub">${m.fecha} · ${m.categoria||tipo}${extra}</div></div></div>
+      <div class="detail-monto ${color}">${s}$${parseFloat(m.monto||0).toFixed(2)}</div></div>`;
+  }).join('');
 }
 
-// ════════════════════════════════════════
-// TARJETAS
-// ════════════════════════════════════════
-function renderTarjetas() {
-  // Actualizar visual de cada tarjeta
-  ['Visa Pichincha','Visa JEP'].forEach(t => {
-    const data  = TARJETAS_DATA[t];
-    const saldo = saldosTarjeta[t];
-    const pct   = Math.min(100, Math.round(saldo / data.cupo * 100));
-    const disp  = Math.max(0, data.cupo - saldo);
-    const key   = t === 'Visa Pichincha' ? 'Pichincha' : 'JEP';
-    document.getElementById('saldo'+key).textContent         = '$' + saldo.toLocaleString('es-EC',{minimumFractionDigits:0,maximumFractionDigits:0});
-    document.getElementById('cupoDisponible'+key).textContent = '$' + disp.toLocaleString('es-EC',{minimumFractionDigits:0,maximumFractionDigits:0});
-    document.getElementById('bar'+key).style.width            = pct + '%';
-    document.getElementById('pct'+key).textContent            = `${pct}% utilizado · cupo $${data.cupo.toLocaleString()} · vence día ${data.vence} · mín $${data.min}`;
-
-    // Actualizar también las tarjetas del Resumen
-    const resKey = t === 'Visa Pichincha' ? 'pichincha' : 'jep';
-    const resSaldo = document.getElementById('res-saldo-'+resKey);
-    const resBar   = document.getElementById('res-bar-'+resKey);
-    const resPct   = document.getElementById('res-pct-'+resKey);
-    if (resSaldo) resSaldo.textContent = '$' + saldo.toLocaleString('es-EC',{minimumFractionDigits:0,maximumFractionDigits:0});
-    if (resBar)   resBar.style.width   = pct + '%';
-    if (resPct)   resPct.textContent   = pct + '% utilizado';
+// ════ TARJETAS ════
+function recalcularSaldosTarjeta(){
+  saldosTarjeta['Visa Pichincha']=TARJETAS['Visa Pichincha'].saldoBase;
+  saldosTarjeta['Visa JEP']=TARJETAS['Visa JEP'].saldoBase;
+  movTarjetas.forEach(m=>{
+    if(!m.tarjeta)return;
+    if(m.tipo==='Compra tarjeta')saldosTarjeta[m.tarjeta]=(saldosTarjeta[m.tarjeta]||0)+parseFloat(m.monto);
+    if(m.tipo==='Pago tarjeta')  saldosTarjeta[m.tarjeta]=(saldosTarjeta[m.tarjeta]||0)-parseFloat(m.monto);
   });
+  actualizarTarjetas();
+}
+
+function actualizarTarjetas(){
+  ['Visa Pichincha','Visa JEP'].forEach(t=>{
+    const id=t==='Visa Pichincha'?'pic':'jep';
+    const tc=TARJETAS[t],saldo=saldosTarjeta[t],pct=Math.min(saldo/tc.cupo*100,100);
+    const disp=tc.cupo-saldo;
+    document.getElementById(`tc-saldo-${id}`).textContent='$'+saldo.toFixed(2);
+    document.getElementById(`tc-sub-${id}`).textContent=`de $${tc.cupo.toLocaleString()} cupo · $${disp.toFixed(2)} disponible`;
+    document.getElementById(`tc-bar-${id}`).style.width=pct.toFixed(0)+'%';
+    if(t==='Visa Pichincha'){
+      document.getElementById('bar-pic').style.width=pct.toFixed(0)+'%';
+      document.getElementById('pct-pic').textContent=pct.toFixed(0)+'% utilizado · $'+disp.toFixed(2)+' disponible';
+      document.getElementById('dval-pic').textContent='$'+Math.round(saldo).toLocaleString();
+    }else{
+      document.getElementById('bar-jep').style.width=pct.toFixed(0)+'%';
+      document.getElementById('pct-jep').textContent=pct.toFixed(0)+'% utilizado · $'+disp.toFixed(2)+' disponible';
+      document.getElementById('dval-jep').textContent='$'+Math.round(saldo).toLocaleString();
+    }
+  });
+  actualizarConsumoMes();
+  renderListaDeudas();
+}
+
+function actualizarConsumoMes(){
+  const mes=HOY.getMonth(),anio=HOY.getFullYear();
+  const delMes=movTarjetas.filter(m=>{
+    if(m.tipo!=='Compra tarjeta')return false;
+    const p=(m.fecha||'').split('/');if(p.length<3)return false;
+    return parseInt(p[1])-1===mes&&parseInt(p[2])===anio;
+  });
+  const pic=delMes.filter(m=>m.tarjeta==='Visa Pichincha').reduce((s,m)=>s+parseFloat(m.monto),0);
+  const jep=delMes.filter(m=>m.tarjeta==='Visa JEP').reduce((s,m)=>s+parseFloat(m.monto),0);
+  document.getElementById('tc-mes-pic').textContent='$'+pic.toFixed(2);
+  document.getElementById('tc-mes-jep').textContent='$'+jep.toFixed(2);
+  document.getElementById('tc-mes-total').textContent='$'+(pic+jep).toFixed(2);
+}
+
+function selInnerTab(t){
+  innerTabActiva=t;
+  ['todas','pichincha','jep'].forEach(x=>document.getElementById('itab-'+x).classList.toggle('active',x===t));
   renderTarjetasMov();
 }
 
-function renderTarjetasMov() {
-  const lista = document.getElementById('listaTarjetasMov');
-  let filtrado = movTarjetas;
-  if (innerTabActiva === 'pichincha') filtrado = movTarjetas.filter(m=>m.tarjeta==='Visa Pichincha');
-  if (innerTabActiva === 'jep')       filtrado = movTarjetas.filter(m=>m.tarjeta==='Visa JEP');
-
-  if (filtrado.length === 0) {
-    lista.innerHTML = '<div class="empty-state">Sin movimientos</div>';
-    return;
-  }
-  lista.innerHTML = filtrado.map(m => {
-    const esCompra = m.tipo === 'Compra tarjeta';
-    const cuotasTxt = m.cuotas && parseInt(m.cuotas)>1 ? ` · ${m.cuotas} cuotas` : '';
-    return `<div class="row">
-      <div style="display:flex;align-items:flex-start">
-        <div class="dot ${esCompra?'tarjeta':'ingreso'}"></div>
-        <div>
-          <div class="row-label">${m.descripcion}</div>
-          <div class="row-sub">${m.fecha} · ${m.tarjeta} · ${m.categoria}${cuotasTxt}</div>
-        </div>
-      </div>
-      <div class="row-value ${esCompra?'red':'green'}">${esCompra?'-':'+'}$${parseFloat(m.monto).toFixed(2)}</div>
-    </div>`;
-  }).join('');
-}
-
-// ════════════════════════════════════════
-// HISTORIAL GENERAL
-// ════════════════════════════════════════
-function renderHistorial() {
-  const lista = document.getElementById('listaMovimientos');
-  const todos = [
-    ...movimientos.map(m=>({...m, _src:'general'})),
-    ...movTarjetas.map(m=>({...m, _src:'tarjeta'})),
-    ...movAirbnb.map(m=>({...m, _src:'airbnb'}))
-  ];
-  if (todos.length === 0) {
-    lista.innerHTML = '<div class="empty-state">Sin movimientos</div>';
-    return;
-  }
-  lista.innerHTML = todos.map(m => {
-    const esI   = ['Ingreso','Airbnb Ingreso','Pago tarjeta'].includes(m.tipo);
-    const clase  = m._src==='airbnb'?'airbnb': m._src==='tarjeta'?'tarjeta': esI?'ingreso':'gasto';
-    const color  = esI ? 'green' : 'red';
-    const signo  = esI ? '+' : '-';
-    const sub2   = m.tarjeta ? ` · ${m.tarjeta}` : '';
-    return `<div class="row">
-      <div style="display:flex;align-items:flex-start">
-        <div class="dot ${clase}"></div>
-        <div>
-          <div class="row-label">${m.descripcion}</div>
-          <div class="row-sub">${m.fecha} · ${m.categoria||m.tipo}${sub2}</div>
-        </div>
-      </div>
-      <div class="row-value ${color}">${signo}$${parseFloat(m.monto).toFixed(2)}</div>
-    </div>`;
-  }).join('');
-}
-
-// ════════════════════════════════════════
-// CHARTS
-// ════════════════════════════════════════
-function buildCharts() {
-  const { totalIng, totalGas } = calcTotales();
-
-  if (chartCombo) chartCombo.destroy();
-  chartCombo = new Chart(document.getElementById('chartCombo'), {
-    type: 'bar',
-    data: {
-      labels: ['Ingresos','Gastos'],
-      datasets: [{ data:[totalIng,totalGas], backgroundColor:['#2d7a4f','#a32d2d'], borderRadius:8, borderWidth:0, barPercentage:0.5 }]
-    },
-    options: {
-      plugins:{ legend:{display:false}, tooltip:{callbacks:{label:c=>' $'+c.parsed.y.toFixed(2)}} },
-      scales:{
-        x:{ grid:{display:false}, ticks:{font:{...font,size:13,weight:'600'}} },
-        y:{ grid:{color:'#e2e0d8'}, ticks:{font,callback:v=>'$'+v} }
-      },
-      responsive:true, maintainAspectRatio:false
-    }
+function renderTarjetasMov(){
+  const lista=document.getElementById('listaTarjetasMov');
+  let movs=innerTabActiva==='todas'?movTarjetas
+    :innerTabActiva==='pichincha'?movTarjetas.filter(m=>m.tarjeta==='Visa Pichincha')
+    :movTarjetas.filter(m=>m.tarjeta==='Visa JEP');
+  movs=[...movs].sort((a,b)=>{
+    const pa=(a.fecha||'').split('/'),pb=(b.fecha||'').split('/');
+    if(pa.length<3||pb.length<3)return 0;
+    return new Date(pb[2],pb[1]-1,pb[0])-new Date(pa[2],pa[1]-1,pa[0]);
   });
-
-  // Deudas (stacked)
-  const cupos   = [1400, 3900, 13000];
+  if(!movs.length){lista.innerHTML='<div class="empty-state">Sin movimientos</div>';return;}
+  lista.innerHTML=movs.slice(0,40).map(m=>{
+    const esCompra=m.tipo==='Compra tarjeta';
+    const cuotaLabel=m.cuotas&&m.cuotas>1?` · ${m.cuotas} cuotas`:'';
+    return`<div class="detail-row">
+      <div><div class="detail-desc">${m.descripcion||m.categoria}</div>
+      <div class="detail-sub">${m.fecha} · ${m.categoria}${m.tarjeta?' · '+m.tarjeta:''}${cuotaLabel}</div></div>
+      <div class="detail-monto ${esCompra?'purple':'green'}">${esCompra?'+':'-'}$${parseFloat(m.monto).toFixed(2)}</div></div>`;
+  }).join('');
 }
 
-// ════════════════════════════════════════
-// MODAL
-// ════════════════════════════════════════
-function abrirDetalle(tipo) {
-  const items = movimientos.filter(m =>
-    tipo==='ingreso' ? m.tipo==='Ingreso' : (m.tipo==='Gasto'||m.tipo==='Abono deuda')
-  );
-  const total = items.reduce((s,m)=>s+parseFloat(m.monto),0);
-  const esIng = tipo==='ingreso';
-  document.getElementById('modalTitulo').textContent = esIng ? '↑ Detalle de ingresos' : '↓ Detalle de gastos';
-  document.getElementById('modalTotal').innerHTML    = `Total: <span>$${total.toFixed(2)}</span>`;
-  document.getElementById('modalItems').innerHTML   = items.map(m=>`
-    <div class="detail-row">
-      <div><div class="detail-desc">${m.descripcion}</div><div class="detail-sub">${m.fecha} · ${m.categoria} · ${m.cuenta||''}</div></div>
-      <div class="detail-monto ${esIng?'green':'red'}">${esIng?'+':'-'}$${parseFloat(m.monto).toFixed(2)}</div>
-    </div>`).join('');
+// ════ AIRBNB ════
+function actualizarAirbnb(){
+  const mes=HOY.getMonth(),anio=HOY.getFullYear();
+  const delMes=movAirbnb.filter(m=>{const p=(m.fecha||'').split('/');if(p.length<3)return false;return parseInt(p[1])-1===mes&&parseInt(p[2])===anio;});
+  const ing=delMes.filter(m=>m.tipo==='Airbnb Ingreso').reduce((s,m)=>s+parseFloat(m.monto),0);
+  const gas=delMes.filter(m=>m.tipo==='Airbnb Gasto').reduce((s,m)=>s+parseFloat(m.monto),0);
+  document.getElementById('ab-ing').textContent='$'+Math.round(ing);
+  document.getElementById('ab-gas').textContent='$'+Math.round(gas);
+  const net=ing-gas,el=document.getElementById('ab-net');
+  el.textContent=(net>=0?'+':'')+'$'+Math.round(Math.abs(net));
+  el.style.color=net>=0?'var(--teal)':'var(--red)';
+  buildChartAirbnb(ing,gas);
+}
+
+function renderAirbnbMov(){
+  const lista=document.getElementById('listaAirbnbMov');
+  const movs=[...movAirbnb].sort((a,b)=>{
+    const pa=(a.fecha||'').split('/'),pb=(b.fecha||'').split('/');
+    if(pa.length<3||pb.length<3)return 0;
+    return new Date(pb[2],pb[1]-1,pb[0])-new Date(pa[2],pa[1]-1,pa[0]);
+  });
+  if(!movs.length){lista.innerHTML='<div class="empty-state">Sin movimientos Airbnb</div>';return;}
+  lista.innerHTML=movs.slice(0,40).map(m=>{
+    const esIng=m.tipo==='Airbnb Ingreso';
+    return`<div class="detail-row">
+      <div><div class="detail-desc">${m.descripcion||m.categoria}</div>
+      <div class="detail-sub">${m.fecha} · ${m.categoria}</div></div>
+      <div class="detail-monto ${esIng?'teal':'red'}">${esIng?'+':'-'}$${parseFloat(m.monto).toFixed(2)}</div></div>`;
+  }).join('');
+}
+
+// ════ CHARTS ════
+function buildCharts(){
+  const{totalIng,totalGas}=calcTotales();
+  if(chartCombo)chartCombo.destroy();
+  chartCombo=new Chart(document.getElementById('chartCombo'),{
+    type:'bar',
+    data:{labels:['Ingresos','Gastos'],datasets:[{data:[totalIng,totalGas],backgroundColor:['#2d7a4f','#a32d2d'],borderRadius:8,borderWidth:0,barPercentage:.5}]},
+    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' $'+c.parsed.y.toFixed(2)}}},
+      scales:{x:{grid:{display:false},ticks:{font:{...font,size:13,weight:'600'}}},y:{grid:{color:'#e2e0d8'},ticks:{font,callback:v=>'$'+v}}},
+      responsive:true,maintainAspectRatio:false}
+  });
+  // chartDeudas se reemplazó por la lista visual renderListaDeudas()
+}
+
+function buildChartAirbnb(ing,gas){
+  if(chartAirbnb)chartAirbnb.destroy();
+  chartAirbnb=new Chart(document.getElementById('chartAirbnb'),{
+    type:'bar',
+    data:{labels:['Ingresos','Gastos','Neto'],datasets:[{
+      data:[ing,gas,ing-gas],
+      backgroundColor:[ing>0?'#1a7a6e':'#ccc',gas>0?'#a32d2d':'#ccc',(ing-gas)>=0?'#185fa5':'#a32d2d'],
+      borderRadius:8,borderWidth:0,barPercentage:.5
+    }]},
+    options:{plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>' $'+c.parsed.y.toFixed(2)}}},
+      scales:{x:{grid:{display:false},ticks:{font:{...font,size:12,weight:'600'}}},y:{grid:{color:'#e2e0d8'},ticks:{font,callback:v=>'$'+v}}},
+      responsive:true,maintainAspectRatio:false}
+  });
+}
+
+// ════ LISTA DEUDAS RESUMEN ════
+function renderListaDeudas(){
+  // Deudas dinámicas (tarjetas se actualizan con pagos/compras)
+  const spic = saldosTarjeta['Visa Pichincha'];
+  const sjep  = saldosTarjeta['Visa JEP'];
+
+  const deudas=[
+    {
+      nombre:'Visa Pichincha', urgente:true,
+      sub:'4454···6210 · día 30 · $105.95/mes',
+      saldo:spic, ref:1400, tasa:'15.60%', barClass:'danger',
+      mode:'uso',  // barra = % utilizado del cupo
+    },
+    {
+      nombre:'Visa JEP', urgente:false,
+      sub:'4770···8442 · día 4 · $239.07/mes',
+      saldo:sjep, ref:3900, tasa:'15.60%', barClass:'warning',
+      mode:'uso',
+    },
+    {
+      nombre:'Préstamo Jardín Azuayo', urgente:false,
+      sub:'#1156747 · día 1 · ~$345/mes',
+      saldo:5963.47, ref:13000, tasa:'14.22%', barClass:'ok',
+      mode:'pagado', // barra = % pagado del original
+    },
+    {
+      nombre:'Deuda a Papá', urgente:false,
+      sub:'Sin interés · coordinar plan de pago',
+      saldo:7500.00, ref:7500, tasa:'0%', barClass:'muted-bar',
+      mode:'uso',
+    },
+    {
+      nombre:'Deuda a Mamá', urgente:false,
+      sub:'Sin interés · monto pequeño, liquidar pronto',
+      saldo:371.81, ref:371.81, tasa:'0%', barClass:'muted-bar',
+      mode:'uso',
+    },
+  ];
+
+  const totalDeuda = deudas.reduce((s,d)=>s+d.saldo,0);
+
+  document.getElementById('listaDeudas').innerHTML =
+    deudas.map((d,idx)=>{
+      const isLast = idx === deudas.length-1;
+      let pct, barWidth, label;
+      if(d.mode==='pagado'){
+        pct = Math.min(Math.round((1-d.saldo/d.ref)*100),100);
+        barWidth = pct;
+        label = pct+'% pagado';
+      } else {
+        pct = d.ref>0 ? Math.min(Math.round(d.saldo/d.ref*100),100) : 100;
+        barWidth = pct;
+        label = d.ref===d.saldo&&d.tasa==='0%' ? 'Sin interés' : pct+'% utilizado';
+      }
+      return`<div class="drow" ${isLast?'style="border-bottom:none;padding-bottom:0"':''}>
+        <div class="drow-header">
+          <div class="drow-left">
+            <span class="drow-nombre">${d.nombre}</span>
+            ${d.urgente?'<span class="drow-urgente">URGENTE</span>':''}
+          </div>
+          <div class="drow-right">
+            <span class="drow-monto ${d.barClass==='ok'?'':'red'}">$${d.saldo.toLocaleString('es',{minimumFractionDigits:0,maximumFractionDigits:0})}</span>
+            <span class="drow-tasa">${d.tasa}</span>
+          </div>
+        </div>
+        <div class="drow-sub">${d.sub}</div>
+        <div class="drow-bar-wrap"><div class="drow-bar ${d.barClass}" style="width:${barWidth}%"></div></div>
+        <div class="drow-pct">${label}</div>
+      </div>`;
+    }).join('')
+    + `<div class="drow" style="border-top:1.5px solid var(--border);border-bottom:none;padding-bottom:0;margin-top:4px">
+        <div class="drow-header" style="margin-bottom:0">
+          <span style="font-size:13px;font-weight:700">Total deuda</span>
+          <span style="font-size:16px;font-weight:700;color:var(--red)">$${totalDeuda.toLocaleString('es',{minimumFractionDigits:2,maximumFractionDigits:2})}</span>
+        </div>
+      </div>`;
+}
+
+// ════ MODAL ════
+function abrirDetalle(tipo){
+  const esIng=tipo==='ingreso';
+  const items=movimientos.filter(m=>esIng?m.tipo==='Ingreso':(m.tipo==='Gasto'||m.tipo==='Abono deuda'));
+  const total=items.reduce((s,m)=>s+parseFloat(m.monto),0);
+  document.getElementById('modalTitulo').textContent=esIng?'Ingresos del mes':'Gastos del mes';
+  document.getElementById('modalTotal').innerHTML=`Total: <span>$${total.toFixed(2)}</span>`;
+  document.getElementById('modalItems').innerHTML=items.length
+    ?items.map(m=>`<div class="detail-row"><div><div class="detail-desc">${m.descripcion||m.categoria}</div><div class="detail-sub">${m.fecha} · ${m.categoria}</div></div><div class="detail-monto ${esIng?'green':'red'}">${esIng?'+':'-'}$${parseFloat(m.monto).toFixed(2)}</div></div>`).join('')
+    :'<div class="empty-state">Sin registros este mes</div>';
   document.getElementById('modalOverlay').classList.add('open');
 }
-function cerrarDetalle(e) {
-  if (!e || e.target===document.getElementById('modalOverlay'))
-    document.getElementById('modalOverlay').classList.remove('open');
+function cerrarDetalle(e){if(!e||e.target===document.getElementById('modalOverlay'))document.getElementById('modalOverlay').classList.remove('open');}
+
+// ════ COBROS ════
+function renderCobros(){
+  const pendientes=cobrosData.filter(c=>!c.cobrado);
+  document.getElementById('resumenCobrar').innerHTML=pendientes.length===0
+    ?'<div class="empty-state">Sin cobros pendientes</div>'
+    :pendientes.map(c=>`<div class="row"><div><div class="row-label">${c.descripcion}</div><div class="row-sub">${c.deudor} · esperado ${c.fechaCobro||'—'}</div></div><div class="row-value blue">+$${parseFloat(c.monto).toFixed(2)}</div></div>`).join('')
+      +`<div class="row"><div class="row-label" style="font-weight:700">Total</div><div class="row-value blue" style="font-weight:700">$${pendientes.reduce((s,c)=>s+parseFloat(c.monto),0).toFixed(2)}</div></div>`;
+  document.getElementById('listaCobrar').innerHTML=cobrosData.length===0
+    ?'<div class="empty-state">No tenés cobros registrados</div>'
+    :cobrosData.map(c=>`<div class="cobrar-item ${c.cobrado?'cobrado':''}">
+        <div style="flex:1"><div class="row-label">${c.descripcion}</div><div class="row-sub">${c.deudor} · ${c.fecha}${c.fechaCobro?' · cobrar: '+c.fechaCobro:''}</div><div class="row-sub" style="color:var(--blue)">${c.categoria}</div></div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
+          <div class="row-value blue">$${parseFloat(c.monto).toFixed(2)}</div>
+          ${!c.cobrado?`<button class="btn-sm" onclick="marcarCobrado(${c.id})">Marcar cobrado</button>`:'<span style="font-size:11px;color:var(--green)">✓ Cobrado</span>'}
+        </div></div>`).join('');
+}
+function marcarCobrado(id){
+  const item=cobrosData.find(c=>c.id===id);if(!item)return;
+  item.cobrado=true;localStorage.setItem('cobros_byron',JSON.stringify(cobrosData));renderCobros();
+  const d=String(HOY.getDate()).padStart(2,'0'),m=String(HOY.getMonth()+1).padStart(2,'0');
+  enviarDrive({fecha:`${d}/${m}/${HOY.getFullYear()}`,tipo:'Ingreso',categoria:item.categoria,descripcion:item.descripcion+' — COBRADO',cuenta:'Pichincha Cte 2203',monto:item.monto});
+  showToast('✓ Marcado como cobrado','success');
 }
 
-// ════════════════════════════════════════
-// FORM — selección de tipo
-// ════════════════════════════════════════
-function selTipo(t) {
-  tipoSel=t; subtipoSel=''; subtipoTarjetaSel=''; subtipoAirbnbSel='';
+// ════ TABS ════
+function showTab(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.tab-item').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');
+  document.getElementById('nav-'+id).classList.add('active');
+}
 
-  const todos = ['Ingreso','Gasto','Tarjeta','Airbnb','Deuda','Cobrar'];
-  todos.forEach(x => document.getElementById('btn-'+x).className = 'tipo-btn' + (x===t?' sel-'+x.toLowerCase():''));
-
-  // Mostrar/ocultar secciones específicas
-  document.getElementById('subtipoDeuda').classList.toggle('hidden',   t!=='Deuda');
-  document.getElementById('subtipoTarjeta').classList.toggle('hidden', t!=='Tarjeta');
-  document.getElementById('subtipoAirbnb').classList.toggle('hidden',  t!=='Airbnb');
-  document.getElementById('camposNuevaDeuda').classList.add('hidden');
-  document.getElementById('camposCobrar').classList.toggle('hidden',   t!=='Cobrar');
-  document.getElementById('wrapCuenta').classList.toggle('hidden',     t==='Cobrar'||t==='Tarjeta'||t==='Airbnb');
+// ════ FORM ════
+function selTipo(t){
+  tipoSel=t; subtipoTCSel=''; subtipoABSel=''; subtipoDeudaSel='';
+  ['Ingreso','Gasto','Tarjeta','Airbnb','Deuda','Cobrar','Transferencia'].forEach(x=>{
+    const el=document.getElementById('btn-'+x);if(el)el.className='tipo-btn'+(x===t?' sel-'+x.toLowerCase():'');
+  });
+  // ocultar todo
+  ['subtipoTarjeta','subtipoAirbnb','subtipoDeuda','camposNuevaDeuda','camposCobrar','camposTransferencia'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  document.getElementById('wrapCuenta').classList.remove('hidden');
+  document.getElementById('wrapTarjetaSel').classList.remove('hidden');
   document.getElementById('wrapCuotas').classList.add('hidden');
+  document.getElementById('camposComunes').classList.remove('hidden');
 
-  // Reset subtipo btns
-  ['abono','nueva'].forEach(x=>document.getElementById('sub-'+x).className='subtipo-btn');
-
-  document.getElementById('labelDescripcion').textContent = t==='Cobrar'?'Concepto / trabajo':'Descripción';
-  document.getElementById('labelMonto').textContent       = t==='Cobrar'?'Monto a cobrar ($)':'Monto ($)';
-
-  const sel = document.getElementById('categoria');
-  sel.innerHTML = '<option value="">Seleccioná...</option>';
-
-  if (t==='Ingreso') { CATS.Ingreso.forEach(c=>sel.add(new Option(c,c))); }
-  if (t==='Gasto')   { CATS.Gasto.forEach(c=>sel.add(new Option(c,c))); }
-  if (t==='Cobrar')  { CATS.Cobrar.forEach(c=>sel.add(new Option(c,c))); }
-  if (t==='Tarjeta'||t==='Airbnb'||t==='Deuda') {
-    sel.innerHTML = '<option value="">Primero completá la selección arriba...</option>';
+  if(t==='Tarjeta'){document.getElementById('subtipoTarjeta').classList.remove('hidden');document.getElementById('wrapCuenta').classList.add('hidden');}
+  if(t==='Airbnb'){document.getElementById('subtipoAirbnb').classList.remove('hidden');document.getElementById('wrapCuenta').classList.add('hidden');}
+  if(t==='Deuda')document.getElementById('subtipoDeuda').classList.remove('hidden');
+  if(t==='Cobrar'){document.getElementById('camposCobrar').classList.remove('hidden');document.getElementById('wrapCuenta').classList.add('hidden');}
+  if(t==='Transferencia'){
+    document.getElementById('camposTransferencia').classList.remove('hidden');
+    document.getElementById('wrapCuenta').classList.add('hidden');
+    // Ocultar categoría (no aplica para transferencia)
+    document.getElementById('categoria').parentElement.classList.add('hidden');
+  } else {
+    document.getElementById('categoria').parentElement.classList.remove('hidden');
   }
+
+  document.getElementById('labelDescripcion').textContent=t==='Cobrar'?'Concepto / trabajo':t==='Transferencia'?'Nota (opcional)':'Descripción';
+  document.getElementById('labelMonto').textContent=t==='Cobrar'?'Monto a cobrar ($)':'Monto ($)';
+  const sel=document.getElementById('categoria');
+  const keyMap={Ingreso:'Ingreso',Gasto:'Gasto',Cobrar:'Cobrar'};
+  const key=keyMap[t];
+  if(key){sel.innerHTML='<option value="">Seleccioná...</option>';CATS[key].forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});}
+  else sel.innerHTML='<option value="">Primero completá el subtipo...</option>';
 }
 
-function selSubtipo(s) {
-  subtipoSel=s;
-  ['abono','nueva'].forEach(x=>document.getElementById('sub-'+x).className='subtipo-btn'+(x===s?' sel':''));
+function selSubtipoTC(s){
+  subtipoTCSel=s;
+  ['Compra','Pago'].forEach(x=>document.getElementById('sub-tc-'+x).className='subtipo-btn'+(x===s?' sel-'+(x==='Compra'?'compra':'pago'):''));
+  document.getElementById('wrapCuotas').classList.toggle('hidden',s!=='Compra');
+  // En Pago, mostrar cuenta de débito
+  document.getElementById('wrapCuenta').classList.toggle('hidden',s==='Compra');
+  const key=s==='Compra'?'Tarjeta_Compra':'Tarjeta_Pago';
+  const sel=document.getElementById('categoria');
+  sel.innerHTML='<option value="">Seleccioná...</option>';
+  CATS[key].forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
+}
+
+function selSubtipoAB(s){
+  subtipoABSel=s;
+  ['Ingreso','Gasto'].forEach(x=>document.getElementById('sub-ab-'+x).className='subtipo-btn'+(x===s?' sel-'+(x==='Ingreso'?'ingreso':'gasto'):''));
+  const key=s==='Ingreso'?'Airbnb_Ingreso':'Airbnb_Gasto';
+  const sel=document.getElementById('categoria');
+  sel.innerHTML='<option value="">Seleccioná...</option>';
+  CATS[key].forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
+  // Airbnb ingreso: cuenta = Pichincha CA2 automático
+  document.getElementById('wrapCuenta').classList.toggle('hidden',s==='Ingreso');
+}
+
+function selSubtipoDeuda(s){
+  subtipoDeudaSel=s;
+  ['abono','nueva'].forEach(x=>document.getElementById('sub-deuda-'+x).className='subtipo-btn'+(x===s?' sel-'+(x==='abono'?'pago':'nueva'):''));
   document.getElementById('camposNuevaDeuda').classList.toggle('hidden',s!=='nueva');
   document.getElementById('wrapCuenta').classList.toggle('hidden',s==='abono');
-  document.getElementById('labelDescripcion').textContent = s==='nueva'?'Nombre / referencia':'Descripción';
-  const sel = document.getElementById('categoria');
-  sel.innerHTML = '<option value="">Seleccioná...</option>';
-  CATS[s==='abono'?'Deuda_abono':'Deuda_nueva'].forEach(c=>sel.add(new Option(c,c)));
+  const key=s==='abono'?'Deuda_abono':'Deuda_nueva';
+  const sel=document.getElementById('categoria');
+  sel.innerHTML='<option value="">Seleccioná...</option>';
+  CATS[key].forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;sel.appendChild(o);});
 }
 
-function selSubtipoTarjeta(s) {
-  subtipoTarjetaSel = s;
-  document.getElementById('btn-Compra').className = 'tipo-btn' + (s==='Compra'?' sel-compra':'');
-  document.getElementById('btn-Pago').className   = 'tipo-btn' + (s==='Pago'  ?' sel-pago':'');
-  document.getElementById('wrapCuotas').classList.toggle('hidden', s!=='Compra');
-  document.getElementById('wrapCuenta').classList.toggle('hidden', s!=='Pago');
-  const sel = document.getElementById('categoria');
-  sel.innerHTML = '<option value="">Seleccioná...</option>';
-  CATS[s==='Compra'?'Tarjeta_Compra':'Tarjeta_Pago'].forEach(c=>sel.add(new Option(c,c)));
-}
-
-function selSubtipoAirbnb(s) {
-  subtipoAirbnbSel = s;
-  document.getElementById('btn-AirbnbI').className = 'tipo-btn' + (s==='Ingreso'?' sel-airbnb-i':'');
-  document.getElementById('btn-AirbnbG').className = 'tipo-btn' + (s==='Gasto'  ?' sel-airbnb-g':'');
-  const sel = document.getElementById('categoria');
-  sel.innerHTML = '<option value="">Seleccioná...</option>';
-  CATS[s==='Ingreso'?'Airbnb_Ingreso':'Airbnb_Gasto'].forEach(c=>sel.add(new Option(c,c)));
-}
-
-// ════════════════════════════════════════
-// GUARDAR
-// ════════════════════════════════════════
-function showToast(msg,tipo='') {
-  const t = document.getElementById('toast');
-  t.textContent=msg; t.className='toast show '+tipo;
+function showToast(msg,tipo=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.className='toast show '+tipo;
   setTimeout(()=>t.className='toast',3000);
 }
 
-async function guardar() {
-  if (!tipoSel) { showToast('Seleccioná el tipo de movimiento','error'); return; }
+// ════ GUARDAR ════
+async function guardar(){
+  if(!tipoSel){showToast('Seleccioná el tipo de movimiento','error');return;}
+  if(tipoSel==='Tarjeta'&&!subtipoTCSel){showToast('Seleccioná Compra o Pago','error');return;}
+  if(tipoSel==='Airbnb'&&!subtipoABSel){showToast('Seleccioná Ingreso o Gasto','error');return;}
+  if(tipoSel==='Deuda'&&!subtipoDeudaSel){showToast('Seleccioná abono o nueva deuda','error');return;}
 
-  const fecha       = document.getElementById('fecha').value;
-  const categoria   = document.getElementById('categoria').value;
-  const descripcion = document.getElementById('descripcion').value.trim();
-  const monto       = parseFloat(document.getElementById('monto').value);
+  const fecha=document.getElementById('fecha').value;
+  const categoria=document.getElementById('categoria').value;
+  const descripcion=document.getElementById('descripcion').value.trim();
+  const monto=parseFloat(document.getElementById('monto').value);
+  const categoriaRequerida = tipoSel !== 'Transferencia';
+  if(!fecha||(categoriaRequerida&&!categoria)||!monto||monto<=0){showToast('Completá todos los campos','error');return;}
 
-  if (!fecha||!categoria||!descripcion||!monto||monto<=0) {
-    showToast('Completá todos los campos','error'); return;
-  }
+  const[y,m,d]=fecha.split('-');
+  const fechaFmt=`${d}/${m}/${y}`;
+  const btn=document.getElementById('btnGuardar');
+  btn.disabled=true;btn.textContent='Guardando...';
 
-  const [y,m,d] = fecha.split('-');
-  const fechaFmt = d+'/'+m+'/'+y;
-
-  // ── Por cobrar ──
-  if (tipoSel === 'Cobrar') {
-    const deudor    = document.getElementById('deudor').value.trim();
-    const fechaCobro= document.getElementById('fechaCobro').value;
-    if (!deudor) { showToast('Ingresá quién debe','error'); return; }
-    const item = {id:Date.now(),fecha:fechaFmt,categoria,descripcion,deudor,monto,fechaCobro,cobrado:false};
-    cobrosData.unshift(item);
-    localStorage.setItem('cobros_byron',JSON.stringify(cobrosData));
-    renderCobros();
-    await enviarDrive({fecha:fechaFmt,tipo:'Por cobrar',categoria,descripcion:descripcion+' (debe: '+deudor+')',cuenta:'—',monto});
-    showToast('✓ Cobro registrado','success');
-    limpiarForm(); return;
-  }
-
-  // ── Tarjeta ──
-  if (tipoSel === 'Tarjeta') {
-    if (!subtipoTarjetaSel) { showToast('Elegí Compra o Pago','error'); return; }
-    const tarjeta = document.getElementById('tarjetaSel').value;
-    if (!tarjeta)           { showToast('Seleccioná la tarjeta','error'); return; }
-    const cuotas  = document.getElementById('cuotas').value || '1';
-    const tipoFinal = subtipoTarjetaSel==='Compra' ? 'Compra tarjeta' : 'Pago tarjeta';
-
-    const mov = {fecha:fechaFmt,tipo:tipoFinal,tarjeta,categoria,descripcion,monto,cuotas};
+  // ── TARJETA ──
+  if(tipoSel==='Tarjeta'){
+    const tarjeta=document.getElementById('tarjetaSel').value;
+    if(!tarjeta){showToast('Seleccioná la tarjeta','error');btn.disabled=false;btn.textContent='Guardar en Drive';return;}
+    const cuotas=parseInt(document.getElementById('cuotas').value)||1;
+    const cuenta=subtipoTCSel==='Pago'?document.getElementById('cuenta').value:'';
+    const tipo=subtipoTCSel==='Compra'?'Compra tarjeta':'Pago tarjeta';
+    const mov={fecha:fechaFmt,tipo,categoria,descripcion,tarjeta,cuotas,monto,cuenta};
+    await enviarDrive({...mov,tarjeta,cuotas});
+    // actualizar saldo local
+    if(subtipoTCSel==='Compra')saldosTarjeta[tarjeta]=(saldosTarjeta[tarjeta]||0)+monto;
+    else saldosTarjeta[tarjeta]=Math.max((saldosTarjeta[tarjeta]||0)-monto,0);
     movTarjetas.unshift(mov);
-
-    // Ajustar saldo en memoria
-    if (subtipoTarjetaSel==='Compra') saldosTarjeta[tarjeta] = (saldosTarjeta[tarjeta]||0) + monto;
-    if (subtipoTarjetaSel==='Pago')   saldosTarjeta[tarjeta] = (saldosTarjeta[tarjeta]||0) - monto;
-
-    await enviarDrive({fecha:fechaFmt,tipo:tipoFinal,categoria,descripcion,cuenta:tarjeta,monto,extra:cuotas});
-    renderTarjetas();
-    buildCharts();
-    renderHistorial();
-    renderCompromisos();
-    showToast('✓ Guardado en tarjeta','success');
-    limpiarForm(); return;
+    actualizarTarjetas();renderTarjetasMov();renderCompromisos();
+    showToast(`✓ ${subtipoTCSel} registrada en ${tarjeta}`,'success');
+    limpiarForm();btn.disabled=false;btn.textContent='Guardar en Drive';return;
   }
 
-  // ── Airbnb ──
-  if (tipoSel === 'Airbnb') {
-    if (!subtipoAirbnbSel) { showToast('Elegí Ingreso o Gasto','error'); return; }
-    const tipoFinal = 'Airbnb ' + subtipoAirbnbSel;
-    const mov = {fecha:fechaFmt,tipo:tipoFinal,categoria,descripcion,monto};
+  // ── AIRBNB ──
+  if(tipoSel==='Airbnb'){
+    const tipo=subtipoABSel==='Ingreso'?'Airbnb Ingreso':'Airbnb Gasto';
+    const cuenta=subtipoABSel==='Ingreso'?'Pichincha CA2 (Airbnb)':document.getElementById('cuenta').value||'Pichincha CA2 (Airbnb)';
+    const mov={fecha:fechaFmt,tipo,categoria,descripcion,cuenta,monto};
+    await enviarDrive(mov);
     movAirbnb.unshift(mov);
+    actualizarAirbnb();renderAirbnbMov();
+    showToast(`✓ ${tipo} registrado`,'success');
+    limpiarForm();btn.disabled=false;btn.textContent='Guardar en Drive';return;
+  }
 
-    // Si es ingreso Airbnb también suma a ingresos generales
-    if (subtipoAirbnbSel==='Ingreso') {
-      movimientos.unshift({fecha:fechaFmt,tipo:'Ingreso',categoria:'Airbnb',descripcion,cuenta:'Pichincha CA2',monto});
+  // ── TRANSFERENCIA ──
+  if(tipoSel==='Transferencia'){
+    const origen  = document.getElementById('cuentaOrigen').value;
+    const destino = document.getElementById('cuentaDestino').value;
+    if(!origen) {showToast('Seleccioná la cuenta origen','error');btn.disabled=false;btn.textContent='Guardar en Drive';return;}
+    if(!destino){showToast('Seleccioná la cuenta destino','error');btn.disabled=false;btn.textContent='Guardar en Drive';return;}
+    if(origen===destino){showToast('Las cuentas deben ser distintas','error');btn.disabled=false;btn.textContent='Guardar en Drive';return;}
+    const nota = document.getElementById('descripcion').value.trim() || `${origen} → ${destino}`;
+    const movSalida  = {fecha:fechaFmt, tipo:'Transferencia salida',  categoria:'Transferencia', descripcion:nota, cuenta:origen,  monto};
+    const movEntrada = {fecha:fechaFmt, tipo:'Transferencia entrada', categoria:'Transferencia', descripcion:nota, cuenta:destino, monto};
+    await enviarDrive(movSalida);
+    await enviarDrive(movEntrada);
+    movimientos.unshift(movSalida, movEntrada);
+    renderHistorial(); actualizarResumen();
+    showToast(`✓ Transferencia $${monto.toFixed(2)} · ${origen} → ${destino}`,'success');
+    limpiarForm();btn.disabled=false;btn.textContent='Guardar en Drive';return;
+  }
+
+  // ── COBRAR ──
+  if(tipoSel==='Cobrar'){
+    const deudor=document.getElementById('deudor').value.trim();
+    const fechaCobro=document.getElementById('fechaCobro').value;
+    if(!deudor){showToast('Ingresá quién debe','error');btn.disabled=false;btn.textContent='Guardar en Drive';return;}
+    const item={id:Date.now(),fecha:fechaFmt,categoria,descripcion,deudor,monto,fechaCobro,cobrado:false};
+    cobrosData.unshift(item);localStorage.setItem('cobros_byron',JSON.stringify(cobrosData));
+    renderCobros();await enviarDrive({fecha:fechaFmt,tipo:'Por cobrar',categoria,descripcion:descripcion+' (debe: '+deudor+')',cuenta:'—',monto});
+    showToast('✓ Cobro registrado','success');
+    limpiarForm();btn.disabled=false;btn.textContent='Guardar en Drive';return;
+  }
+
+  // ── DEUDA ──
+  if(tipoSel==='Deuda'){
+    const cuenta=subtipoDeudaSel==='abono'
+      ?(categoria==='Visa Pichincha'?'Tarjeta Pichincha':categoria==='Visa JEP'?'Tarjeta JEP':'Jardín Azuayo')
+      :document.getElementById('cuenta').value;
+    let descFinal=descripcion;
+    if(subtipoDeudaSel==='nueva'){
+      const tasa=document.getElementById('tasa').value,plazo=document.getElementById('plazo').value,acr=document.getElementById('acreedor').value.trim();
+      descFinal+=(acr?' — '+acr:'')+(tasa?' | '+tasa+'% / '+plazo+'m':'');
     }
-
-    await enviarDrive({fecha:fechaFmt,tipo:tipoFinal,categoria,descripcion,cuenta:'Pichincha CA2',monto});
-    renderAirbnb();
-    actualizarResumen();
-    renderHistorial();
-    showToast('✓ Guardado en Airbnb','success');
-    limpiarForm(); return;
+    const tipo=subtipoDeudaSel==='abono'?'Abono deuda':'Nueva deuda';
+    const mov={fecha:fechaFmt,tipo,categoria,descripcion:descFinal,cuenta,monto};
+    await enviarDrive(mov);movimientos.unshift(mov);
+    renderHistorial();renderCompromisos();actualizarResumen();
+    showToast('✓ Movimiento guardado','success');
+    limpiarForm();btn.disabled=false;btn.textContent='Guardar en Drive';return;
   }
 
-  // ── Ingreso / Gasto / Deuda general ──
-  if (tipoSel==='Deuda' && !subtipoSel) { showToast('Seleccioná abono o nueva deuda','error'); return; }
-  const cuenta = document.getElementById('cuenta').value;
-  if (!cuenta) { showToast('Seleccioná la cuenta','error'); return; }
-
-  let tipoFinal = tipoSel==='Deuda' ? (subtipoSel==='abono'?'Abono deuda':'Nueva deuda') : tipoSel;
-  let descFinal = descripcion;
-  if (subtipoSel==='nueva') {
-    const tasa = document.getElementById('tasa').value;
-    const plazo= document.getElementById('plazo').value;
-    const acr  = document.getElementById('acreedor').value.trim();
-    descFinal += (acr?' — '+acr:'')+(tasa?' | '+tasa+'% / '+plazo+'m':'');
-  }
-
-  const btn = document.getElementById('btnGuardar');
-  btn.disabled=true; btn.textContent='Guardando...';
-
-  await enviarDrive({fecha:fechaFmt,tipo:tipoFinal,categoria,descripcion:descFinal,cuenta,monto});
-
-  movimientos.unshift({fecha:fechaFmt,tipo:tipoFinal,categoria,descripcion:descFinal,cuenta,monto});
-  actualizarResumen();
-  renderHistorial();
-  renderCompromisos();
-
+  // ── INGRESO / GASTO ──
+  const cuenta=document.getElementById('cuenta').value;
+  if(!cuenta){showToast('Seleccioná la cuenta','error');btn.disabled=false;btn.textContent='Guardar en Drive';return;}
+  const mov={fecha:fechaFmt,tipo:tipoSel,categoria,descripcion,cuenta,monto};
+  await enviarDrive(mov);movimientos.unshift(mov);
+  renderHistorial();actualizarResumen();
   showToast('✓ Guardado en Drive','success');
-  limpiarForm();
-  btn.disabled=false; btn.textContent='Guardar en Drive';
+  limpiarForm();btn.disabled=false;btn.textContent='Guardar en Drive';
 }
 
-async function enviarDrive(data) {
-  try {
-    // no-cors: GitHub Pages no puede leer la respuesta pero el POST llega igual
-    await fetch(SCRIPT_URL, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(data)
-    });
-  } catch(e) {
-    console.error('enviarDrive error:', e);
-    showToast('Error al conectar con Drive','error');
-  }
+async function enviarDrive(data){
+  if(SCRIPT_URL==='PEGAR_URL_APPS_SCRIPT_AQUI')return;
+  try{await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(data)});}
+  catch(e){console.error('enviarDrive:',e);showToast('Error al conectar con Drive','error');}
 }
 
-function limpiarForm() {
+function limpiarForm(){
   ['descripcion','monto','tasa','plazo','acreedor','deudor'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('categoria').value='';
   document.getElementById('cuenta').value='';
   document.getElementById('tarjetaSel').value='';
   document.getElementById('cuotas').value='1';
-  tipoSel=''; subtipoSel=''; subtipoTarjetaSel=''; subtipoAirbnbSel='';
-  ['Ingreso','Gasto','Tarjeta','Airbnb','Deuda','Cobrar'].forEach(x=>document.getElementById('btn-'+x).className='tipo-btn');
-  ['abono','nueva'].forEach(x=>document.getElementById('sub-'+x).className='subtipo-btn');
-  ['btn-Compra','btn-Pago','btn-AirbnbI','btn-AirbnbG'].forEach(id=>{ const el=document.getElementById(id); if(el) el.className='tipo-btn'; });
-  document.getElementById('subtipoDeuda').classList.add('hidden');
-  document.getElementById('subtipoTarjeta').classList.add('hidden');
-  document.getElementById('subtipoAirbnb').classList.add('hidden');
-  document.getElementById('camposNuevaDeuda').classList.add('hidden');
-  document.getElementById('camposCobrar').classList.add('hidden');
-  document.getElementById('wrapCuotas').classList.add('hidden');
+  document.getElementById('cuentaOrigen').value='';
+  document.getElementById('cuentaDestino').value='';
+  tipoSel='';subtipoTCSel='';subtipoABSel='';subtipoDeudaSel='';
+  ['Ingreso','Gasto','Tarjeta','Airbnb','Deuda','Cobrar','Transferencia'].forEach(x=>{const el=document.getElementById('btn-'+x);if(el)el.className='tipo-btn';});
+  ['subtipoTarjeta','subtipoAirbnb','subtipoDeuda','camposNuevaDeuda','camposCobrar','camposTransferencia','wrapCuotas'].forEach(id=>document.getElementById(id).classList.add('hidden'));
   document.getElementById('wrapCuenta').classList.remove('hidden');
+  document.getElementById('categoria').parentElement.classList.remove('hidden');
   document.getElementById('categoria').innerHTML='<option value="">Primero seleccioná el tipo...</option>';
-  const btn=document.getElementById('btnGuardar'); btn.disabled=false; btn.textContent='Guardar en Drive';
-}
-
-// ════════════════════════════════════════
-// COBROS
-// ════════════════════════════════════════
-function renderCobros() {
-  const pendientes = cobrosData.filter(c=>!c.cobrado);
-  // Label en resumen
-  const labelEl = document.getElementById('resumenCobrarLabel');
-  if (labelEl) {
-    labelEl.textContent = pendientes.length===0
-      ? 'Sin cobros pendientes'
-      : `${pendientes.length} cobro${pendientes.length>1?'s':''} · $${pendientes.reduce((s,c)=>s+c.monto,0).toFixed(2)} pendiente${pendientes.length>1?'s':''}`;
-    labelEl.style.color = pendientes.length>0 ? 'var(--blue)' : 'var(--muted)';
-  }
-  // Lista completa
-  document.getElementById('listaCobrar').innerHTML = cobrosData.length===0
-    ? '<div class="empty-state">No tenés cobros registrados</div>'
-    : cobrosData.map(c=>`
-      <div class="cobrar-item ${c.cobrado?'cobrado':''}">
-        <div style="flex:1">
-          <div class="row-label">${c.descripcion}</div>
-          <div class="row-sub">${c.deudor} · ${c.fecha}${c.fechaCobro?' · cobrar: '+c.fechaCobro:''}</div>
-          <div class="row-sub" style="color:var(--blue)">${c.categoria}</div>
-        </div>
-        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
-          <div class="row-value blue">$${parseFloat(c.monto).toFixed(2)}</div>
-          ${!c.cobrado
-            ? `<button class="btn-sm" onclick="marcarCobrado(${c.id})">Marcar cobrado</button>`
-            : '<span style="font-size:11px;color:var(--green)">✓ Cobrado</span>'}
-        </div>
-      </div>`).join('');
-}
-
-function marcarCobrado(id) {
-  const item = cobrosData.find(c=>c.id===id);
-  if (!item) return;
-  item.cobrado = true;
-  localStorage.setItem('cobros_byron',JSON.stringify(cobrosData));
-  renderCobros();
-  const hoy=new Date(),d=String(hoy.getDate()).padStart(2,'0'),mo=String(hoy.getMonth()+1).padStart(2,'0'),y=hoy.getFullYear();
-  enviarDrive({fecha:d+'/'+mo+'/'+y,tipo:'Ingreso',categoria:item.categoria,descripcion:item.descripcion+' — COBRADO',cuenta:'Pichincha cte 2203',monto:item.monto});
-  showToast('✓ Marcado como cobrado','success');
+  const btn=document.getElementById('btnGuardar');btn.disabled=false;btn.textContent='Guardar en Drive';
 }
 </script>
 </body>
