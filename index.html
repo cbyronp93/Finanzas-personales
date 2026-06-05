@@ -650,6 +650,7 @@ const COMPROMISOS = [
 let tipoSel='', subtipoTCSel='', subtipoABSel='', subtipoDeudaSel='';
 let movimientos=[], movTarjetas=[], movAirbnb=[];
 let cobrosData=JSON.parse(localStorage.getItem('cobros_byron')||'[]');
+let deudasSheet = {}; // deudas calculadas por el Script, persisten entre llamadas
 let innerTabActiva='todas';
 const font={family:'-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif',size:11};
 let chartCombo, chartAirbnb;
@@ -659,7 +660,7 @@ const HOY=new Date();
 document.getElementById('fecha').value=HOY.toISOString().split('T')[0];
 document.getElementById('fechaCobro').value=HOY.toISOString().split('T')[0];
 if(SCRIPT_URL==='PEGAR_URL_APPS_SCRIPT_AQUI') document.getElementById('configBanner').classList.remove('hidden');
-buildCharts(); renderCobros(); renderCompromisos(); renderListaDeudas(); cargarMovimientos();
+buildCharts(); renderCobros(); renderCompromisos(); renderListaDeudas(deudasSheet); cargarMovimientos();
 
 // ════ CARGA SHEET ════
 function fetchJSONP(url,timeout=10000){
@@ -709,6 +710,7 @@ async function cargarMovimientos(){
 function aplicarSaldos(s){
   const c = s.cuentas || {};
   const d = s.deudas  || {};
+  deudasSheet = d; // guardar globalmente
   const fmt = v => '$' + (parseFloat(v)||0).toFixed(2);
 
   // Chips de cuentas en Resumen
@@ -826,7 +828,7 @@ function actualizarTarjetas(){
     }
   });
   actualizarConsumoMes();
-  renderListaDeudas();
+  renderListaDeudas(deudasSheet); // usar siempre las deudas del Sheet
 }
 
 function actualizarConsumoMes(){
