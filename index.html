@@ -751,10 +751,26 @@ function setTxt(id, val){
   if(el) el.textContent = val;
 }
 
+// ════ HELPER FECHA ════
+// Soporta "DD/MM/YYYY" y el formato largo del Sheet "Thu Jun 04 2026 ..."
+function parseFecha(str){
+  if(!str) return null;
+  if(str.includes('/')){
+    const p=str.split('/');
+    if(p.length<3) return null;
+    return new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));
+  }
+  const d=new Date(str);
+  return isNaN(d)?null:d;
+}
+
 // ════ RESUMEN ════
 function calcTotales(){
   const mes=HOY.getMonth(),anio=HOY.getFullYear();
-  const delMes=movimientos.filter(m=>{const p=(m.fecha||'').split('/');if(p.length<3)return false;return parseInt(p[1])-1===mes&&parseInt(p[2])===anio;});
+  const delMes=movimientos.filter(m=>{
+    const d=parseFecha(m.fecha);
+    return d && d.getMonth()===mes && d.getFullYear()===anio;
+  });
   const ing=delMes.filter(m=>m.tipo==='Ingreso');
   const gas=delMes.filter(m=>m.tipo==='Gasto'||m.tipo==='Abono deuda');
   return{ing,gas,totalIng:ing.reduce((s,m)=>s+parseFloat(m.monto),0),totalGas:gas.reduce((s,m)=>s+parseFloat(m.monto),0)};
@@ -775,8 +791,8 @@ function renderCompromisos(){
   const mes=HOY.getMonth(),anio=HOY.getFullYear();
   const abonos=[...movimientos,...movTarjetas].filter(m=>{
     if(!['Abono deuda','Pago tarjeta'].includes(m.tipo))return false;
-    const p=(m.fecha||'').split('/');if(p.length<3)return false;
-    return parseInt(p[1])-1===mes&&parseInt(p[2])===anio;
+    const d=parseFecha(m.fecha);
+    return d && d.getMonth()===mes && d.getFullYear()===anio;
   });
   lista.innerHTML=COMPROMISOS.map((c,idx)=>{
     const pagado=abonos.some(m=>{const txt=((m.categoria||'')+' '+(m.descripcion||'')+' '+(m.tarjeta||'')).toLowerCase();return c.keys.some(k=>txt.includes(k));});
@@ -790,9 +806,8 @@ function renderCompromisos(){
 function renderHistorial(){
   const lista=document.getElementById('listaMovimientos');
   const todos=[...movimientos,...movTarjetas,...movAirbnb].sort((a,b)=>{
-    const pa=(a.fecha||'').split('/'),pb=(b.fecha||'').split('/');
-    if(pa.length<3||pb.length<3)return 0;
-    const da=new Date(pa[2],pa[1]-1,pa[0]),db=new Date(pb[2],pb[1]-1,pb[0]);
+    const da=parseFecha(a.fecha), db=parseFecha(b.fecha);
+    if(!da||!db) return 0;
     return db-da;
   });
   if(!todos.length){lista.innerHTML='<div class="empty-state">Sin movimientos registrados</div>';return;}
@@ -848,8 +863,8 @@ function actualizarConsumoMes(){
   const mes=HOY.getMonth(),anio=HOY.getFullYear();
   const delMes=movTarjetas.filter(m=>{
     if(m.tipo!=='Compra tarjeta')return false;
-    const p=(m.fecha||'').split('/');if(p.length<3)return false;
-    return parseInt(p[1])-1===mes&&parseInt(p[2])===anio;
+    const d=parseFecha(m.fecha);
+    return d && d.getMonth()===mes && d.getFullYear()===anio;
   });
   const pic=delMes.filter(m=>m.tarjeta==='Visa Pichincha').reduce((s,m)=>s+parseFloat(m.monto),0);
   const jep=delMes.filter(m=>m.tarjeta==='Visa JEP').reduce((s,m)=>s+parseFloat(m.monto),0);
@@ -870,9 +885,9 @@ function renderTarjetasMov(){
     :innerTabActiva==='pichincha'?movTarjetas.filter(m=>m.tarjeta==='Visa Pichincha')
     :movTarjetas.filter(m=>m.tarjeta==='Visa JEP');
   movs=[...movs].sort((a,b)=>{
-    const pa=(a.fecha||'').split('/'),pb=(b.fecha||'').split('/');
-    if(pa.length<3||pb.length<3)return 0;
-    return new Date(pb[2],pb[1]-1,pb[0])-new Date(pa[2],pa[1]-1,pa[0]);
+    const da=parseFecha(a.fecha),db=parseFecha(b.fecha);
+    if(!da||!db) return 0;
+    return db-da;
   });
   if(!movs.length){lista.innerHTML='<div class="empty-state">Sin movimientos</div>';return;}
   lista.innerHTML=movs.slice(0,40).map(m=>{
@@ -888,7 +903,20 @@ function renderTarjetasMov(){
 // ════ AIRBNB ════
 function actualizarAirbnb(){
   const mes=HOY.getMonth(),anio=HOY.getFullYear();
-  const delMes=movAirbnb.filter(m=>{const p=(m.fecha||'').split('/');if(p.length<3)return false;return parseInt(p[1])-1===mes&&parseInt(p[2])===anio;});
+  const delMes=movAirbnb.filter(m=>{
+    const fecha = m.fecha || '';
+    let d;
+    if(fecha.includes('/')){
+      // formato DD/MM/YYYY
+      const p=fecha.split('/');
+      if(p.length<3) return false;
+      d=new Date(parseInt(p[2]),parseInt(p[1])-1,parseInt(p[0]));
+    } else {
+      // formato largo del Sheet: "Thu Jun 04 2026 ..."
+      d=new Date(fecha);
+    }
+    return d.getMonth()===mes && d.getFullYear()===anio;
+  });
   const ing=delMes.filter(m=>m.tipo==='Airbnb Ingreso').reduce((s,m)=>s+parseFloat(m.monto),0);
   const gas=delMes.filter(m=>m.tipo==='Airbnb Gasto').reduce((s,m)=>s+parseFloat(m.monto),0);
   document.getElementById('ab-ing').textContent='$'+Math.round(ing);
@@ -902,9 +930,9 @@ function actualizarAirbnb(){
 function renderAirbnbMov(){
   const lista=document.getElementById('listaAirbnbMov');
   const movs=[...movAirbnb].sort((a,b)=>{
-    const pa=(a.fecha||'').split('/'),pb=(b.fecha||'').split('/');
-    if(pa.length<3||pb.length<3)return 0;
-    return new Date(pb[2],pb[1]-1,pb[0])-new Date(pa[2],pa[1]-1,pa[0]);
+    const da=parseFecha(a.fecha),db=parseFecha(b.fecha);
+    if(!da||!db) return 0;
+    return db-da;
   });
   if(!movs.length){lista.innerHTML='<div class="empty-state">Sin movimientos Airbnb</div>';return;}
   lista.innerHTML=movs.slice(0,40).map(m=>{
