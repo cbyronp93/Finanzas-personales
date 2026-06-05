@@ -157,7 +157,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .subtipo-btn.sel-pago{border-color:var(--green);background:var(--green-bg);color:var(--green)}
 .subtipo-btn.sel-deuda{border-color:var(--warning);background:var(--warning-bg);color:var(--warning)}
 .subtipo-btn.sel-nueva{border-color:var(--red);background:var(--red-bg);color:var(--red)}
-.tipo-btn.sel-transferencia{border-color:var(--blue);background:var(--blue-bg);color:var(--blue)}
+.tipo-btn.sel-retiroairbnb{border-color:var(--teal);background:var(--teal-bg);color:var(--teal)}
 .subtipo-btn.sel-gasto{border-color:var(--red);background:var(--red-bg);color:var(--red)}
 
 .hidden{display:none}
@@ -281,7 +281,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         <button class="tipo-btn" id="btn-Cobrar"        onclick="selTipo('Cobrar')">◷ Cobrar</button>
       </div>
       <div class="tipo-btns">
-        <button class="tipo-btn" id="btn-Transferencia" onclick="selTipo('Transferencia')" style="flex:1">⇄ Transferencia</button>
+        <button class="tipo-btn" id="btn-Transferencia" onclick="selTipo('Transferencia')">⇄ Transferencia</button>
+        <button class="tipo-btn" id="btn-RetiroAirbnb"  onclick="selTipo('RetiroAirbnb')">🏠↑ Retiro Airbnb</button>
       </div>
     </div>
 
@@ -376,7 +377,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="form-group"><label>Fecha esperada de cobro</label><input type="date" id="fechaCobro"></div>
     </div>
 
-    <!-- Transferencia entre cuentas -->
+    <!-- Retiro Airbnb -->
+    <div id="camposRetiroAirbnb" class="hidden">
+      <div class="form-group">
+        <label>Cuenta destino (donde entra el dinero)</label>
+        <select id="cuentaRetiro">
+          <option value="">Seleccioná...</option>
+          <option>Pichincha Cte 2203</option>
+          <option>Efectivo</option>
+          <option>Jardín Azuayo</option>
+          <option>Coop. JEP</option>
+        </select>
+      </div>
+    </div>
     <div id="camposTransferencia" class="hidden">
       <div class="form-group">
         <label>Cuenta origen (sale el dinero)</label>
@@ -1089,11 +1102,11 @@ function showTab(id){
 // ════ FORM ════
 function selTipo(t){
   tipoSel=t; subtipoTCSel=''; subtipoABSel=''; subtipoDeudaSel='';
-  ['Ingreso','Gasto','Tarjeta','Airbnb','Deuda','Cobrar','Transferencia'].forEach(x=>{
+  ['Ingreso','Gasto','Tarjeta','Airbnb','Deuda','Cobrar','Transferencia','RetiroAirbnb'].forEach(x=>{
     const el=document.getElementById('btn-'+x);if(el)el.className='tipo-btn'+(x===t?' sel-'+x.toLowerCase():'');
   });
   // ocultar todo
-  ['subtipoTarjeta','subtipoAirbnb','subtipoDeuda','camposNuevaDeuda','camposCobrar','camposTransferencia'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  ['subtipoTarjeta','subtipoAirbnb','subtipoDeuda','camposNuevaDeuda','camposCobrar','camposTransferencia','camposRetiroAirbnb'].forEach(id=>document.getElementById(id).classList.add('hidden'));
   document.getElementById('wrapCuenta').classList.remove('hidden');
   document.getElementById('wrapTarjetaSel').classList.remove('hidden');
   document.getElementById('wrapCuotas').classList.add('hidden');
@@ -1106,9 +1119,16 @@ function selTipo(t){
   if(t==='Transferencia'){
     document.getElementById('camposTransferencia').classList.remove('hidden');
     document.getElementById('wrapCuenta').classList.add('hidden');
-    // Ocultar categoría (no aplica para transferencia)
     document.getElementById('categoria').parentElement.classList.add('hidden');
-  } else {
+  }
+  if(t==='RetiroAirbnb'){
+    document.getElementById('camposRetiroAirbnb').classList.remove('hidden');
+    document.getElementById('wrapCuenta').classList.add('hidden');
+    document.getElementById('categoria').parentElement.classList.add('hidden');
+    document.getElementById('labelDescripcion').textContent='Nota (opcional)';
+    document.getElementById('labelMonto').textContent='Monto a retirar ($)';
+  }
+  if(t!=='Transferencia'&&t!=='RetiroAirbnb'){
     document.getElementById('categoria').parentElement.classList.remove('hidden');
   }
 
@@ -1210,6 +1230,26 @@ async function guardar(){
     limpiarForm();btn.disabled=false;btn.textContent='Guardar en Drive';return;
   }
 
+  // ── RETIRO AIRBNB ──
+  if(tipoSel==='RetiroAirbnb'){
+    const destino=document.getElementById('cuentaRetiro').value;
+    if(!destino){showToast('Seleccioná la cuenta destino','error');btn.disabled=false;btn.textContent='Guardar en Drive';return;}
+    const nota=descripcion||`Retiro Airbnb → ${destino}`;
+    // 1. Sale de CA2
+    const movSalida  ={fecha:fechaFmt,tipo:'Transferencia salida', categoria:'Retiro Airbnb',descripcion:nota,cuenta:'Pichincha CA2 (Airbnb)',monto};
+    // 2. Entra a destino
+    const movEntrada ={fecha:fechaFmt,tipo:'Transferencia entrada',categoria:'Retiro Airbnb',descripcion:nota,cuenta:destino,monto};
+    // 3. Ingreso personal registrado
+    const movIngreso ={fecha:fechaFmt,tipo:'Ingreso',categoria:'Airbnb',descripcion:nota,cuenta:destino,monto};
+    await enviarDrive(movSalida);
+    await enviarDrive(movEntrada);
+    await enviarDrive(movIngreso);
+    movimientos.unshift(movIngreso);
+    renderHistorial(); actualizarResumen();
+    showToast(`✓ Retiro $${monto.toFixed(2)} registrado como ingreso`,'success');
+    limpiarForm();btn.disabled=false;btn.textContent='Guardar en Drive';return;
+  }
+
   // ── TRANSFERENCIA ──
   if(tipoSel==='Transferencia'){
     const origen  = document.getElementById('cuentaOrigen').value;
@@ -1281,9 +1321,10 @@ function limpiarForm(){
   document.getElementById('cuotas').value='1';
   document.getElementById('cuentaOrigen').value='';
   document.getElementById('cuentaDestino').value='';
+  document.getElementById('cuentaRetiro').value='';
   tipoSel='';subtipoTCSel='';subtipoABSel='';subtipoDeudaSel='';
-  ['Ingreso','Gasto','Tarjeta','Airbnb','Deuda','Cobrar','Transferencia'].forEach(x=>{const el=document.getElementById('btn-'+x);if(el)el.className='tipo-btn';});
-  ['subtipoTarjeta','subtipoAirbnb','subtipoDeuda','camposNuevaDeuda','camposCobrar','camposTransferencia','wrapCuotas'].forEach(id=>document.getElementById(id).classList.add('hidden'));
+  ['Ingreso','Gasto','Tarjeta','Airbnb','Deuda','Cobrar','Transferencia','RetiroAirbnb'].forEach(x=>{const el=document.getElementById('btn-'+x);if(el)el.className='tipo-btn';});
+  ['subtipoTarjeta','subtipoAirbnb','subtipoDeuda','camposNuevaDeuda','camposCobrar','camposTransferencia','camposRetiroAirbnb','wrapCuotas'].forEach(id=>document.getElementById(id).classList.add('hidden'));
   document.getElementById('wrapCuenta').classList.remove('hidden');
   document.getElementById('categoria').parentElement.classList.remove('hidden');
   document.getElementById('categoria').innerHTML='<option value="">Primero seleccioná el tipo...</option>';
