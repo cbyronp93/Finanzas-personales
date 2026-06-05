@@ -232,14 +232,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="card">
     <div class="card-title">Saldos disponibles · hoy</div>
     <div class="saldos-grid">
-      <div class="saldo-chip"><div class="saldo-chip-label">Pichincha Cte</div><div class="saldo-chip-val green">$6.14</div></div>
-      <div class="saldo-chip"><div class="saldo-chip-label">Pichincha CA2 (Airbnb)</div><div class="saldo-chip-val green">$188.36</div></div>
-      <div class="saldo-chip"><div class="saldo-chip-label">Jardín Azuayo</div><div class="saldo-chip-val green">$18.38</div></div>
-      <div class="saldo-chip"><div class="saldo-chip-label">JEP · Efectivo</div><div class="saldo-chip-val muted">$0.00</div></div>
+      <div class="saldo-chip"><div class="saldo-chip-label">Pichincha Cte</div><div class="saldo-chip-val green" id="sal-pic-cte">$6.14</div></div>
+      <div class="saldo-chip"><div class="saldo-chip-label">Pichincha CA2 (Airbnb)</div><div class="saldo-chip-val green" id="sal-pic-ca2">$188.36</div></div>
+      <div class="saldo-chip"><div class="saldo-chip-label">Jardín Azuayo</div><div class="saldo-chip-val green" id="sal-ja">$18.38</div></div>
+      <div class="saldo-chip"><div class="saldo-chip-label">JEP · Efectivo</div><div class="saldo-chip-val muted" id="sal-jep-ef">$0.00</div></div>
     </div>
     <div class="row" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
       <div class="row-label" style="font-weight:700">Total disponible</div>
-      <div class="row-value green">$212.88</div>
+      <div class="row-value green" id="sal-total-disp">$212.88</div>
     </div>
   </div>
   <div class="card">
@@ -504,7 +504,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="card-title">Cuenta Pichincha CA2</div>
     <div class="row" style="padding-top:0">
       <div class="row-label">Saldo actual</div>
-      <div class="row-value teal">$188.36</div>
+      <div class="row-value teal" id="ab-saldo-ca2">$188.36</div>
     </div>
     <div class="row">
       <div><div class="row-label">Meta de reserva</div><div class="row-sub">Dejar crecer antes de usar</div></div>
@@ -685,6 +685,10 @@ async function cargarMovimientos(){
       movimientos=todos.filter(m=>!['Compra tarjeta','Pago tarjeta','Airbnb Ingreso','Airbnb Gasto'].includes(m.tipo));
       movTarjetas=todos.filter(m=>['Compra tarjeta','Pago tarjeta'].includes(m.tipo));
       movAirbnb=todos.filter(m=>['Airbnb Ingreso','Airbnb Gasto'].includes(m.tipo));
+
+      // Aplicar saldos reales del Sheet
+      if(data.saldos) aplicarSaldos(data.saldos);
+
       recalcularSaldosTarjeta();
       if(data.cobros&&data.cobros.length>0){cobrosData=data.cobros.map((c,i)=>({...c,id:c.id||i}));localStorage.setItem('cobros_byron',JSON.stringify(cobrosData));}
       renderHistorial(); renderCompromisos(); renderCobros();
@@ -693,6 +697,37 @@ async function cargarMovimientos(){
       actualizarResumen();
     }else{lista.innerHTML='<div class="empty-state">Sin movimientos registrados</div>';actualizarResumen();}
   }catch(e){lista.innerHTML=`<div class="empty-state">Error al cargar<br><small style="font-size:11px">${e.message}</small></div>`;actualizarResumen();}
+}
+
+// ════ APLICAR SALDOS REALES DESDE SHEET ════
+function aplicarSaldos(s){
+  const c = s.cuentas || {};
+  const d = s.deudas  || {};
+  const fmt = v => '$' + (parseFloat(v)||0).toFixed(2);
+
+  // Chips de cuentas en Resumen
+  setTxt('sal-pic-cte',  fmt(c['Pichincha Cte 2203']));
+  setTxt('sal-pic-ca2',  fmt(c['Pichincha CA2 (Airbnb)']));
+  setTxt('sal-ja',       fmt(c['Jardín Azuayo']));
+  setTxt('sal-jep-ef',   fmt((c['Coop. JEP']||0)+(c['Efectivo']||0)));
+  setTxt('sal-total-disp', fmt(s.totalDisponible));
+
+  // Airbnb cuenta
+  setTxt('ab-saldo-ca2', fmt(c['Pichincha CA2 (Airbnb)']));
+
+  // Saldos de tarjetas (para que renderListaDeudas use valores reales)
+  if(d['Visa Pichincha'] !== undefined) saldosTarjeta['Visa Pichincha'] = parseFloat(d['Visa Pichincha']);
+  if(d['Visa JEP']       !== undefined) saldosTarjeta['Visa JEP']       = parseFloat(d['Visa JEP']);
+
+  // Jardín Azuayo en tab Deudas
+  setTxt('dval-ja', '$' + Math.round(d['Jardín Azuayo']||5963.47).toLocaleString('es'));
+
+  renderListaDeudas(d);
+}
+
+function setTxt(id, val){
+  const el = document.getElementById(id);
+  if(el) el.textContent = val;
 }
 
 // ════ RESUMEN ════
@@ -890,42 +925,31 @@ function buildChartAirbnb(ing,gas){
 }
 
 // ════ LISTA DEUDAS RESUMEN ════
-function renderListaDeudas(){
-  // Deudas dinámicas (tarjetas se actualizan con pagos/compras)
-  const spic = saldosTarjeta['Visa Pichincha'];
-  const sjep  = saldosTarjeta['Visa JEP'];
+function renderListaDeudas(deudasSheet){
+  // Usa saldos del Sheet si están disponibles, si no usa los locales
+  const d = deudasSheet || {};
+  const spic = d['Visa Pichincha'] !== undefined ? d['Visa Pichincha'] : saldosTarjeta['Visa Pichincha'];
+  const sjep  = d['Visa JEP']       !== undefined ? d['Visa JEP']       : saldosTarjeta['Visa JEP'];
+  const sja   = d['Jardín Azuayo']  !== undefined ? d['Jardín Azuayo']  : 5963.47;
+  const spapa = d['Papá']           !== undefined ? d['Papá']           : 7500.00;
+  const smama = d['Mamá']           !== undefined ? d['Mamá']           :  371.81;
 
   const deudas=[
-    {
-      nombre:'Visa Pichincha', urgente:true,
+    { nombre:'Visa Pichincha', urgente:true,
       sub:'4454···6210 · día 30 · $105.95/mes',
-      saldo:spic, ref:1400, tasa:'15.60%', barClass:'danger',
-      mode:'uso',  // barra = % utilizado del cupo
-    },
-    {
-      nombre:'Visa JEP', urgente:false,
+      saldo:spic, ref:1400, tasa:'15.60%', barClass:'danger', mode:'uso' },
+    { nombre:'Visa JEP', urgente:false,
       sub:'4770···8442 · día 4 · $239.07/mes',
-      saldo:sjep, ref:3900, tasa:'15.60%', barClass:'warning',
-      mode:'uso',
-    },
-    {
-      nombre:'Préstamo Jardín Azuayo', urgente:false,
+      saldo:sjep, ref:3900, tasa:'15.60%', barClass:'warning', mode:'uso' },
+    { nombre:'Préstamo Jardín Azuayo', urgente:false,
       sub:'#1156747 · día 1 · ~$345/mes',
-      saldo:5963.47, ref:13000, tasa:'14.22%', barClass:'ok',
-      mode:'pagado', // barra = % pagado del original
-    },
-    {
-      nombre:'Deuda a Papá', urgente:false,
+      saldo:sja, ref:13000, tasa:'14.22%', barClass:'ok', mode:'pagado' },
+    { nombre:'Deuda a Papá', urgente:false,
       sub:'Sin interés · coordinar plan de pago',
-      saldo:7500.00, ref:7500, tasa:'0%', barClass:'muted-bar',
-      mode:'uso',
-    },
-    {
-      nombre:'Deuda a Mamá', urgente:false,
+      saldo:spapa, ref:7500, tasa:'0%', barClass:'muted-bar', mode:'uso' },
+    { nombre:'Deuda a Mamá', urgente:false,
       sub:'Sin interés · monto pequeño, liquidar pronto',
-      saldo:371.81, ref:371.81, tasa:'0%', barClass:'muted-bar',
-      mode:'uso',
-    },
+      saldo:smama, ref:371.81, tasa:'0%', barClass:'muted-bar', mode:'uso' },
   ];
 
   const totalDeuda = deudas.reduce((s,d)=>s+d.saldo,0);
