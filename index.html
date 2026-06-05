@@ -681,13 +681,19 @@ async function cargarMovimientos(){
   try{
     const data=await fetchJSONP(SCRIPT_URL);
     if(data.status==='ok'){
+      console.log('SALDOS RECIBIDOS:', JSON.stringify(data.saldos));
       const todos=data.movimientos||[];
       movimientos=todos.filter(m=>!['Compra tarjeta','Pago tarjeta','Airbnb Ingreso','Airbnb Gasto'].includes(m.tipo));
       movTarjetas=todos.filter(m=>['Compra tarjeta','Pago tarjeta'].includes(m.tipo));
       movAirbnb=todos.filter(m=>['Airbnb Ingreso','Airbnb Gasto'].includes(m.tipo));
 
       // Aplicar saldos reales del Sheet
-      if(data.saldos) aplicarSaldos(data.saldos);
+      if(data.saldos && data.saldos.deudas){
+        console.log('Papá recibido:', data.saldos.deudas['Papá']);
+        aplicarSaldos(data.saldos);
+      } else {
+        console.warn('No llegaron saldos del script — verificá la versión implementada');
+      }
 
       recalcularSaldosTarjeta();
       if(data.cobros&&data.cobros.length>0){cobrosData=data.cobros.map((c,i)=>({...c,id:c.id||i}));localStorage.setItem('cobros_byron',JSON.stringify(cobrosData));}
