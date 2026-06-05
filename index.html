@@ -615,7 +615,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 
 <script>
 // ════ CONFIG ════
-const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyjM2YKvDzENaYkRAH3pwWOPJx9FzWJl4__rPx8SEzwWOk-atAxxgNot1dDz-1JVEKY/exec';
+const SCRIPT_URL = 'PEGAR_URL_APPS_SCRIPT_AQUI';
 
 // ════ DATOS TARJETAS ════
 const TARJETAS = {
@@ -1052,7 +1052,7 @@ function selTipo(t){
 
   if(t==='Tarjeta'){document.getElementById('subtipoTarjeta').classList.remove('hidden');document.getElementById('wrapCuenta').classList.add('hidden');}
   if(t==='Airbnb'){document.getElementById('subtipoAirbnb').classList.remove('hidden');document.getElementById('wrapCuenta').classList.add('hidden');}
-  if(t==='Deuda')document.getElementById('subtipoDeuda').classList.remove('hidden');
+  if(t==='Deuda'){document.getElementById('subtipoDeuda').classList.remove('hidden');}
   if(t==='Cobrar'){document.getElementById('camposCobrar').classList.remove('hidden');document.getElementById('wrapCuenta').classList.add('hidden');}
   if(t==='Transferencia'){
     document.getElementById('camposTransferencia').classList.remove('hidden');
@@ -1099,7 +1099,7 @@ function selSubtipoDeuda(s){
   subtipoDeudaSel=s;
   ['abono','nueva'].forEach(x=>document.getElementById('sub-deuda-'+x).className='subtipo-btn'+(x===s?' sel-'+(x==='abono'?'pago':'nueva'):''));
   document.getElementById('camposNuevaDeuda').classList.toggle('hidden',s!=='nueva');
-  document.getElementById('wrapCuenta').classList.toggle('hidden',s==='abono');
+  document.getElementById('wrapCuenta').classList.remove('hidden'); // siempre visible en deuda
   const key=s==='abono'?'Deuda_abono':'Deuda_nueva';
   const sel=document.getElementById('categoria');
   sel.innerHTML='<option value="">Seleccioná...</option>';
