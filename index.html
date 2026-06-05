@@ -547,11 +547,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div style="flex:1">
         <div class="row-label">Préstamo Jardín Azuayo</div>
         <div class="row-sub">#1156747 · día 1 · ~$345/mes</div>
-        <div class="bar-wrap"><div class="bar ok" style="width:54%"></div></div>
-        <div class="row-sub" style="margin-top:4px">54% pagado · de $13,000 originales</div>
+        <div class="bar-wrap"><div class="bar ok" id="bar-ja" style="width:54%"></div></div>
+        <div class="row-sub" style="margin-top:4px" id="pct-ja">54% pagado · de $13,000 originales</div>
       </div>
       <div style="margin-left:12px;text-align:right;flex-shrink:0">
-        <div class="row-value">$5,963</div>
+        <div class="row-value" id="dval-ja">$5,963</div>
         <div class="row-sub">14.22%</div>
       </div>
     </div>
@@ -560,11 +560,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
     <div class="card-title">Deudas familiares · sin interés</div>
     <div class="row" style="padding-top:0">
       <div><div class="row-label">Papá</div><div class="row-sub">Sin interés · coordinar plan de pago</div></div>
-      <div class="row-value red">$7,500.00</div>
+      <div class="row-value red" id="dval-papa">$7,500.00</div>
     </div>
     <div class="row">
       <div><div class="row-label">Mamá</div><div class="row-sub">Sin interés · monto pequeño</div></div>
-      <div class="row-value red">$371.81</div>
+      <div class="row-value red" id="dval-mama">$371.81</div>
     </div>
   </div>
   <div class="card">
@@ -729,6 +729,19 @@ function aplicarSaldos(s){
 
   // Jardín Azuayo en tab Deudas
   setTxt('dval-ja', '$' + Math.round(d['Jardín Azuayo']||5963.47).toLocaleString('es'));
+
+  // Tab Deudas — familiares
+  const fmtD = v => '$' + (parseFloat(v)||0).toLocaleString('es',{minimumFractionDigits:2,maximumFractionDigits:2});
+  setTxt('dval-papa', fmtD(d['Papá']));
+  setTxt('dval-mama', fmtD(d['Mamá']));
+
+  // Tab Deudas — Jardín Azuayo
+  const sja = parseFloat(d['Jardín Azuayo'])||5963.47;
+  setTxt('dval-ja', '$' + Math.round(sja).toLocaleString('es'));
+  const pctJA = Math.min(Math.round((1 - sja/13000)*100), 100);
+  const barJA = document.getElementById('bar-ja');
+  if(barJA) barJA.style.width = pctJA + '%';
+  setTxt('pct-ja', pctJA + '% pagado · de $13,000 originales');
 
   renderListaDeudas(d);
 }
