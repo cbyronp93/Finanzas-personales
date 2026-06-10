@@ -58,7 +58,8 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .balance-sub{font-size:11px;color:var(--muted);margin-top:2px}
 .balance-value{font-size:22px;font-weight:700;color:var(--blue)}
 .saldos-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:4px}
-.saldo-chip{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px}
+.saldo-chip{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;cursor:pointer;transition:transform .1s}
+.saldo-chip:active{transform:scale(.96)}
 .saldo-chip-label{font-size:10px;color:var(--muted);margin-bottom:3px}
 .saldo-chip-val{font-size:16px;font-weight:700}
 .saldo-chip-val.green{color:var(--green)}
@@ -232,10 +233,22 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   <div class="card">
     <div class="card-title">Saldos disponibles · hoy</div>
     <div class="saldos-grid">
-      <div class="saldo-chip"><div class="saldo-chip-label">Pichincha Cte</div><div class="saldo-chip-val green" id="sal-pic-cte">$6.14</div></div>
-      <div class="saldo-chip"><div class="saldo-chip-label">Pichincha CA2 (Airbnb)</div><div class="saldo-chip-val green" id="sal-pic-ca2">$188.36</div></div>
-      <div class="saldo-chip"><div class="saldo-chip-label">Jardín Azuayo</div><div class="saldo-chip-val green" id="sal-ja">$18.38</div></div>
-      <div class="saldo-chip"><div class="saldo-chip-label">JEP · Efectivo</div><div class="saldo-chip-val muted" id="sal-jep-ef">$0.00</div></div>
+      <div class="saldo-chip" onclick="abrirCuenta('Pichincha Cte 2203','Pichincha Cte')">
+        <div class="saldo-chip-label">Pichincha Cte ›</div>
+        <div class="saldo-chip-val green" id="sal-pic-cte">$6.14</div>
+      </div>
+      <div class="saldo-chip" onclick="abrirCuenta('Pichincha CA2 (Airbnb)','CA2 Airbnb')">
+        <div class="saldo-chip-label">Pichincha CA2 (Airbnb) ›</div>
+        <div class="saldo-chip-val green" id="sal-pic-ca2">$188.36</div>
+      </div>
+      <div class="saldo-chip" onclick="abrirCuenta('Jardín Azuayo','Jardín Azuayo')">
+        <div class="saldo-chip-label">Jardín Azuayo ›</div>
+        <div class="saldo-chip-val green" id="sal-ja">$18.38</div>
+      </div>
+      <div class="saldo-chip" onclick="abrirCuenta('Efectivo','Efectivo · JEP')">
+        <div class="saldo-chip-label">JEP · Efectivo ›</div>
+        <div class="saldo-chip-val muted" id="sal-jep-ef">$0.00</div>
+      </div>
     </div>
     <div class="row" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
       <div class="row-label" style="font-weight:700">Total disponible</div>
@@ -1065,9 +1078,57 @@ function abrirDetalle(tipo){
     :'<div class="empty-state">Sin registros este mes</div>';
   document.getElementById('modalOverlay').classList.add('open');
 }
-function cerrarDetalle(e){if(!e||e.target===document.getElementById('modalOverlay'))document.getElementById('modalOverlay').classList.remove('open');}
+// ════ MODAL CUENTA ════
+function abrirCuenta(cuenta, label){
+  // Recopilar todos los movimientos que afectan esta cuenta
+  const todos = [...movimientos, ...movTarjetas, ...movAirbnb];
+  const cuentaN = cuenta.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 
-// ════ COBROS ════
+  const items = todos.filter(m => {
+    const mc = (m.cuenta||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+    // Para Efectivo también incluir JEP
+    if(cuentaN.includes('efectivo')){
+      return mc.includes('efectivo') || mc.includes('jep');
+    }
+    return mc === cuentaN || (m.cuenta||'') === cuenta;
+  }).sort((a,b) => {
+    const da=parseFecha(a.fecha), db=parseFecha(b.fecha);
+    if(!da||!db) return 0;
+    return db - da;
+  });
+
+  const colorMap={'Ingreso':'green','Gasto':'red','Abono deuda':'red','Compra tarjeta':'purple','Pago tarjeta':'green','Airbnb Ingreso':'teal','Airbnb Gasto':'red','Transferencia salida':'red','Transferencia entrada':'green','Retiro Airbnb':'teal'};
+  const signoMap={'Ingreso':'+','Gasto':'-','Abono deuda':'-','Compra tarjeta':'+','Pago tarjeta':'-','Airbnb Ingreso':'+','Airbnb Gasto':'-','Transferencia salida':'-','Transferencia entrada':'+'};
+
+  // Calcular saldo acumulado
+  const saldoActual = parseFloat((document.getElementById(
+    cuenta.includes('CA2')||cuenta.includes('Airbnb') ? 'sal-pic-ca2' :
+    cuenta.includes('Cte')||cuenta.includes('2203')   ? 'sal-pic-cte' :
+    cuenta.includes('Azuayo')                          ? 'sal-ja'      : 'sal-jep-ef'
+  )?.textContent?.replace('$','').replace(',','.')) || 0);
+
+  document.getElementById('modalTitulo').textContent = label;
+  document.getElementById('modalTotal').innerHTML = `Saldo actual: <span>${'$'+saldoActual.toFixed(2)}</span> · ${items.length} movimiento${items.length!==1?'s':''}`;
+  document.getElementById('modalItems').innerHTML = items.length
+    ? items.map(m => {
+        const tipo = m.tipo||'';
+        const color = colorMap[tipo]||'muted';
+        const signo = signoMap[tipo]||'';
+        const desc = m.descripcion||m.categoria||tipo;
+        const sub = [m.fecha ? parseFecha(m.fecha)?.toLocaleDateString('es-EC',{day:'2-digit',month:'short',year:'numeric'}) : '', m.categoria||tipo].filter(Boolean).join(' · ');
+        return `<div class="detail-row">
+          <div><div class="detail-desc">${desc}</div><div class="detail-sub">${sub}</div></div>
+          <div class="detail-monto ${color}">${signo}$${parseFloat(m.monto||0).toFixed(2)}</div>
+        </div>`;
+      }).join('')
+    : '<div class="empty-state">Sin movimientos en esta cuenta</div>';
+
+  document.getElementById('modalOverlay').classList.add('open');
+}
+
+
+
+function cerrarDetalle(e){if(!e||e.target===document.getElementById('modalOverlay'))document.getElementById('modalOverlay').classList.remove('open');}
 function renderCobros(){
   const pendientes=cobrosData.filter(c=>!c.cobrado);
   document.getElementById('resumenCobrar').innerHTML=pendientes.length===0
