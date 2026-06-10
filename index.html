@@ -276,10 +276,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 <!-- ══════════════ REGISTRAR ══════════════ -->
 <div id="tab-registrar" class="section">
   <div class="card">
-    <div id="configBanner" class="config-banner hidden">
-      <b>⚙️ Conectá tu Google Sheet</b>
-      Pegá la URL de tu Apps Script en la variable <code>SCRIPT_URL</code>.
-    </div>
     <div class="card-title">Nuevo movimiento</div>
     <div class="form-group">
       <label>Tipo</label>
@@ -685,7 +681,7 @@ const HOY=new Date();
 // ════ INIT ════
 document.getElementById('fecha').value=HOY.toISOString().split('T')[0];
 document.getElementById('fechaCobro').value=HOY.toISOString().split('T')[0];
-if(SCRIPT_URL==='PEGAR_URL_APPS_SCRIPT_AQUI') document.getElementById('configBanner').classList.remove('hidden');
+if(SCRIPT_URL.includes('PEGAR')) console.warn('Script URL no configurada');
 buildCharts(); renderCobros(); renderCompromisos(); renderListaDeudas(deudasSheet); cargarMovimientos();
 
 // ════ CARGA SHEET ════
@@ -703,7 +699,6 @@ function fetchJSONP(url,timeout=10000){
 
 async function cargarMovimientos(){
   const lista=document.getElementById('listaMovimientos');
-  if(SCRIPT_URL==='PEGAR_URL_APPS_SCRIPT_AQUI'){lista.innerHTML='<div class="empty-state">Configura el Apps Script para ver movimientos</div>';actualizarResumen();return;}
   lista.innerHTML='<div style="text-align:center;padding:24px 0;color:var(--muted);font-size:13px">Cargando...</div>';
   try{
     const data=await fetchJSONP(SCRIPT_URL);
@@ -793,12 +788,14 @@ function parseFecha(str){
 // ════ RESUMEN ════
 function calcTotales(){
   const mes=HOY.getMonth(),anio=HOY.getFullYear();
-  const delMes=movimientos.filter(m=>{
+  // Incluir movimientos generales + airbnb (para capturar Retiro Airbnb que se guarda como Ingreso)
+  const todosMov=[...movimientos,...movAirbnb];
+  const delMes=todosMov.filter(m=>{
     const d=parseFecha(m.fecha);
     return d && d.getMonth()===mes && d.getFullYear()===anio;
   });
-  const ing=delMes.filter(m=>m.tipo==='Ingreso');
-  const gas=delMes.filter(m=>m.tipo==='Gasto'||m.tipo==='Abono deuda');
+  const ing=delMes.filter(m=>m.tipo==='Ingreso'||m.tipo==='Airbnb Ingreso');
+  const gas=delMes.filter(m=>m.tipo==='Gasto'||m.tipo==='Abono deuda'||m.tipo==='Airbnb Gasto');
   return{ing,gas,totalIng:ing.reduce((s,m)=>s+parseFloat(m.monto),0),totalGas:gas.reduce((s,m)=>s+parseFloat(m.monto),0)};
 }
 function actualizarResumen(){
@@ -1069,7 +1066,10 @@ function renderListaDeudas(deudasSheet){
 // ════ MODAL ════
 function abrirDetalle(tipo){
   const esIng=tipo==='ingreso';
-  const items=movimientos.filter(m=>esIng?m.tipo==='Ingreso':(m.tipo==='Gasto'||m.tipo==='Abono deuda'));
+  const todos=[...movimientos,...movAirbnb];
+  const items=todos.filter(m=>esIng
+    ?(m.tipo==='Ingreso'||m.tipo==='Airbnb Ingreso')
+    :(m.tipo==='Gasto'||m.tipo==='Abono deuda'||m.tipo==='Airbnb Gasto'));
   const total=items.reduce((s,m)=>s+parseFloat(m.monto),0);
   document.getElementById('modalTitulo').textContent=esIng?'Ingresos del mes':'Gastos del mes';
   document.getElementById('modalTotal').innerHTML=`Total: <span>$${total.toFixed(2)}</span>`;
@@ -1371,7 +1371,6 @@ async function guardar(){
 }
 
 async function enviarDrive(data){
-  if(SCRIPT_URL==='PEGAR_URL_APPS_SCRIPT_AQUI')return;
   try{await fetch(SCRIPT_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'text/plain'},body:JSON.stringify(data)});}
   catch(e){console.error('enviarDrive:',e);showToast('Error al conectar con Drive','error');}
 }
