@@ -794,7 +794,7 @@ function calcTotales(){
     const d=parseFecha(m.fecha);
     return d && d.getMonth()===mes && d.getFullYear()===anio;
   });
-  const ing=delMes.filter(m=>m.tipo==='Ingreso'||m.tipo==='Airbnb Ingreso');
+  const ing=delMes.filter(m=>m.tipo==='Ingreso');
   const gas=delMes.filter(m=>m.tipo==='Gasto'||m.tipo==='Abono deuda'||m.tipo==='Airbnb Gasto');
   return{ing,gas,totalIng:ing.reduce((s,m)=>s+parseFloat(m.monto),0),totalGas:gas.reduce((s,m)=>s+parseFloat(m.monto),0)};
 }
@@ -1068,7 +1068,7 @@ function abrirDetalle(tipo){
   const esIng=tipo==='ingreso';
   const todos=[...movimientos,...movAirbnb];
   const items=todos.filter(m=>esIng
-    ?(m.tipo==='Ingreso'||m.tipo==='Airbnb Ingreso')
+    ?(m.tipo==='Ingreso')
     :(m.tipo==='Gasto'||m.tipo==='Abono deuda'||m.tipo==='Airbnb Gasto'));
   const total=items.reduce((s,m)=>s+parseFloat(m.monto),0);
   document.getElementById('modalTitulo').textContent=esIng?'Ingresos del mes':'Gastos del mes';
@@ -1299,13 +1299,10 @@ async function guardar(){
     if(!destino){showToast('Seleccioná la cuenta destino','error');btn.disabled=false;btn.textContent='Guardar en Drive';return;}
     const nota=descripcion||`Retiro Airbnb → ${destino}`;
     // 1. Sale de CA2
-    const movSalida  ={fecha:fechaFmt,tipo:'Transferencia salida', categoria:'Retiro Airbnb',descripcion:nota,cuenta:'Pichincha CA2 (Airbnb)',monto};
-    // 2. Entra a destino
-    const movEntrada ={fecha:fechaFmt,tipo:'Transferencia entrada',categoria:'Retiro Airbnb',descripcion:nota,cuenta:destino,monto};
-    // 3. Ingreso personal registrado
+    const movSalida  ={fecha:fechaFmt,tipo:'Transferencia salida',categoria:'Retiro Airbnb',descripcion:nota,cuenta:'Pichincha CA2 (Airbnb)',monto};
+    // 2. Ingreso personal en cuenta destino
     const movIngreso ={fecha:fechaFmt,tipo:'Ingreso',categoria:'Airbnb',descripcion:nota,cuenta:destino,monto};
     await enviarDrive(movSalida);
-    await enviarDrive(movEntrada);
     await enviarDrive(movIngreso);
     movimientos.unshift(movIngreso);
     renderHistorial(); actualizarResumen();
